@@ -1,105 +1,123 @@
 package DAO;
 
-import DAO.Interface.Base;
 import DTO.DetailOrderDTO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailOrderDAO implements Base<DetailOrderDTO, String> {
-    @Override
-    public boolean create(DetailOrderDTO entity) {
-        String sql = "INSERT INTO chitietdonhang (MADH, MAXE, SOLUONG) VALUES (?, ?, ?)";
+public class DetailOrderDAO {
+
+    // Thêm chi tiết đơn hàng mới
+    public boolean create(DetailOrderDTO detailOrder) {
+        String sql = "INSERT INTO chitietdonhang (MADH, MAXM, SOLUONG, GIATRI, THANHTIEN) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            // Set parameters for the PreparedStatement
-            ps.setString(1, entity.getOrderId());
-            ps.setString(2, entity.getXeId());
-            ps.setInt(3, entity.getQuantity());
 
-            // Execute the SQL statement
+            ps.setString(1, detailOrder.getOrderId());
+            ps.setString(2, detailOrder.getXeId());
+            ps.setInt(3, detailOrder.getQuantity());
+            ps.setBigDecimal(4, detailOrder.getUnitPrice());
+            ps.setBigDecimal(5, detailOrder.getTotalPrice());
+
             ps.executeUpdate();
-
             return true;
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Lỗi khi thêm chi tiết đơn hàng: " + e.getMessage(), e);
         }
     }
 
-    @Override
-    public boolean update(DetailOrderDTO entity) {
-        String sql = "UPDATE chitietdonhang SET SOLUONG = ? WHERE MADH = ? AND MAXE = ?";
-        try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            // Set parameters for the PreparedStatement
-            ps.setInt(1, entity.getQuantity());
-            ps.setString(2, entity.getOrderId());
-            ps.setString(3, entity.getXeId());
-
-            // Execute the SQL statement
-            ps.executeUpdate();
-
-            return true;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public DetailOrderDTO getById(String id) {
-        String sql = "SELECT * FROM chitietdonhang WHERE MADH = ?";
-        try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                DetailOrderDTO detailOrder = new DetailOrderDTO();
-                detailOrder.setOrderId(rs.getString("MADH"));
-                detailOrder.setXeId(rs.getString("MAXE"));
-                detailOrder.setQuantity(rs.getInt("SOLUONG"));
-                return detailOrder;
-            }
-            return null;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
+    // Lấy danh sách tất cả chi tiết đơn hàng
     public List<DetailOrderDTO> getAll() {
+        List<DetailOrderDTO> detailOrders = new ArrayList<>();
         String sql = "SELECT * FROM chitietdonhang";
+
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            List<DetailOrderDTO> list = new ArrayList<>();
+
             while (rs.next()) {
-                DetailOrderDTO detailOrder = new DetailOrderDTO();
-                detailOrder.setOrderId(rs.getString("MADH"));
-                detailOrder.setXeId(rs.getString("MAXE"));
-                detailOrder.setQuantity(rs.getInt("SOLUONG"));
-                list.add(detailOrder);
+                DetailOrderDTO detailOrder = new DetailOrderDTO(
+                        rs.getString("MADH"),
+                        rs.getString("MAXM"),
+                        rs.getInt("SOLUONG"),
+                        rs.getBigDecimal("GIATRI"),
+                        rs.getBigDecimal("THANHTIEN")
+                );
+                detailOrders.add(detailOrder);
             }
-            return list;
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Lỗi khi lấy danh sách chi tiết đơn hàng: " + e.getMessage(), e);
         }
+
+        return detailOrders;
     }
 
-    @Override
-    public boolean delete(String id) {
-        String sql = "DELETE FROM chitietdonhang WHERE MADH = ?";
+    // Lấy danh sách chi tiết đơn hàng theo mã đơn hàng
+    public List<DetailOrderDTO> getByOrderId(String orderId) {
+        List<DetailOrderDTO> detailOrders = new ArrayList<>();
+        String sql = "SELECT * FROM chitietdonhang WHERE MADH = ?";
+
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, id);
+
+            ps.setString(1, orderId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                DetailOrderDTO detailOrder = new DetailOrderDTO(
+                        rs.getString("MADH"),
+                        rs.getString("MAXM"),
+                        rs.getInt("SOLUONG"),
+                        rs.getBigDecimal("GIATRI"),
+                        rs.getBigDecimal("THANHTIEN")
+                );
+                detailOrders.add(detailOrder);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi khi lấy chi tiết đơn hàng theo mã đơn hàng: " + e.getMessage(), e);
+        }
+
+        return detailOrders;
+    }
+
+    // Cập nhật chi tiết đơn hàng
+    public boolean update(DetailOrderDTO detailOrder) {
+        String sql = "UPDATE chitietdonhang SET SOLUONG = ?, GIATRI = ?, THANHTIEN = ? WHERE MADH = ? AND MAXM = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, detailOrder.getQuantity());
+            ps.setBigDecimal(2, detailOrder.getUnitPrice());
+            ps.setBigDecimal(3, detailOrder.getTotalPrice());
+            ps.setString(4, detailOrder.getOrderId());
+            ps.setString(5, detailOrder.getXeId());
+
             ps.executeUpdate();
             return true;
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Lỗi khi cập nhật chi tiết đơn hàng: " + e.getMessage(), e);
         }
     }
 
+    // Xóa chi tiết đơn hàng theo mã đơn hàng và mã xe
+    public boolean delete(String orderId, String xeId) {
+        String sql = "DELETE FROM chitietdonhang WHERE MADH = ? AND MAXM = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, orderId);
+            ps.setString(2, xeId);
+
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi khi xóa chi tiết đơn hàng: " + e.getMessage(), e);
+        }
+    }
 }

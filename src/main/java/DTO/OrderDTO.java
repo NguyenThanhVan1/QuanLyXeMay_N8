@@ -21,6 +21,14 @@ public class OrderDTO {
         this.status = status;
     }
 
+    
+
+
+    public OrderDTO() {
+        //TODO Auto-generated constructor stub
+    }
+
+
 
     public String getOrderId() {
         return orderId;
@@ -81,5 +89,9 @@ public class OrderDTO {
         this.status = status;
     }
 
-    
+    @Override
+    public String toString() {
+        return String.format("%-10s | %-12s | %-10s | %-30s | %-12s | %-15s",
+                orderId, createdDate, customerId, address, totalAmount, status);
+    }
 }
