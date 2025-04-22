@@ -3,16 +3,18 @@ package BUS.Interface;
 import java.sql.Connection;
 import java.util.List;
 
-public interface InvoicesBUSInterface<InvoicesDTO, Integer> {
+public interface InvoicesBUSInterface<T, ID> {
 
-    List<InvoicesDTO> getAll();
+    List<T> getAll();
 
-    List<InvoicesDTO> getById(Integer invoiceId);
+    T getById(ID invoiceId);
 
-    boolean create(Integer customerID, Integer employerID, Integer orderID);
+    boolean create(ID customerID, ID employerID, ID orderID);
 
-    boolean update(InvoicesDTO invoice);
+    boolean update(T invoice);
 
-    boolean delete(Integer invoiceId);
+    boolean delete(ID invoiceId);
+
+    T getByOrderID(ID orderID);
     
 }

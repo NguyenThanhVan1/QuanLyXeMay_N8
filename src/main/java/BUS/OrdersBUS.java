@@ -2,9 +2,12 @@ package BUS;
 
 import BUS.Interface.OrdersBUSInterface;
 import DAO.Database;
+import DAO.DetailInvoicesDAO;
 import DAO.DetailOrdersDAO;
 import DAO.InvoicesDAO;
 import DAO.OrdersDAO;
+import DAO.ProductsDAO;
+import DTO.DetailInvoicesDTO;
 import DTO.DetailOrdersDTO;
 import DTO.InvoicesDTO;
 import DTO.OrdersDTO;
@@ -21,6 +24,8 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
     private OrdersDAO orderDAO;
     private DetailOrdersDAO detailOrderDAO;
     private InvoicesDAO invoicesDAO;
+    private DetailInvoicesDAO detailInvoicesDAO;
+    private ProductsDAO productsDAO;
     private Connection conn;
 
 
@@ -28,6 +33,8 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
         this.orderDAO = new OrdersDAO();
         this.detailOrderDAO = new DetailOrdersDAO();
         this.invoicesDAO = new InvoicesDAO();
+        this.detailInvoicesDAO = new DetailInvoicesDAO();
+        this.productsDAO = new ProductsDAO();
         try {
             this.conn = Database.getConnection();
         } catch (Exception e) {
@@ -80,9 +87,21 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
                 for(DetailOrdersDTO detailOrder : list) {
                     total = total.add(detailOrder.getTotalPrice()); 
                 }
+
                 InvoicesDTO invoice = new InvoicesDTO(date, order.getCustomerId(), IdCurrentUser.getCurrentUserId(), total, order.getOrderId());
-                
-                this.invoicesDAO.create(invoice, conn); 
+                System.out.println("chưa tạo" + invoice.getId());
+                this.invoicesDAO.create(invoice, conn);
+                System.out.println("Hóa đơn đã được tạo: " + invoice.getId());
+
+                List<DetailInvoicesDTO> invoicesList = new ArrayList<>();
+                for(DetailOrdersDTO detailOrder : list) {
+                    detailOrder.setOrderId(order.getOrderId());
+                    DetailInvoicesDTO detailInvoice = new DetailInvoicesDTO(invoice.getId(), detailOrder.getXeId(), detailOrder.getQuantity(), detailOrder.getUnitPrice(), detailOrder.getTotalPrice());
+                    invoicesList.add(detailInvoice);
+                    // System.out.println(detailInvoice);
+                }
+                this.detailInvoicesDAO.create(invoicesList, conn);
+
                 this.orderDAO.update(order, conn);
 
                 conn.commit();
@@ -97,9 +116,49 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
                 return false;
             } 
         }
+        else if(order.getStatus().equals("Đã hủy")){
+            try {
+                this.conn.setAutoCommit(false);
+                List<DetailOrdersDTO> list = this.detailOrderDAO.getById(order.getOrderId()); 
+                List<ProductsDTO> productList = new ArrayList<>();
+
+                for(DetailOrdersDTO detailOrder : list) {
+                    ProductsDTO product = this.productsDAO.getById(detailOrder.getXeId(), conn);
+                    int quantity = product.getQuantity() + detailOrder.getQuantity(); 
+                    product.setQuantity(quantity); 
+                    productList.add(product);
+                }
+
+                this.productsDAO.update(productList, conn);
+                this.orderDAO.update(order, conn); 
+                conn.commit();
+                return true;
+            } catch (Exception e) {
+                try {
+                    conn.rollback(); 
+                } catch (Exception rollbackEx) {
+                    System.out.println("Lỗi khi rollback: " + rollbackEx.getMessage());
+                }
+                e.printStackTrace();
+                return false;
+            } 
+
+        }
         else{
             try {
+                this.conn.setAutoCommit(false);
+                List<DetailOrdersDTO> list = this.detailOrderDAO.getById(order.getOrderId());
+                List<ProductsDTO> productList = new ArrayList<>();
+                for(DetailOrdersDTO detailOrder : list) {
+                    ProductsDTO product = this.productsDAO.getById(detailOrder.getXeId(), conn);
+                    int quantity = product.getQuantity() - detailOrder.getQuantity(); 
+                    product.setQuantity(quantity); 
+                    productList.add(product);
+                }
+
+                this.productsDAO.update(productList, conn);
                 this.orderDAO.update(order, conn); 
+                conn.commit();
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();

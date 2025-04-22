@@ -1,10 +1,25 @@
 package BUS;
 
+import java.sql.Connection;
+
 import BUS.Interface.ProductsBUSInterface;
 import DAO.ProductsDAO;
 import DTO.ProductsDTO;
 
 public class ProductsBUS implements ProductsBUSInterface<ProductsDTO, Integer> {
+    private Connection conn;
+    private ProductsDAO productDAO;
+    
+
+    public ProductsBUS() {
+        try {
+            conn = DAO.Database.getConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.productDAO = new ProductsDAO();
+    }
+
     @Override
     public boolean create(DTO.ProductsDTO productDTO) {
         
@@ -26,9 +41,7 @@ public class ProductsBUS implements ProductsBUSInterface<ProductsDTO, Integer> {
     @Override
     public DTO.ProductsDTO getById(Integer id) {
         try {
-            ProductsDAO productDAO = new ProductsDAO();
-            ProductsDTO productDTO = productDAO.getById(id);
-            return productDTO;
+            return this.productDAO.getById(id, conn);
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi lấy thông tin xe máy: " + e.getMessage(), e);
         }

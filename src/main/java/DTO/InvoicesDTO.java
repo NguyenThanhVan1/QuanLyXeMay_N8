@@ -18,6 +18,9 @@ public class InvoicesDTO {
                 + ", totalPrice=" + totalPrice + ", orderID=" + orderID + "]";
     }
 
+    public InvoicesDTO() {
+    }
+
     public InvoicesDTO(int id, Date date, int customerId, int employerID, BigDecimal totalPrice, int orderID) {
         this.id = id;
         this.date = date;
@@ -79,5 +82,10 @@ public class InvoicesDTO {
         return orderID;
     }
 
+    public void setOrderID(int orderID) {
+        this.orderID = orderID;
+    }
+
+    
     
 }

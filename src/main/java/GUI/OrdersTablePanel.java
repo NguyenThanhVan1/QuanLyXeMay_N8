@@ -6,17 +6,21 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import BUS.DetailInvoicesBUS;
 import BUS.DetailOrdersBUS;
 import BUS.InvoicesBUS;
 import BUS.OrdersBUS;
 import BUS.ProductsBUS;
 import DAO.UsersDAO;
+import DTO.DetailInvoicesDTO;
 import DTO.DetailOrdersDTO;
+import DTO.InvoicesDTO;
 import DTO.OrdersDTO;
 import DTO.ProductsDTO;
 import DTO.UsersDTO;
 
 import java.awt.*;
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -470,8 +474,7 @@ public class OrdersTablePanel extends JPanel {
         JButton printButton = new JButton("Xem hóa đơn");
         styleButton(printButton, primaryColor, Color.WHITE);
         printButton.addActionListener(e -> {
-            // Thêm chức năng in đơn hàng ở đây
-            JOptionPane.showMessageDialog(detailDialog, "Chức năng in đơn hàng sẽ được thực hiện", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            showInvoiceDetailDialog(orderId); // Hiển thị chi tiết hóa đơn
         });
         
         footerPanel.add(printButton);
@@ -660,8 +663,267 @@ public class OrdersTablePanel extends JPanel {
         parentPanel.revalidate();
         parentPanel.repaint(); // Vẽ lại giao diện
     }
+ 
 
-    public void createInvoice(){
-        
+    private void showInvoiceDetailDialog(int orderId) {
+        // Create dialog for invoice details
+        JDialog invoiceDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Chi Tiết Hóa Đơn", true);
+        invoiceDialog.setSize(900, 700);
+        invoiceDialog.setLocationRelativeTo(this);
+    
+        // Modern colors and fonts
+        Color primaryColor = new Color(52, 152, 219);  // Modern blue
+        Color secondaryColor = new Color(236, 240, 241); // Light gray background
+        Color accentColor = new Color(46, 204, 113);   // Green for highlights
+        Color textColor = new Color(44, 62, 80);       // Dark text
+        Color borderColor = new Color(189, 195, 199);  // Border color
+    
+        Font titleFont = new Font("Segoe UI", Font.BOLD, 16);
+        Font headerFont = new Font("Segoe UI", Font.BOLD, 14);
+        Font normalFont = new Font("Segoe UI", Font.PLAIN, 13);
+        Font infoFont = new Font("Segoe UI Semibold", Font.PLAIN, 13);
+    
+        // Main panel with BorderLayout
+        JPanel mainPanel = new JPanel(new BorderLayout(20, 20));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+        mainPanel.setBackground(secondaryColor);
+    
+        // === HEADER PANEL - Title and basic invoice info ===
+        JPanel headerPanel = new JPanel(new BorderLayout(15, 0));
+        headerPanel.setBackground(Color.WHITE);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 2, 0, primaryColor),
+                BorderFactory.createEmptyBorder(15, 20, 15, 20)
+        ));
+    
+        // Fetch invoice data
+        InvoicesBUS invoicesBUS = new InvoicesBUS();
+        InvoicesDTO invoice = invoicesBUS.getByOrderID(orderId); 
+
+        if (invoice != null) {
+       
+            // Title
+            JPanel titlePanel = new JPanel(new BorderLayout());
+            titlePanel.setBackground(Color.WHITE);
+    
+            JLabel titleLabel = new JLabel("Hóa Đơn #" + invoice.getId());
+            titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
+            titleLabel.setForeground(textColor);
+    
+            titlePanel.add(titleLabel, BorderLayout.WEST);
+    
+            headerPanel.add(titlePanel, BorderLayout.CENTER);
+    
+            // Invoice date
+            JLabel dateLabel = new JLabel("Ngày lập: " + new SimpleDateFormat("dd/MM/yyyy").format(invoice.getDate()));
+            dateLabel.setFont(normalFont);
+            dateLabel.setForeground(new Color(127, 140, 141));
+            headerPanel.add(dateLabel, BorderLayout.SOUTH);
+        }
+    
+        // === CONTENT PANEL - Invoice and product details ===
+        JPanel contentPanel = new JPanel(new BorderLayout(0, 20));
+        contentPanel.setBackground(secondaryColor);
+    
+        // === Invoice Info Panel - Card style ===
+        JPanel invoiceInfoPanel = new JPanel(new BorderLayout());
+        invoiceInfoPanel.setBackground(Color.WHITE);
+        invoiceInfoPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(borderColor, 1, true),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+    
+        JLabel infoTitleLabel = new JLabel("Thông Tin Hóa Đơn");
+        infoTitleLabel.setFont(headerFont);
+        infoTitleLabel.setForeground(primaryColor);
+        infoTitleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+    
+        JPanel infoGridPanel = new JPanel(new GridLayout(0, 2, 30, 15));
+        infoGridPanel.setBackground(Color.WHITE);
+    
+        if (invoice != null) {
+            // Customer info
+            UsersDAO userDAO = new UsersDAO();
+            UsersDTO customer = userDAO.getById(invoice.getCustomerId());
+    
+            JPanel customerInfoPanel = new JPanel(new BorderLayout(0, 10));
+            customerInfoPanel.setBackground(Color.WHITE);
+    
+            JLabel customerTitleLabel = new JLabel("Thông Tin Khách Hàng");
+            customerTitleLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            customerTitleLabel.setForeground(textColor);
+    
+            JPanel customerDetailsPanel = new JPanel(new GridLayout(0, 1, 0, 8));
+            customerDetailsPanel.setBackground(Color.WHITE);
+    
+            JLabel nameLabel = createInfoLabel("Khách hàng:", customer.getName(), normalFont, infoFont);
+            JLabel idLabel = createInfoLabel("Mã khách hàng:", String.valueOf(invoice.getCustomerId()), normalFont, infoFont);
+    
+            customerDetailsPanel.add(nameLabel);
+            customerDetailsPanel.add(idLabel);
+    
+            customerInfoPanel.add(customerTitleLabel, BorderLayout.NORTH);
+            customerInfoPanel.add(customerDetailsPanel, BorderLayout.CENTER);
+    
+            // Invoice and employee info
+            JPanel invoiceDetailsPanel = new JPanel(new BorderLayout(0, 10));
+            invoiceDetailsPanel.setBackground(Color.WHITE);
+    
+            JLabel invoiceDetailsTitleLabel = new JLabel("Chi Tiết Hóa Đơn");
+            invoiceDetailsTitleLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            invoiceDetailsTitleLabel.setForeground(textColor);
+    
+            JPanel paymentDetailsPanel = new JPanel(new GridLayout(0, 1, 0, 8));
+            paymentDetailsPanel.setBackground(Color.WHITE);
+    
+            JLabel invoiceIdLabel = createInfoLabel("Mã hóa đơn:", String.valueOf(invoice.getId()), normalFont, infoFont);
+            JLabel orderIdLabel = createInfoLabel("Mã đơn hàng:", String.valueOf(invoice.getId()), normalFont, infoFont);
+    
+            // Fetch employee info
+            UsersDTO employee = userDAO.getById(invoice.getEmployerID());
+            JLabel employeeLabel = createInfoLabel("Nhân viên:", employee.getName(), normalFont, infoFont);
+    
+            // Format total amount
+            NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+            String formattedAmount = currencyFormat.format(invoice.getTotalPrice()) + " VNĐ";
+            JLabel totalLabel = createInfoLabel("Tổng tiền:", formattedAmount, normalFont, infoFont);
+            totalLabel.setForeground(accentColor);
+    
+            paymentDetailsPanel.add(invoiceIdLabel);
+            paymentDetailsPanel.add(orderIdLabel);
+            paymentDetailsPanel.add(employeeLabel);
+            paymentDetailsPanel.add(totalLabel);
+    
+            invoiceDetailsPanel.add(invoiceDetailsTitleLabel, BorderLayout.NORTH);
+            invoiceDetailsPanel.add(paymentDetailsPanel, BorderLayout.CENTER);
+    
+            // Add to grid
+            infoGridPanel.add(customerInfoPanel);
+            infoGridPanel.add(invoiceDetailsPanel);
+        }
+    
+        invoiceInfoPanel.add(infoTitleLabel, BorderLayout.NORTH);
+        invoiceInfoPanel.add(infoGridPanel, BorderLayout.CENTER);
+    
+        // === Product Details Panel - Modern table ===
+        JPanel productPanel = new JPanel(new BorderLayout(0, 15));
+        productPanel.setBackground(Color.WHITE);
+        productPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(borderColor, 1, true),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+    
+        JLabel productTitleLabel = new JLabel("Danh Sách Sản Phẩm");
+        productTitleLabel.setFont(headerFont);
+        productTitleLabel.setForeground(primaryColor);
+        productTitleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+    
+        // Product table
+        String[] columns = {"Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Thành Tiền"};
+        DefaultTableModel productTableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+    
+        JTable productTable = new JTable(productTableModel);
+        productTable.setFont(normalFont);
+        productTable.setRowHeight(35);
+        productTable.setShowGrid(false);
+        productTable.setIntercellSpacing(new Dimension(0, 0));
+        productTable.setFillsViewportHeight(true);
+    
+        // Table header style
+        JTableHeader header = productTable.getTableHeader();
+        header.setFont(headerFont);
+        header.setBackground(new Color(236, 240, 241));
+        header.setForeground(textColor);
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, borderColor));
+    
+        // Fetch invoice details
+        DetailInvoicesBUS  detailInvoicesBUS = new DetailInvoicesBUS();
+        List<DetailInvoicesDTO> detailInvoices = detailInvoicesBUS.getById(invoice.getId());
+        ProductsBUS productsBUS = new ProductsBUS();
+    
+        for (DetailInvoicesDTO detail : detailInvoices) {
+            ProductsDTO product = productsBUS.getById(detail.getProductID());
+            String productName = product != null ? product.getProductName() : "Không xác định";
+    
+            NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+            String unitPrice = currencyFormat.format(detail.getPrice()) + " VNĐ";
+            String totalPrice = currencyFormat.format(detail.getTotalPrice()) + " VNĐ";
+    
+            productTableModel.addRow(new Object[]{
+                    detail.getProductID(),
+                    productName,
+                    detail.getQuantity(),
+                    unitPrice,
+                    totalPrice
+            });
+        }
+    
+        // Right-align quantity and price columns
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+        productTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        productTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        productTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+    
+        // Set column widths
+        productTable.getColumnModel().getColumn(0).setPreferredWidth(100);
+        productTable.getColumnModel().getColumn(1).setPreferredWidth(250);
+        productTable.getColumnModel().getColumn(2).setPreferredWidth(80);
+        productTable.getColumnModel().getColumn(3).setPreferredWidth(120);
+        productTable.getColumnModel().getColumn(4).setPreferredWidth(150);
+    
+        // Custom renderer for even/odd rows
+        productTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                          boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(249, 249, 249));
+                } else {
+                    c.setBackground(new Color(235, 245, 251));
+                    c.setForeground(textColor);
+                }
+                setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(242, 242, 242)));
+                setVerticalAlignment(SwingConstants.CENTER);
+                return c;
+            }
+        });
+    
+        JScrollPane productScrollPane = new JScrollPane(productTable);
+        productScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        productScrollPane.getViewport().setBackground(Color.WHITE);
+    
+        productPanel.add(productTitleLabel, BorderLayout.NORTH);
+        productPanel.add(productScrollPane, BorderLayout.CENTER);
+    
+        // Add panels to content panel
+        contentPanel.add(invoiceInfoPanel, BorderLayout.NORTH);
+        contentPanel.add(productPanel, BorderLayout.CENTER);
+    
+        // === FOOTER PANEL - Action buttons ===
+        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        footerPanel.setBackground(secondaryColor);
+    
+        JButton closeButton = new JButton("Đóng");
+        styleButton(closeButton, new Color(52, 73, 94), Color.WHITE);
+        closeButton.addActionListener(e -> invoiceDialog.dispose());
+    
+        footerPanel.add(closeButton);
+    
+        // Add all to main panel
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
+        mainPanel.add(contentPanel, BorderLayout.CENTER);
+        mainPanel.add(footerPanel, BorderLayout.SOUTH);
+    
+        // Show dialog
+        invoiceDialog.add(mainPanel);
+        invoiceDialog.setVisible(true);
     }
+
 }

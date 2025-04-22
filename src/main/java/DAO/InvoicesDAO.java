@@ -2,7 +2,9 @@ package DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
+import java.sql.Statement;
 
 import DAO.Interface.InvoicesDAOInterface;
 import DTO.InvoicesDTO;
@@ -12,9 +14,10 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
     @Override
     public boolean create(InvoicesDTO invoice, Connection conn) {
         try {
-            System.out.println(invoice);
+            // System.out.println(invoice);
             String sql = "INSERT INTO hoadon (NGAYLAP, MAKH, MANV, TONGTIEN, MADH) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+            PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            
             pstmt.setDate(1, new java.sql.Date(invoice.getDate().getTime()));
             pstmt.setInt(2, invoice.getCustomerId());
             pstmt.setInt(3, invoice.getEmployerID());
@@ -22,7 +25,14 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
             pstmt.setInt(5, invoice.getOrderID());
             
             int rowsAffected = pstmt.executeUpdate();
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                int newId = rs.getInt(1);
+                invoice.setId(newId);
+            }
+            
             return rowsAffected > 0;
+            
         } catch (Exception e) {
             throw new RuntimeException("Lỗi tạo hóa đơn: " + e.getMessage(), e);
         } 
@@ -41,8 +51,29 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
     }
 
     @Override
-    public List<InvoicesDTO> getById(Integer id) {
-        
+    public InvoicesDTO getById(Integer id, Connection conn) {
+        try {
+            String sql = "SELECT * FROM hoadon WHERE MAHD = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, id);
+            
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                InvoicesDTO invoice = new InvoicesDTO();
+                invoice.setId(rs.getInt("MAHD"));
+                invoice.setDate(rs.getDate("NGAYLAP"));
+                invoice.setCustomerId(rs.getInt("MAKH"));
+                invoice.setEmployerID(rs.getInt("MANV"));
+                invoice.setTotalPrice(rs.getBigDecimal("TONGTIEN"));
+                invoice.setOrderID(rs.getInt("MADH"));
+                
+                return invoice;
+            }
+        } catch (Exception e) {
+      
+            throw new RuntimeException("Lỗi khi lấy hóa đơn: " + e.getMessage(), e);
+        }
         return null;
     }
 
@@ -52,4 +83,29 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
         return false;
     }
     
+    @Override
+    public InvoicesDTO getByOrderID(Integer orderID, Connection conn) {
+        try {
+            String sql = "SELECT * FROM hoadon WHERE MADH = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, orderID);
+            
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                InvoicesDTO invoice = new InvoicesDTO();
+                invoice.setId(rs.getInt("MAHD"));
+                invoice.setDate(rs.getDate("NGAYLAP"));
+                invoice.setCustomerId(rs.getInt("MAKH"));
+                invoice.setEmployerID(rs.getInt("MANV"));
+                invoice.setTotalPrice(rs.getBigDecimal("TONGTIEN"));
+                invoice.setOrderID(rs.getInt("MADH"));
+                
+                return invoice;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi lấy hóa đơn theo đơn hàng: " + e.getMessage(), e);
+        }
+        return null;
+    }
 }

@@ -35,27 +35,17 @@ public class InvoicesBUS implements InvoicesBUSInterface<InvoicesDTO, Integer> {
     }
 
     @Override
-    public List<InvoicesDTO> getById(Integer invoiceId) {
-        return null;
+    public InvoicesDTO getById(Integer invoiceId) {
+        try {
+            return invoicesDAO.getById(invoiceId, conn);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi lấy hóa đơn: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public boolean create(Integer customerID, Integer employerID, Integer orderID) {
-        try {
-            Date currentDate = new Date(System.currentTimeMillis());
-            List<DetailOrdersDTO> detailOrders = detailOrdersDAO.getById(orderID);
-            BigDecimal totalPrice = BigDecimal.ZERO;
-            for(DetailOrdersDTO detailOrder : detailOrders) {
-                totalPrice = totalPrice.add(detailOrder.getTotalPrice());
-            }
-            InvoicesDTO invoice = new InvoicesDTO(currentDate, customerID, employerID, totalPrice, orderID);
-            System.out.println(invoice);
-            this.invoicesDAO.create(invoice, conn);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return true;
     }
 
     @Override
@@ -66,6 +56,16 @@ public class InvoicesBUS implements InvoicesBUSInterface<InvoicesDTO, Integer> {
     @Override
     public boolean delete(Integer invoiceId) {
         return false;
+    }
+
+    @Override
+    public InvoicesDTO getByOrderID(Integer orderID) {
+        try {
+            return invoicesDAO.getByOrderID(orderID, conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
 }

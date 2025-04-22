@@ -22,25 +22,25 @@ public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, Integer> {
     }
 
     @Override
-    public boolean create(ProductsDTO entity) {
+    public boolean create(ProductsDTO entity, Connection conn) {
         
         return false;
     }
 
     @Override
-    public boolean delete(Integer id) {
+    public boolean delete(Integer id, Connection conn) {
         
         return false;
     }
 
     @Override
-    public List<ProductsDTO> getAll() {
+    public List<ProductsDTO> getAll(Connection conn) {
         
         return null;
     }
 
     @Override
-    public ProductsDTO getById(Integer id) {
+    public ProductsDTO getById(Integer id, Connection conn) {
         try {
             String sql = "SELECT * FROM xemay where MAXE = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -62,8 +62,30 @@ public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, Integer> {
     }
 
     @Override
-    public boolean update(ProductsDTO entity) {
-        
-        return false;
+    public boolean update(List<ProductsDTO> entity, Connection conn) {
+        try {
+            conn.setAutoCommit(false);
+            String sql = "UPDATE xemay SET TENXE = ?, HANGXE = ?, GIABAN = ?, SOLUONG = ? WHERE MAXE = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            for (ProductsDTO product : entity) {
+                ps.setString(1, product.getProductName());
+                ps.setString(2, product.getBrand());
+                ps.setBigDecimal(3, product.getPrice());
+                ps.setInt(4, product.getQuantity());
+                ps.setInt(5, product.getProductId());
+                ps.addBatch();
+            }
+
+            ps.executeBatch();
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            try {
+                conn.rollback(); // Rollback nếu có lỗi xảy ra
+            } catch (SQLException rollbackEx) {
+                System.out.println("Lỗi khi rollback: " + rollbackEx.getMessage());
+            }
+            throw new RuntimeException("Lỗi khi cập nhật thông tin sản phẩm: " + e.getMessage(), e);
+        }
     }
 }
