@@ -1,40 +1,22 @@
 package BUS.Interface;
 
-import DTO.OrderDTO;
+import DTO.OrdersDTO;
+import DTO.ProductsDTO;
+
+import java.util.Date;
 import java.util.List;
 
-public interface OrdersBUSInterface {
-    /**
-     * Lấy danh sách tất cả đơn hàng.
-     * @return Danh sách các đối tượng OrderDTO.
-     */
-    List<OrderDTO> getAllOrders();
+public interface OrdersBUSInterface<T, ID>{
 
-    /**
-     * Lấy thông tin đơn hàng theo ID.
-     * @param orderId Mã đơn hàng.
-     * @return Đối tượng OrderDTO chứa thông tin đơn hàng.
-     */
-    OrderDTO getOrderById(String orderId);
+    List<T> getAll();
 
-    /**
-     * Thêm đơn hàng mới.
-     * @param order Đối tượng OrderDTO chứa thông tin đơn hàng cần thêm.
-     * @return True nếu thêm thành công, ngược lại False.
-     */
-    boolean addOrder(OrderDTO order);
+    T getById(ID orderId);
 
-    /**
-     * Cập nhật thông tin đơn hàng.
-     * @param order Đối tượng OrderDTO chứa thông tin đơn hàng cần cập nhật.
-     * @return True nếu cập nhật thành công, ngược lại False.
-     */
-    boolean updateOrder(OrderDTO order);
+    boolean create(T order, List<ProductsDTO> productList);
 
-    /**
-     * Xóa đơn hàng theo ID.
-     * @param orderId Mã đơn hàng cần xóa.
-     * @return True nếu xóa thành công, ngược lại False.
-     */
-    boolean deleteOrder(String orderId);
+    boolean update(T order);
+
+    boolean delete(ID orderId);
+
+    List<T> getOrdersByFilters(Date fromDate, Date toDate, String statusFilter);
 }

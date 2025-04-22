@@ -2,15 +2,22 @@ package DTO;
 
 import java.math.BigDecimal;
 
-public class ProductDTO {
-    private String productId; // MAXE
-    private String productName; // TENXE
-    private String brand; // HANGXE
-    private BigDecimal price; // GIABAN
-    private int quantity; // SOLUONG
+public class ProductsDTO {
+    private int productId; 
+    private String productName; 
+    private String brand; 
+    private BigDecimal price; 
+    private int quantity; 
 
-    // Constructor đầy đủ
-    public ProductDTO(String productId, String productName, String brand, BigDecimal price, int quantity) {
+    
+    public ProductsDTO(String productName, String brand, BigDecimal price, int quantity) {
+        this.productName = productName;
+        this.brand = brand;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public ProductsDTO(int productId, String productName, String brand, BigDecimal price, int quantity) {
         this.productId = productId;
         this.productName = productName;
         this.brand = brand;
@@ -18,17 +25,17 @@ public class ProductDTO {
         this.quantity = quantity;
     }
 
-    // Constructor mặc định
-    public ProductDTO() {
-        // Default constructor
+    
+    public ProductsDTO() {
+        
     }
 
-    // Getter và Setter
-    public String getProductId() {
+    
+    public int getProductId() {
         return productId;
     }
 
-    public void setProductId(String productId) {
+    public void setProductId(int productId) {
         this.productId = productId;
     }
 

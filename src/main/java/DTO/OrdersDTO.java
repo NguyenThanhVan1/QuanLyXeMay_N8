@@ -2,17 +2,26 @@ package DTO;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class OrderDTO {
-    private String orderId;
+public class OrdersDTO {
+    private int orderId;
     private Date createdDate;
-    private String customerId;
+    private int customerId;
     private String address;
     private BigDecimal totalAmount;
     private String status;
 
 
-    public OrderDTO(String orderId, Date createdDate, String customerId, String address, BigDecimal totalAmount,
+    public OrdersDTO(Date createdDate, int customerId, String address, BigDecimal totalAmount,
         String status) {
+        this.createdDate = createdDate;
+        this.customerId = customerId;
+        this.address = address;
+        this.totalAmount = totalAmount;
+        this.status = status;
+    }
+
+    public OrdersDTO(int orderId, Date createdDate, int customerId, String address,
+        BigDecimal totalAmount, String status) {
         this.orderId = orderId;
         this.createdDate = createdDate;
         this.customerId = customerId;
@@ -21,21 +30,19 @@ public class OrderDTO {
         this.status = status;
     }
 
-    
 
-
-    public OrderDTO() {
+    public OrdersDTO() {
         //TODO Auto-generated constructor stub
     }
 
 
 
-    public String getOrderId() {
+    public int getOrderId() {
         return orderId;
     }
 
 
-    public void setOrderId(String orderId) {
+    public void setOrderId(int orderId) {
         this.orderId = orderId;
     }
 
@@ -50,12 +57,12 @@ public class OrderDTO {
     }
 
 
-    public String getCustomerId() {
+    public int getCustomerId() {
         return customerId;
     }
 
 
-    public void setCustomerId(String customerId) {
+    public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
 

@@ -1,7 +1,7 @@
 package DAO;
 
-import DAO.Interface.Base;
-import DTO.OrderDTO;
+import DAO.Interface.OrdersDAOInterface;
+import DTO.OrdersDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,17 +10,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderDAO implements Base<OrderDTO, String> {
+public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
 
     @Override
-    public boolean create(OrderDTO entity) {
+    public boolean create(OrdersDTO entity) {
         String sql = "INSERT INTO donhang (MADH, NGAYLAP, MAKH, DIACHI, TONGTIEN, TRANGTHAI) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, entity.getOrderId());
+            ps.setInt(1, entity.getOrderId());
             ps.setDate(2, new java.sql.Date(entity.getCreatedDate().getTime()));
-            ps.setString(3, entity.getCustomerId());
+            ps.setInt(3, entity.getCustomerId());
             ps.setString(4, entity.getAddress());
             ps.setBigDecimal(5, entity.getTotalAmount());
             ps.setString(6, entity.getStatus());
@@ -34,12 +34,12 @@ public class OrderDAO implements Base<OrderDTO, String> {
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(Integer id) {
         String sql = "DELETE FROM donhang WHERE MADH = ?";
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, id);
+            ps.setInt(1, id);
             ps.executeUpdate();
             return true;
 
@@ -49,8 +49,8 @@ public class OrderDAO implements Base<OrderDTO, String> {
     }
 
     @Override
-    public List<OrderDTO> getAll() {
-        List<OrderDTO> list = new ArrayList<>();
+    public List<OrdersDTO> getAll() {
+        List<OrdersDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM donhang";
 
         try (Connection conn = Database.getConnection();
@@ -58,10 +58,10 @@ public class OrderDAO implements Base<OrderDTO, String> {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                OrderDTO order = new OrderDTO(
-                        rs.getString("MADH"),
+                OrdersDTO order = new OrdersDTO(
+                        rs.getInt("MADH"),
                         rs.getDate("NGAYLAP"),
-                        rs.getString("MAKH"),
+                        rs.getInt("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
                         rs.getString("TRANGTHAI")
@@ -77,19 +77,19 @@ public class OrderDAO implements Base<OrderDTO, String> {
     }
 
     @Override
-    public OrderDTO getById(String id) {
+    public OrdersDTO getById(Integer id) {
         String sql = "SELECT * FROM donhang WHERE MADH = ?";
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, id);
+            ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return new OrderDTO(
-                        rs.getString("MADH"),
+                return new OrdersDTO(
+                        rs.getInt("MADH"),
                         rs.getDate("NGAYLAP"),
-                        rs.getString("MAKH"),
+                        rs.getInt("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
                         rs.getString("TRANGTHAI")
@@ -104,28 +104,28 @@ public class OrderDAO implements Base<OrderDTO, String> {
     }
 
     @Override
-    public boolean update(OrderDTO entity) {
+    public boolean update(OrdersDTO entity, Connection conn) {
         String sql = "UPDATE donhang SET NGAYLAP = ?, MAKH = ?, DIACHI = ?, TONGTIEN = ?, TRANGTHAI = ? WHERE MADH = ?";
-        try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setDate(1, new java.sql.Date(entity.getCreatedDate().getTime()));
-            ps.setString(2, entity.getCustomerId());
+            ps.setInt(2, entity.getCustomerId());
             ps.setString(3, entity.getAddress());
             ps.setBigDecimal(4, entity.getTotalAmount());
             ps.setString(5, entity.getStatus());
-            ps.setString(6, entity.getOrderId());
+            ps.setInt(6, entity.getOrderId());
 
             ps.executeUpdate();
             return true;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi cập nhật đơn hàng: " + e.getMessage(), e);
+            throw new RuntimeException("Lỗi khi cập nhật đơn hàng: DAO " + e.getMessage(), e);
         }
     }
 
-    public List<OrderDTO> getOrdersByStatus(String status){
-        List<OrderDTO> list = new ArrayList<>();
+    @Override
+    public List<OrdersDTO> getByStatus(String status){
+        List<OrdersDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM donhang WHERE TRANGTHAI = ?";
 
         try (Connection conn = Database.getConnection();
@@ -135,10 +135,10 @@ public class OrderDAO implements Base<OrderDTO, String> {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                OrderDTO order = new OrderDTO(
-                        rs.getString("MADH"),
+                OrdersDTO order = new OrdersDTO(
+                        rs.getInt("MADH"),
                         rs.getDate("NGAYLAP"),
-                        rs.getString("MAKH"),
+                        rs.getInt("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
                         rs.getString("TRANGTHAI")

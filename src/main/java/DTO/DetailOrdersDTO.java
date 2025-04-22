@@ -2,15 +2,15 @@ package DTO;
 
 import java.math.BigDecimal;
 
-public class DetailOrderDTO {
-    private String orderId; // MADH
-    private String xeId; // MAXM
-    private int quantity; // SOLUONG
-    private BigDecimal unitPrice; // GIATRI
-    private BigDecimal totalPrice; // THANHTIEN
+public class DetailOrdersDTO {
+    private int orderId; 
+    private int xeId; 
+    private int quantity; 
+    private BigDecimal unitPrice; 
+    private BigDecimal totalPrice; 
 
-    // Constructor đầy đủ
-    public DetailOrderDTO(String orderId, String xeId, int quantity, BigDecimal unitPrice, BigDecimal totalPrice) {
+    
+    public DetailOrdersDTO(int orderId, int xeId, int quantity, BigDecimal unitPrice, BigDecimal totalPrice) {
         this.orderId = orderId;
         this.xeId = xeId;
         this.quantity = quantity;
@@ -18,25 +18,25 @@ public class DetailOrderDTO {
         this.totalPrice = totalPrice;
     }
 
-    // Constructor mặc định
-    public DetailOrderDTO() {
-        // Default constructor
+    
+    public DetailOrdersDTO() {
+        
     }
 
-    // Getter và Setter
-    public String getOrderId() {
+    
+    public int getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
+    public void setOrderId(int orderId) {
         this.orderId = orderId;
     }
 
-    public String getXeId() {
+    public int getXeId() {
         return xeId;
     }
 
-    public void setXeId(String xeId) {
+    public void setXeId(int xeId) {
         this.xeId = xeId;
     }
 

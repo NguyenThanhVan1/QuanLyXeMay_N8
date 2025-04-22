@@ -1,7 +1,7 @@
 package GUI;
 
 import BUS.OrdersBUS;
-import DTO.OrderDTO;
+import DTO.OrdersDTO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,12 +38,12 @@ public class OrdersSummaryPanel extends JPanel {
     public void updateSummary() {
         removeAll(); // Xóa các thành phần cũ
 
-        List<OrderDTO> orders = ordersBUS.getAllOrders();
+        List<OrdersDTO> orders = ordersBUS.getAll();
         int shippingCount = 0;
         int processCount = 0;
         int completeCount = 0;
 
-        for (OrderDTO order : orders) {
+        for (OrdersDTO order : orders) {
             if (order.getStatus().equals("Chờ xử lý")) {
                 processCount++;
             } else if (order.getStatus().equals("Đã hoàn thành")) {

@@ -1,45 +1,44 @@
 package BUS;
 
 import BUS.Interface.DetailOrdersBUSInterface;
-import DAO.DetailOrderDAO;
-import DTO.DetailOrderDTO;
+import DAO.DetailOrdersDAO;
+import DTO.DetailOrdersDTO;
 
 import java.util.List;
 
-public class DetailOrdersBUS implements DetailOrdersBUSInterface {
-    private final DetailOrderDAO detailOrderDAO;
+public class DetailOrdersBUS implements DetailOrdersBUSInterface<DetailOrdersDTO, Integer> {
+    private final DetailOrdersDAO detailOrderDAO;
 
     public DetailOrdersBUS() {
-        this.detailOrderDAO = new DetailOrderDAO();
+        this.detailOrderDAO = new DetailOrdersDAO();
     }
 
     @Override
-    public List<DetailOrderDTO> getAllDetailOrders() {
-        // Lấy danh sách tất cả chi tiết đơn hàng từ DetailOrderDAO
+    public List<DetailOrdersDTO> getAll() {
+        
         return detailOrderDAO.getAll();
     }
 
     @Override
-    public List<DetailOrderDTO> getDetailOrdersByOrderId(String orderId) {
-        // Lấy danh sách chi tiết đơn hàng theo mã đơn hàng từ DetailOrderDAO
-        return detailOrderDAO.getByOrderId(orderId);
+    public List<DetailOrdersDTO> getByOrderId(Integer orderId) {
+        
+        return detailOrderDAO.getById(orderId);
     }
 
     @Override
-    public boolean addDetailOrder(DetailOrderDTO detailOrder) {
-        // Thêm chi tiết đơn hàng mới thông qua DetailOrderDAO
-        return detailOrderDAO.create(detailOrder);
+    public boolean create(DetailOrdersDTO detailOrder) {
+        return true;
     }
 
     @Override
-    public boolean updateDetailOrder(DetailOrderDTO detailOrder) {
-        // Cập nhật thông tin chi tiết đơn hàng thông qua DetailOrderDAO
+    public boolean update(DetailOrdersDTO detailOrder) {
+        
         return detailOrderDAO.update(detailOrder);
     }
 
     @Override
-    public boolean deleteDetailOrder(String orderId, String xeId) {
-        // Xóa chi tiết đơn hàng theo mã đơn hàng và mã xe thông qua DetailOrderDAO
-        return detailOrderDAO.delete(orderId, xeId);
+    public boolean delete(Integer orderId, Integer xeId) {
+        
+        return detailOrderDAO.delete(orderId);
     }
 }

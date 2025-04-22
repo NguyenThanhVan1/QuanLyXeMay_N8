@@ -1,0 +1,449 @@
+package GUI;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.border.*;
+
+public class Login extends JFrame {
+    
+    private JPanel mainPanel;
+    private JPanel loginPanel;
+    private JPanel registerPanel;
+    private CardLayout cardLayout;
+    
+    private JTextField usernameField;
+    private JPasswordField passwordField;
+    private JTextField regUsernameField;
+    private JPasswordField regPasswordField;
+    private JPasswordField confirmPasswordField;
+    private JTextField fullNameField;
+    private JTextField emailField;
+    
+    private Color primaryColor = new Color(33, 33, 33);
+    private Color accentColor = new Color(0, 123, 255);
+    private Color textColor = Color.WHITE;
+    private Font mainFont = new Font("Segoe UI", Font.PLAIN, 14);
+    private Font titleFont = new Font("Segoe UI", Font.BOLD, 24);
+    
+    public Login() {
+        setTitle("MOTORCYCLE SHOP");
+        setSize(450, 550);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        
+        // Set icon
+        // ImageIcon icon = new ImageIcon(getClass().getResource("/images/motorcycle_icon.png"));
+        // setIconImage(icon.getImage());
+        
+        // Main panel with CardLayout
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+        mainPanel.setBackground(primaryColor);
+        
+        // Create panels
+        createLoginPanel();
+        createRegisterPanel();
+        
+        // Add panels to card layout
+        mainPanel.add(loginPanel, "login");
+        mainPanel.add(registerPanel, "register");
+        
+        // Show login panel first
+        cardLayout.show(mainPanel, "login");
+        
+        // Add to frame
+        add(mainPanel);
+        
+        setVisible(true);
+    }
+    
+    private void createLoginPanel() {
+        loginPanel = new JPanel();
+        loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
+        loginPanel.setBackground(primaryColor);
+        loginPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+        
+        // Logo and title
+        JLabel logoLabel = createLogoLabel();
+        JLabel titleLabel = new JLabel("MOTORCYCLE SHOP");
+        titleLabel.setFont(titleFont);
+        titleLabel.setForeground(textColor);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        JLabel subtitleLabel = new JLabel("Chất lượng - Uy tín - Giá tốt");
+        subtitleLabel.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+        subtitleLabel.setForeground(new Color(180, 180, 180));
+        subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        // Form panel
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBackground(primaryColor);
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        
+        // Username field with center-aligned label
+        JLabel usernameLabel = new JLabel("Tên đăng nhập");
+        usernameLabel.setFont(mainFont);
+        usernameLabel.setForeground(textColor);
+        usernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        usernameField = createTextField();
+        
+        // Password field with center-aligned label
+        JLabel passwordLabel = new JLabel("Mật khẩu");
+        passwordLabel.setFont(mainFont);
+        passwordLabel.setForeground(textColor);
+        passwordLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        passwordField = createPasswordField();
+        
+        JButton loginButton = createButton("Đăng nhập");
+        loginButton.addActionListener(e -> attemptLogin());
+        
+        JPanel registerLinkPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        registerLinkPanel.setBackground(primaryColor);
+        JLabel registerPrompt = new JLabel("Chưa có tài khoản? ");
+        registerPrompt.setForeground(textColor);
+        JLabel registerLink = new JLabel("Đăng ký ngay");
+        registerLink.setForeground(accentColor);
+        registerLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        registerLink.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                cardLayout.show(mainPanel, "register");
+            }
+            
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                registerLink.setText("<html><u>Đăng ký ngay</u></html>");
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                registerLink.setText("Đăng ký ngay");
+            }
+        });
+        
+        registerLinkPanel.add(registerPrompt);
+        registerLinkPanel.add(registerLink);
+        
+        // Add components to form panel
+        formPanel.add(usernameLabel);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        formPanel.add(usernameField);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        formPanel.add(passwordLabel);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        formPanel.add(passwordField);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 25)));
+        formPanel.add(loginButton);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        formPanel.add(registerLinkPanel);
+        
+        // Add all components to login panel
+        loginPanel.add(logoLabel);
+        loginPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        loginPanel.add(titleLabel);
+        loginPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        loginPanel.add(subtitleLabel);
+        loginPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        loginPanel.add(formPanel);
+    }
+    
+    private void createRegisterPanel() {
+        registerPanel = new JPanel();
+        registerPanel.setLayout(new BoxLayout(registerPanel, BoxLayout.Y_AXIS));
+        registerPanel.setBackground(primaryColor);
+        registerPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        
+        // Logo and title
+        JLabel logoLabel = createLogoLabel();
+        JLabel titleLabel = new JLabel("ĐĂNG KÝ TÀI KHOẢN");
+        titleLabel.setFont(titleFont);
+        titleLabel.setForeground(textColor);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        // Form panel
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBackground(primaryColor);
+        formPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
+        
+        // All labels center-aligned
+        JLabel fullNameLabel = new JLabel("Họ và tên");
+        fullNameLabel.setFont(mainFont);
+        fullNameLabel.setForeground(textColor);
+        fullNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        fullNameField = createTextField();
+        
+        JLabel emailLabel = new JLabel("Email");
+        emailLabel.setFont(mainFont);
+        emailLabel.setForeground(textColor);
+        emailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        emailField = createTextField();
+        
+        JLabel regUsernameLabel = new JLabel("Tên đăng nhập");
+        regUsernameLabel.setFont(mainFont);
+        regUsernameLabel.setForeground(textColor);
+        regUsernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        regUsernameField = createTextField();
+        
+        JLabel regPasswordLabel = new JLabel("Mật khẩu");
+        regPasswordLabel.setFont(mainFont);
+        regPasswordLabel.setForeground(textColor);
+        regPasswordLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        regPasswordField = createPasswordField();
+        
+        JLabel confirmPasswordLabel = new JLabel("Xác nhận mật khẩu");
+        confirmPasswordLabel.setFont(mainFont);
+        confirmPasswordLabel.setForeground(textColor);
+        confirmPasswordLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        confirmPasswordField = createPasswordField();
+        
+        JButton registerButton = createButton("Đăng ký");
+        registerButton.addActionListener(e -> attemptRegister());
+        
+        JPanel loginLinkPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        loginLinkPanel.setBackground(primaryColor);
+        JLabel loginPrompt = new JLabel("Đã có tài khoản? ");
+        loginPrompt.setForeground(textColor);
+        JLabel loginLink = new JLabel("Đăng nhập");
+        loginLink.setForeground(accentColor);
+        loginLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        loginLink.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                cardLayout.show(mainPanel, "login");
+            }
+            
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                loginLink.setText("<html><u>Đăng nhập</u></html>");
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                loginLink.setText("Đăng nhập");
+            }
+        });
+        
+        loginLinkPanel.add(loginPrompt);
+        loginLinkPanel.add(loginLink);
+        
+        // Add components to form panel
+        formPanel.add(fullNameLabel);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        formPanel.add(fullNameField);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        formPanel.add(emailLabel);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        formPanel.add(emailField);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        formPanel.add(regUsernameLabel);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        formPanel.add(regUsernameField);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        formPanel.add(regPasswordLabel);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        formPanel.add(regPasswordField);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        formPanel.add(confirmPasswordLabel);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        formPanel.add(confirmPasswordField);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        formPanel.add(registerButton);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        formPanel.add(loginLinkPanel);
+        
+        // Add all components to register panel
+        registerPanel.add(logoLabel);
+        registerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        registerPanel.add(titleLabel);
+        registerPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        registerPanel.add(formPanel);
+    }
+    
+    private JLabel createLogoLabel() {
+        // Create a custom motorcycle icon since we don't have an actual image
+        JLabel logoLabel = new JLabel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                g2d.setColor(accentColor);
+                
+                // Draw a simple motorcycle icon
+                int centerX = getWidth() / 2;
+                int centerY = getHeight() / 2;
+                
+                // Wheels
+                g2d.fillOval(centerX - 20, centerY - 5, 15, 15);
+                g2d.fillOval(centerX + 10, centerY - 5, 15, 15);
+                
+                // Body
+                g2d.drawLine(centerX - 12, centerY, centerX + 15, centerY);
+                g2d.drawLine(centerX - 5, centerY, centerX - 5, centerY - 12);
+                g2d.drawLine(centerX - 5, centerY - 12, centerX + 8, centerY - 8);
+                g2d.drawLine(centerX + 8, centerY - 8, centerX + 15, centerY);
+                
+                // Handlebars
+                g2d.drawLine(centerX + 5, centerY - 6, centerX + 5, centerY - 15);
+                g2d.drawLine(centerX + 5, centerY - 15, centerX - 5, centerY - 15);
+                g2d.drawLine(centerX + 5, centerY - 15, centerX + 15, centerY - 15);
+            }
+        };
+        
+        logoLabel.setPreferredSize(new Dimension(80, 50));
+        logoLabel.setMaximumSize(new Dimension(80, 50));
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        return logoLabel;
+    }
+    
+    private JTextField createTextField() {
+        JTextField field = new JTextField();
+        field.setFont(mainFont);
+        field.setPreferredSize(new Dimension(300, 35));
+        field.setMaximumSize(new Dimension(5000, 35));
+        field.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(100, 100, 100), 1),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        field.setBackground(new Color(45, 45, 45));
+        field.setForeground(textColor);
+        field.setCaretColor(textColor);
+        
+        return field;
+    }
+    
+    private JPasswordField createPasswordField() {
+        JPasswordField field = new JPasswordField();
+        field.setFont(mainFont);
+        field.setPreferredSize(new Dimension(300, 35));
+        field.setMaximumSize(new Dimension(5000, 35));
+        field.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(100, 100, 100), 1),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        field.setBackground(new Color(45, 45, 45));
+        field.setForeground(textColor);
+        field.setCaretColor(textColor);
+        
+        return field;
+    }
+    
+    private JButton createButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setBackground(accentColor);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setMaximumSize(new Dimension(5000, 40));
+        button.setPreferredSize(new Dimension(100, 40));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        return button;
+    }
+    
+    private void attemptLogin() {
+        String username = usernameField.getText();
+        String password = new String(passwordField.getPassword());
+        
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Vui lòng nhập đầy đủ thông tin đăng nhập!", 
+                "Lỗi đăng nhập", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (username.equals("admin") && password.equals("admin")) {
+            JOptionPane.showMessageDialog(this, 
+                "Đăng nhập thành công!", 
+                "Thông báo", 
+                JOptionPane.INFORMATION_MESSAGE);
+            
+            // Open admin panel and close login window
+            openAdminPanel();
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                "Tên đăng nhập hoặc mật khẩu không đúng!", 
+                "Lỗi đăng nhập", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void attemptRegister() {
+        String fullName = fullNameField.getText();
+        String email = emailField.getText();
+        String username = regUsernameField.getText();
+        String password = new String(regPasswordField.getPassword());
+        String confirmPassword = new String(confirmPasswordField.getPassword());
+        
+        // Validate inputs
+        if (fullName.isEmpty() || email.isEmpty() || username.isEmpty() || 
+            password.isEmpty() || confirmPassword.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Vui lòng nhập đầy đủ thông tin đăng ký!", 
+                "Lỗi đăng ký", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(this, 
+                "Mật khẩu xác nhận không khớp!", 
+                "Lỗi đăng ký", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // In a real application, save to database
+        // For demonstration, show success message
+        JOptionPane.showMessageDialog(this, 
+            "Đăng ký tài khoản thành công!\nBạn có thể đăng nhập ngay bây giờ.", 
+            "Thông báo", 
+            JOptionPane.INFORMATION_MESSAGE);
+        
+        // Clear fields and switch to login panel
+        fullNameField.setText("");
+        emailField.setText("");
+        regUsernameField.setText("");
+        regPasswordField.setText("");
+        confirmPasswordField.setText("");
+        cardLayout.show(mainPanel, "login");
+    }
+    
+    private void openAdminPanel() {
+        // In a real application, open your admin panel here
+        // For demonstration, just show a message
+        JOptionPane.showMessageDialog(this, 
+            "Mở giao diện quản lý (Admin Panel)!", 
+            "Thông báo", 
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    public static void main(String[] args) {
+        try {
+            // Set system look and feel
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // Apply dark theme to UIManager
+        UIManager.put("OptionPane.background", new Color(33, 33, 33));
+        UIManager.put("Panel.background", new Color(33, 33, 33));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(0, 123, 255));
+        UIManager.put("Button.foreground", Color.WHITE);
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new Login();
+            }
+        });
+    }
+}

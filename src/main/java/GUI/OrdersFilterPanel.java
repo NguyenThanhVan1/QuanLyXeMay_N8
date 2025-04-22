@@ -6,11 +6,10 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
 import com.toedter.calendar.JDateChooser;
 
 import BUS.OrdersBUS;
-import DTO.OrderDTO;
+import DTO.OrdersDTO;
 
 public class OrdersFilterPanel extends JPanel {
     private static OrdersFilterPanel instance;
@@ -171,24 +170,26 @@ public class OrdersFilterPanel extends JPanel {
     
     private void handleSearchID(JButton searchButton) {
         searchButton.addActionListener(e -> {
-            String searchText = searchField.getText().trim();
-            if (!searchText.isEmpty()) {
-                // Gọi phương thức tìm kiếm trong OrdersBUS
-                OrdersBUS ordersBUS = new OrdersBUS();
-                OrderDTO order = ordersBUS.getOrderById(searchText);
-                if (order == null) {
-                    JOptionPane.showMessageDialog(this, "Không tìm thấy đơn hàng với ID: " + searchText, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                    return;
-                }
-                List<OrderDTO> ordersList = new ArrayList<>();
-                ordersList.add(order);
-    
-                OrdersTablePanel tablePanel = OrdersTablePanel.getInstance(parentPanel, false);
-                tablePanel.showTableByRow(ordersList);
-               
-            } else {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập ID đơn hàng để tìm kiếm.", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            int searchText = 0;
+            try {
+                searchText = Integer.parseInt(searchField.getText().trim());
+            } catch (NumberFormatException err) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập số.", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
             }
+     
+            // Gọi phương thức tìm kiếm trong OrdersBUS
+            OrdersBUS ordersBUS = new OrdersBUS();
+            OrdersDTO order = ordersBUS.getById(searchText);
+            if (order == null) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy đơn hàng với ID: " + searchText, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            List<OrdersDTO> ordersList = new ArrayList<>();
+            ordersList.add(order);
+
+            OrdersTablePanel tablePanel = OrdersTablePanel.getInstance(parentPanel, false);
+            tablePanel.showTableByRow(ordersList);
         });
 
     }
@@ -199,7 +200,7 @@ public class OrdersFilterPanel extends JPanel {
             Date fromDate = this.fromDateChooser.getDate(); // Lấy giá trị từ JDateChooser nếu cần
             Date toDate = this.toDateChooser.getDate(); // Lấy giá trị từ JDateChooser nếu cần
             OrdersBUS ordersBUS = new OrdersBUS();
-            List<OrderDTO> filteredOrders = ordersBUS.getOrdersByFilters(fromDate, toDate, selectedStatus);
+            List<OrdersDTO> filteredOrders = ordersBUS.getOrdersByFilters(fromDate, toDate, selectedStatus);
             
             OrdersTablePanel tablePanel = OrdersTablePanel.getInstance(parentPanel, false);
 
