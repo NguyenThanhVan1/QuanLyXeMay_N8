@@ -11,6 +11,7 @@ import BUS.DetailOrdersBUS;
 import BUS.InvoicesBUS;
 import BUS.OrdersBUS;
 import BUS.ProductsBUS;
+import BUS.UsersBUS;
 import DAO.UsersDAO;
 import DTO.DetailInvoicesDTO;
 import DTO.DetailOrdersDTO;
@@ -291,8 +292,8 @@ public class OrdersTablePanel extends JPanel {
         if (order != null) {
             // Thông tin khách hàng
             int userID = order.getCustomerId();
-            UsersDAO userDAO = new UsersDAO();
-            UsersDTO user = userDAO.getById(userID);
+            UsersBUS userBUS = new UsersBUS();
+            UsersDTO user = userBUS.getById(userID);
             
             // Cột trái - Thông tin khách hàng
             JPanel customerInfoPanel = new JPanel(new BorderLayout(0, 10));
@@ -743,8 +744,8 @@ public class OrdersTablePanel extends JPanel {
     
         if (invoice != null) {
             // Customer info
-            UsersDAO userDAO = new UsersDAO();
-            UsersDTO customer = userDAO.getById(invoice.getCustomerId());
+            UsersBUS userBUS = new UsersBUS();
+            UsersDTO customer = userBUS.getById(invoice.getCustomerId());
     
             JPanel customerInfoPanel = new JPanel(new BorderLayout(0, 10));
             customerInfoPanel.setBackground(Color.WHITE);
@@ -780,7 +781,7 @@ public class OrdersTablePanel extends JPanel {
             JLabel orderIdLabel = createInfoLabel("Mã đơn hàng:", String.valueOf(invoice.getId()), normalFont, infoFont);
     
             // Fetch employee info
-            UsersDTO employee = userDAO.getById(invoice.getEmployerID());
+            UsersDTO employee = userBUS.getById(invoice.getEmployerID());
             JLabel employeeLabel = createInfoLabel("Nhân viên:", employee.getName(), normalFont, infoFont);
     
             // Format total amount

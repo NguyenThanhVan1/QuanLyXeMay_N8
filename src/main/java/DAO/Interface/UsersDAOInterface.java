@@ -1,11 +1,12 @@
 package DAO.Interface;
 
+import java.sql.Connection;
 import java.util.List;
 
 public interface UsersDAOInterface<T, ID> {
-    boolean create(T entity); 
-    boolean delete(ID id); 
-    List<T> getAll(); 
-    T getById(ID id); 
-    boolean update(T entity); 
+    boolean create(T entity, Connection conn); 
+    boolean delete(ID id, Connection conn); 
+    List<T> getAll(Connection conn); 
+    T getById(ID id, Connection conn); 
+    boolean update(T entity, Connection conn); 
 }

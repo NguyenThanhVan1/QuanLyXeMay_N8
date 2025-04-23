@@ -97,7 +97,7 @@ public class Login extends JFrame {
         passwordField = createPasswordField();
         
         JButton loginButton = createButton("Đăng nhập");
-        loginButton.addActionListener(e -> attemptLogin());
+        loginButton.addActionListener(e -> handleLogin());
         
         JPanel registerLinkPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         registerLinkPanel.setBackground(primaryColor);
@@ -345,7 +345,7 @@ public class Login extends JFrame {
         return button;
     }
     
-    private void attemptLogin() {
+    private void handleLogin() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
         
