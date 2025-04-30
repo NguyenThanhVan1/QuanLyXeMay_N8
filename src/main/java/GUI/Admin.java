@@ -12,9 +12,15 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.FlowLayout;
+
+import javax.smartcardio.Card;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -23,13 +29,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+
+import BUS.OrdersBUS;
+
 import javax.swing.JButton;
 import GUI.Orders; // Import the Orders class
 
 public class Admin {
 
 	private JFrame frame;
-	private Orders ordersPanel; 
+	private Orders ordersPanel;
+	private StatisticsPanel statisticPanel; 
 
 
 	public static void main(String[] args) {
@@ -191,29 +201,43 @@ public class Admin {
 		frame.getContentPane().add(sidebarPanel, BorderLayout.WEST);
 
 		// Main content panel
-		JPanel contentPanel = new JPanel(new BorderLayout());
+		CardLayout n = new CardLayout();
+		JPanel contentPanel = new JPanel(n);
 		contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		// Add Orders panel
-		ordersPanel = new Orders();
-		contentPanel.add(ordersPanel, BorderLayout.CENTER);
+		this.ordersPanel = new Orders();
+		contentPanel.add(ordersPanel, "OrdersPanel");
+
+		// Add Statistics panel
+		// this.ordersPanel = new OrdersBUS(); // Assuming you have this class to manage orders
+		this.statisticPanel = new StatisticsPanel();
+		contentPanel.add(this.statisticPanel, "StatisticsPanel");
+
 		frame.getContentPane().add(contentPanel, BorderLayout.CENTER);
 
 		// Add ActionListener to "Đơn hàng" button
 		btnDonHang.addActionListener(e -> {
 			// Thiết lập trạng thái active cho nút Đơn hàng
 			setActiveButton(btnDonHang, btnThongKe);
-			ordersPanel.setVisible(true);
-			// TODO: Ẩn panel thống kê nếu có
+			n.show(contentPanel, "OrdersPanel");
 		});
 
 		// Add ActionListener to "Thống kê" button
 		btnThongKe.addActionListener(e -> {
 			// Thiết lập trạng thái active cho nút Thống kê
 			setActiveButton(btnThongKe, btnDonHang);
-			ordersPanel.setVisible(false);
-			System.out.println("Đã ấn Thống kê");
-			// TODO: Hiển thị panel thống kê
+
+			ZoneId zoneId = ZoneId.systemDefault();
+			LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+			Date fromDate = Date.from(startOfDay.atZone(zoneId).toInstant());
+			Date toDate = new Date();
+
+			this.statisticPanel.updateOrdersList(fromDate, toDate); //cập nhật lại đơn hàng (cho trường hợp đã cập nhật ở đơn hàng)
+			n.show(contentPanel, "StatisticsPanel");
+			// this.frame.revalidate();
+			// this.frame.repaint();
+			
 		});
 	}
 

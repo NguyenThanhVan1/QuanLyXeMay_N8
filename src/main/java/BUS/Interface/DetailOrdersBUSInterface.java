@@ -14,4 +14,6 @@ public interface DetailOrdersBUSInterface<T, ID>{
     boolean update(T detailOrder);
 
     boolean delete(ID orderId, ID xeId);
+
+
 }

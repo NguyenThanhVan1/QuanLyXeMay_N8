@@ -98,7 +98,7 @@ public class OrdersDTO {
 
     @Override
     public String toString() {
-        return String.format("%-10s | %-12s | %-10s | %-30s | %-12s | %-15s",
+        return String.format("%-10s | %-12s | %-10s | %-30s | %-12s | %-15s\n",
                 orderId, createdDate, customerId, address, totalAmount, status);
     }
 }

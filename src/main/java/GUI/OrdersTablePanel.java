@@ -600,6 +600,7 @@ public class OrdersTablePanel extends JPanel {
                 ordersBUS.update(order);
                 JOptionPane.showMessageDialog(updateDialog, "Đã xác nhận hủy đơn hàng!");
                 updateDialog.dispose();
+
                 parentPanel.reRender();
             }
         });
@@ -629,6 +630,7 @@ public class OrdersTablePanel extends JPanel {
 
             JOptionPane.showMessageDialog(updateDialog, "Đã xác nhận cập nhật!");
             updateDialog.dispose();
+            
             parentPanel.reRender();
         });
     

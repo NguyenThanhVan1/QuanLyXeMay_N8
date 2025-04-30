@@ -29,6 +29,15 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/jcalendar-1.4.jar</systemPath>
         </dependency>
+
+    
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.5.4</version>
+        </dependency>
+    
+
     </dependencies>
 
     <repositories>
