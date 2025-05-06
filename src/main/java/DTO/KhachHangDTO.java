@@ -13,6 +13,7 @@ public class KhachHangDTO
     String makh,hoten,sdt,diachi,tendangnhap,matkhau;
     public KhachHangDTO(){
     }
+    
     public KhachHangDTO(String makh, String hoten, String sdt, String diachi, String tendangnhap, String matkhau) {
         this.makh = makh;
         this.hoten = hoten;
