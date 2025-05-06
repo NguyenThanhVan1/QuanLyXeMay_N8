@@ -16,6 +16,7 @@ public class OrdersFilterPanel extends JPanel {
     private Orders parentPanel;
     private JTextField searchField;
     private JComboBox<String> filterComboBox;
+    private JComboBox<String> sortComboBox;
     private JDateChooser fromDateChooser;
     private JDateChooser toDateChooser;
 
@@ -31,7 +32,7 @@ public class OrdersFilterPanel extends JPanel {
         final Font REGULAR_FONT = new Font("Segoe UI", Font.PLAIN, 14);
         final Font BOLD_FONT = new Font("Segoe UI", Font.BOLD, 14);
         final Color PRIMARY_BLUE = new Color(13, 110, 253);
-        final Color PRIMARY_RED = new Color(255, 0, 0);
+        final Color PRIMARY_RED = new Color(220, 53, 69);
         final Color BORDER_GRAY = new Color(206, 212, 218);
         final Color BG_COLOR = new Color(248, 249, 250);
         final Dimension BUTTON_SIZE = new Dimension(90, 35);
@@ -45,45 +46,11 @@ public class OrdersFilterPanel extends JPanel {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(BG_COLOR);
         
-        // ==== Panel tìm kiếm ====
-        JPanel searchRow = new JPanel();
-        searchRow.setLayout(new FlowLayout(FlowLayout.LEFT, SPACING, SPACING));
-        searchRow.setBackground(BG_COLOR);
-        searchRow.setBorder(BorderFactory.createEmptyBorder(0, 0, SPACING, 0));
-        
-        // Nhãn tìm kiếm
-        JLabel searchLabel = new JLabel("Tìm kiếm:");
-        searchLabel.setFont(REGULAR_FONT);
-        
-        // Ô nhập tìm kiếm
-        searchField = new JTextField();
-        searchField.setPreferredSize(TEXT_FIELD_SIZE);
-        searchField.setFont(REGULAR_FONT);
-        searchField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(BORDER_GRAY),
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        ));
-        searchField.setToolTipText("Tìm kiếm đơn hàng...");
-        
-        // Nút tìm kiếm
-        JButton searchButton = new JButton("Tìm");
-        searchButton.setPreferredSize(BUTTON_SIZE);
-        searchButton.setBackground(PRIMARY_BLUE);
-        searchButton.setForeground(Color.WHITE);
-        searchButton.setFont(BOLD_FONT);
-        searchButton.setFocusPainted(false);
-        searchButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        // Thêm vào panel tìm kiếm
-        searchRow.add(searchLabel);
-        searchRow.add(searchField);
-        searchRow.add(searchButton);
-        
-        // ==== Panel lọc theo ngày tháng ====
-        JPanel dateRow = new JPanel();
-        dateRow.setLayout(new FlowLayout(FlowLayout.LEFT, SPACING, SPACING));
-        dateRow.setBackground(BG_COLOR);
-        dateRow.setBorder(BorderFactory.createEmptyBorder(0, 0, SPACING, 0));
+        // ==== Panel lọc theo ngày tháng & sắp xếp (ROW 1) ====
+        JPanel filterRow = new JPanel();
+        filterRow.setLayout(new FlowLayout(FlowLayout.LEFT, SPACING, SPACING));
+        filterRow.setBackground(BG_COLOR);
+        filterRow.setBorder(BorderFactory.createEmptyBorder(0, 0, SPACING, 0));
         
         // Từ ngày
         JLabel fromLabel = new JLabel("Từ ngày:");
@@ -112,6 +79,15 @@ public class OrdersFilterPanel extends JPanel {
         filterComboBox.setFont(REGULAR_FONT);
         filterComboBox.setBackground(Color.WHITE);
         
+        // Sắp xếp theo tổng tiền
+        JLabel sortLabel = new JLabel("Sắp xếp tổng tiền:");
+        sortLabel.setFont(REGULAR_FONT);
+        
+        sortComboBox = new JComboBox<>(new String[]{"Không sắp xếp", "Tăng dần", "Giảm dần"});
+        sortComboBox.setPreferredSize(COMBO_BOX_SIZE);
+        sortComboBox.setFont(REGULAR_FONT);
+        sortComboBox.setBackground(Color.WHITE);
+        
         // Nút lọc
         JButton filterButton = new JButton("Lọc");
         filterButton.setPreferredSize(BUTTON_SIZE);
@@ -120,8 +96,51 @@ public class OrdersFilterPanel extends JPanel {
         filterButton.setFont(BOLD_FONT);
         filterButton.setFocusPainted(false);
         filterButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        // nút xóa thay đổi
+        
+        // Thêm vào panel lọc (ROW 1)
+        filterRow.add(fromLabel);
+        filterRow.add(fromDateChooser);
+        filterRow.add(Box.createRigidArea(new Dimension(SPACING, 0)));
+        filterRow.add(toLabel);
+        filterRow.add(toDateChooser);
+        filterRow.add(Box.createRigidArea(new Dimension(SPACING, 0)));
+        filterRow.add(statusLabel);
+        filterRow.add(filterComboBox);
+        filterRow.add(Box.createRigidArea(new Dimension(SPACING, 0)));
+        filterRow.add(sortLabel);
+        filterRow.add(sortComboBox);
+        filterRow.add(filterButton);
+        
+        // ==== Panel tìm kiếm & xóa thay đổi (ROW 2) ====
+        JPanel searchRow = new JPanel();
+        searchRow.setLayout(new FlowLayout(FlowLayout.LEFT, SPACING, SPACING));
+        searchRow.setBackground(BG_COLOR);
+        searchRow.setBorder(BorderFactory.createEmptyBorder(0, 0, SPACING, 0));
+        
+        // Nhãn tìm kiếm
+        JLabel searchLabel = new JLabel("Tìm kiếm:");
+        searchLabel.setFont(REGULAR_FONT);
+        
+        // Ô nhập tìm kiếm
+        searchField = new JTextField();
+        searchField.setPreferredSize(TEXT_FIELD_SIZE);
+        searchField.setFont(REGULAR_FONT);
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_GRAY),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        searchField.setToolTipText("Tìm kiếm đơn hàng theo ID...");
+        
+        // Nút tìm kiếm
+        JButton searchButton = new JButton("Tìm");
+        searchButton.setPreferredSize(BUTTON_SIZE);
+        searchButton.setBackground(PRIMARY_BLUE);
+        searchButton.setForeground(Color.WHITE);
+        searchButton.setFont(BOLD_FONT);
+        searchButton.setFocusPainted(false);
+        searchButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        // Nút xóa thay đổi
         JButton deleteChangeButton = new JButton("Xóa thay đổi");
         deleteChangeButton.setPreferredSize(new Dimension(120, 35));
         deleteChangeButton.setBackground(PRIMARY_RED);
@@ -129,23 +148,17 @@ public class OrdersFilterPanel extends JPanel {
         deleteChangeButton.setFont(BOLD_FONT);
         deleteChangeButton.setFocusPainted(false);
         deleteChangeButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
         
-        // Thêm vào panel ngày tháng
-        dateRow.add(fromLabel);
-        dateRow.add(fromDateChooser);
-        dateRow.add(Box.createRigidArea(new Dimension(SPACING, 0)));
-        dateRow.add(toLabel);
-        dateRow.add(toDateChooser);
-        dateRow.add(Box.createRigidArea(new Dimension(SPACING*2, 0)));
-        dateRow.add(statusLabel);
-        dateRow.add(filterComboBox);
-        dateRow.add(filterButton);
-        dateRow.add(deleteChangeButton);
+        // Thêm vào panel tìm kiếm (ROW 2)
+        searchRow.add(searchLabel);
+        searchRow.add(searchField);
+        searchRow.add(searchButton);
+        searchRow.add(Box.createRigidArea(new Dimension(SPACING * 5, 0)));
+        searchRow.add(deleteChangeButton);
         
         // Thêm các panel con vào panel chính
-        mainPanel.add(searchRow);
-        mainPanel.add(dateRow);
+        mainPanel.add(filterRow);    // Row 1 (Filter options)
+        mainPanel.add(searchRow);    // Row 2 (Search and Delete)
         
         // Đặt panel chính vào panel gốc
         add(mainPanel, BorderLayout.NORTH);
@@ -170,6 +183,11 @@ public class OrdersFilterPanel extends JPanel {
     
     private void handleSearchID(JButton searchButton) {
         searchButton.addActionListener(e -> {
+            if (searchField.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập ID đơn hàng cần tìm.", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
             int searchText = 0;
             try {
                 searchText = Integer.parseInt(searchField.getText().trim());
@@ -191,16 +209,17 @@ public class OrdersFilterPanel extends JPanel {
             OrdersTablePanel tablePanel = OrdersTablePanel.getInstance(parentPanel, false);
             tablePanel.showTableByRow(ordersList);
         });
-
     }
 
     private void handleFilter(JButton filterButton) {
         filterButton.addActionListener(e -> {
             String selectedStatus = (String) filterComboBox.getSelectedItem();
-            Date fromDate = this.fromDateChooser.getDate(); // Lấy giá trị từ JDateChooser nếu cần
-            Date toDate = this.toDateChooser.getDate(); // Lấy giá trị từ JDateChooser nếu cần
+            String selectedSort = (String) sortComboBox.getSelectedItem();
+            Date fromDate = this.fromDateChooser.getDate();
+            Date toDate = this.toDateChooser.getDate();
+            
             OrdersBUS ordersBUS = new OrdersBUS();
-            List<OrdersDTO> filteredOrders = ordersBUS.getOrdersByFilters(fromDate, toDate, selectedStatus);
+            List<OrdersDTO> filteredOrders = ordersBUS.getOrdersByFilters(fromDate, toDate, selectedStatus, selectedSort);
             
             OrdersTablePanel tablePanel = OrdersTablePanel.getInstance(parentPanel, false);
 
@@ -209,12 +228,19 @@ public class OrdersFilterPanel extends JPanel {
                 return;
             }
             tablePanel.showTableByRow(filteredOrders);
-
         });
     }
 
     private void handleDeleteFilter(JButton deleteChangeButton) {
         deleteChangeButton.addActionListener(e -> {
+            // Xóa tất cả các lựa chọn
+            searchField.setText("");
+            fromDateChooser.setDate(null);
+            toDateChooser.setDate(null);
+            filterComboBox.setSelectedIndex(0);
+            sortComboBox.setSelectedIndex(0);
+            
+            // Cập nhật lại bảng
             parentPanel.reRender();
         });
     }

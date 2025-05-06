@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.Interface.ProductsDAOInterface;
@@ -20,6 +21,7 @@ public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, Integer> {
             throw new RuntimeException("Lỗi khi kết nối đến cơ sở dữ liệu: " + e.getMessage(), e);
         }
     }
+
 
     @Override
     public boolean create(ProductsDTO entity, Connection conn) {

@@ -11,4 +11,5 @@ public interface ProductsDAOInterface<T, ID> {
     boolean update(List<T> entity, Connection conn);
     List<T> getAll(Connection conn);
     T getById(ID productId, Connection conn);
+
 }

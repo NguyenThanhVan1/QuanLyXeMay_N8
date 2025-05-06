@@ -21,8 +21,8 @@ import java.util.Date;
 import java.util.List;
 
 public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
-    private OrdersDAO orderDAO;
-    private DetailOrdersDAO detailOrderDAO;
+    private OrdersDAO ordersDAO;
+    private DetailOrdersDAO detailOrdersDAO;
     private InvoicesDAO invoicesDAO;
     private DetailInvoicesDAO detailInvoicesDAO;
     private ProductsDAO productsDAO;
@@ -30,8 +30,8 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
 
 
     public OrdersBUS() {
-        this.orderDAO = new OrdersDAO();
-        this.detailOrderDAO = new DetailOrdersDAO();
+        this.ordersDAO = new OrdersDAO();
+        this.detailOrdersDAO = new DetailOrdersDAO();
         this.invoicesDAO = new InvoicesDAO();
         this.detailInvoicesDAO = new DetailInvoicesDAO();
         this.productsDAO = new ProductsDAO();
@@ -43,21 +43,27 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
     }
 
     @Override
+    public List<OrdersDTO> getByCustomerID(Integer customerId) {
+        
+        return ordersDAO.getByCustomerID(customerId, conn);
+    }
+
+    @Override
     public List<OrdersDTO> getAll() {
         
-        return orderDAO.getAll();
+        return ordersDAO.getAll();
     }
 
     @Override
     public OrdersDTO getById(Integer orderId) {
         
-        return orderDAO.getById(orderId);
+        return ordersDAO.getById(orderId);
     }
 
     @Override
     public boolean create(OrdersDTO order, List<ProductsDTO> productList) {
         try {
-            orderDAO.create(order);
+            ordersDAO.create(order);
 
             List <DetailOrdersDTO> detailOrders = new ArrayList<>();
             for(ProductsDTO product : productList) {
@@ -65,7 +71,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
                 DetailOrdersDTO detailOrder = new DetailOrdersDTO(order.getOrderId(), product.getProductId(), product.getQuantity(), product.getPrice(), total);
                 detailOrders.add(detailOrder);
             }
-            detailOrderDAO.create(detailOrders);
+            detailOrdersDAO.create(detailOrders);
             
         } catch (Exception e) {
             System.out.println("Lỗi khi thêm đơn hàng: " + e.getMessage());
@@ -82,16 +88,16 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
                 this.conn.setAutoCommit(false);
 
                 Date date = order.getCreatedDate();
-                List<DetailOrdersDTO> list = this.detailOrderDAO.getById(order.getOrderId()); 
+                List<DetailOrdersDTO> list = this.detailOrdersDAO.getById(order.getOrderId()); 
                 BigDecimal total = BigDecimal.ZERO;
                 for(DetailOrdersDTO detailOrder : list) {
                     total = total.add(detailOrder.getTotalPrice()); 
                 }
 
                 InvoicesDTO invoice = new InvoicesDTO(date, order.getCustomerId(), IdCurrentUser.getCurrentUserId(), total, order.getOrderId());
-                System.out.println("chưa tạo" + invoice.getId());
+                // System.out.println("chưa tạo" + invoice.getId());
                 this.invoicesDAO.create(invoice, conn);
-                System.out.println("Hóa đơn đã được tạo: " + invoice.getId());
+                // System.out.println("Hóa đơn đã được tạo: " + invoice.getId());
 
                 List<DetailInvoicesDTO> invoicesList = new ArrayList<>();
                 for(DetailOrdersDTO detailOrder : list) {
@@ -102,7 +108,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
                 }
                 this.detailInvoicesDAO.create(invoicesList, conn);
 
-                this.orderDAO.update(order, conn);
+                this.ordersDAO.update(order, conn);
 
                 conn.commit();
                 return true;
@@ -119,7 +125,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
         else if(order.getStatus().equals("Đã hủy")){
             try {
                 this.conn.setAutoCommit(false);
-                List<DetailOrdersDTO> list = this.detailOrderDAO.getById(order.getOrderId()); 
+                List<DetailOrdersDTO> list = this.detailOrdersDAO.getById(order.getOrderId()); 
                 List<ProductsDTO> productList = new ArrayList<>();
 
                 for(DetailOrdersDTO detailOrder : list) {
@@ -130,7 +136,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
                 }
 
                 this.productsDAO.update(productList, conn);
-                this.orderDAO.update(order, conn); 
+                this.ordersDAO.update(order, conn); 
                 conn.commit();
                 return true;
             } catch (Exception e) {
@@ -147,7 +153,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
         else{
             try {
                 this.conn.setAutoCommit(false);
-                List<DetailOrdersDTO> list = this.detailOrderDAO.getById(order.getOrderId());
+                List<DetailOrdersDTO> list = this.detailOrdersDAO.getById(order.getOrderId());
                 List<ProductsDTO> productList = new ArrayList<>();
                 for(DetailOrdersDTO detailOrder : list) {
                     ProductsDTO product = this.productsDAO.getById(detailOrder.getXeId(), conn);
@@ -157,7 +163,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
                 }
 
                 this.productsDAO.update(productList, conn);
-                this.orderDAO.update(order, conn); 
+                this.ordersDAO.update(order, conn); 
                 conn.commit();
                 return true;
             } catch (Exception e) {
@@ -172,9 +178,9 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
     public boolean delete(Integer orderId) {
         //Xóa bảng chi tiết đơn hàng
         try {
-            OrdersDTO order = orderDAO.getById(orderId);
+            OrdersDTO order = ordersDAO.getById(orderId);
             order.setStatus("Đã hủy"); 
-            orderDAO.update(order, conn);
+            ordersDAO.update(order, conn);
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật trạng thái đơn hàng: " + e.getMessage());
             return false;
@@ -184,27 +190,59 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
     }
 
     @Override
-    public List<OrdersDTO> getOrdersByFilters(Date fromDate, Date toDate, String statusFilter) {
-        if(fromDate == null && toDate == null){
-            List<OrdersDTO> list = orderDAO.getByStatus(statusFilter);
-            return list;
-        }
+    public List<OrdersDTO> getOrdersByFilters(Date fromDate, Date toDate, String statusFilter, String range) {
 
-        List<OrdersDTO> listFiltered = new ArrayList<>();
-        List<OrdersDTO> list = orderDAO.getAll();
-        for(OrdersDTO order : list) {
-            Date orderDate = order.getCreatedDate();
-            if (!orderDate.before(fromDate) && !orderDate.after(toDate)) {
-                listFiltered.add(order);
-            }
-        }
+        List<OrdersDTO> orders = this.ordersDAO.getAll();
+        return orders.stream()
+                .filter(order -> {
+                    boolean check = true;
+                    if(fromDate != null){
+                        check &= !order.getCreatedDate().before(fromDate);
+                        // System.out.println("check1: " + check);
+                        // System.out.println("fromDate: " + fromDate + " - order.getCreatedDate(): " + order.getCreatedDate());
+                    }
+                    if(toDate != null){
+                        check &= !order.getCreatedDate().after(toDate);
+                        // System.out.println("check2: " + check);
+                        // System.out.println("toDate: " + toDate + " - order.getCreatedDate(): " + order.getCreatedDate());
+                    }
+                    if(statusFilter != null && !statusFilter.isEmpty() && !statusFilter.equals("Tất cả")){
+                        check &= order.getStatus().equalsIgnoreCase(statusFilter);
+                    }
+                    return check;
+                })
+                .sorted((o1, o2) -> {
+                    if(range != null){
+                        if (range.equals("Tăng dần")) {
+                            return o1.getTotalAmount().compareTo(o2.getTotalAmount());
+                        } else if (range.equals("Giảm dần")) {
+                            return o2.getTotalAmount().compareTo(o1.getTotalAmount());
+                        } else {
+                            return 0;
+                        }
+                    }
+                    else return 1;
+                })
+                .toList();
+    }
 
-        if(statusFilter.equals("Tất cả")){
-            listFiltered = orderDAO.getAll();
-            return listFiltered;
+    @Override
+    public List<ProductsDTO> getByTopLimit(int limit, Date fromDate, Date toDate){
+        try {
+            return this.ordersDAO.getByTopLimit(limit, fromDate, toDate, conn);
+        } catch (Exception e) {
+            System.out.println("Lỗi khi lấy top xe" + e.getMessage());
+            return null;
         }
-        
-        listFiltered = orderDAO.getByStatus(statusFilter);
-        return listFiltered;
+    }
+
+    @Override
+    public BigDecimal getDoanhThuTheoThang(int thang, int nam) {
+        try {
+            return this.ordersDAO.getDoanhThuTheoThang(thang, nam, conn);
+        } catch (Exception e) {
+            System.out.println("Lỗi khi lấy doanh thu theo tháng: " + e.getMessage());
+            return BigDecimal.ZERO;
+        }
     }
 }

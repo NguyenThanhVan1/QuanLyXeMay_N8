@@ -16,6 +16,8 @@ public class Login extends JFrame {
     private JPasswordField passwordField;
     private JTextField regUsernameField;
     private JPasswordField regPasswordField;
+    private JCheckBox adminCheckBox;
+
     private JPasswordField confirmPasswordField;
     private JTextField fullNameField;
     private JTextField emailField;
@@ -135,6 +137,16 @@ public class Login extends JFrame {
         formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         formPanel.add(passwordField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 25)));
+        
+        adminCheckBox = new JCheckBox("Đăng nhập với tư cách Admin");
+        adminCheckBox.setFont(mainFont);
+        adminCheckBox.setForeground(textColor);
+        adminCheckBox.setBackground(primaryColor);
+        adminCheckBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        formPanel.add(adminCheckBox);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+
+
         formPanel.add(loginButton);
         formPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         formPanel.add(registerLinkPanel);
@@ -346,33 +358,51 @@ public class Login extends JFrame {
     }
     
     private void handleLogin() {
-        String username = usernameField.getText();
-        String password = new String(passwordField.getPassword());
-        
-        if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Vui lòng nhập đầy đủ thông tin đăng nhập!", 
-                "Lỗi đăng nhập", 
-                JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
+    String username = usernameField.getText();
+    String password = new String(passwordField.getPassword());
+    
+
+    if (username.isEmpty() || password.isEmpty()) {
+        JOptionPane.showMessageDialog(this,
+            "Vui lòng nhập đầy đủ thông tin đăng nhập!",
+            "Lỗi đăng nhập",
+            JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    if (adminCheckBox.isSelected()) {
+        // Đăng nhập admin
         if (username.equals("admin") && password.equals("admin")) {
-            JOptionPane.showMessageDialog(this, 
-                "Đăng nhập thành công!", 
-                "Thông báo", 
+            JOptionPane.showMessageDialog(this,
+                "Đăng nhập Admin thành công!",
+                "Thông báo",
                 JOptionPane.INFORMATION_MESSAGE);
-            
-            // Open admin panel and close login window
             openAdminPanel();
             this.dispose();
         } else {
-            JOptionPane.showMessageDialog(this, 
-                "Tên đăng nhập hoặc mật khẩu không đúng!", 
-                "Lỗi đăng nhập", 
+            JOptionPane.showMessageDialog(this,
+                "Tài khoản admin không đúng!",
+                "Lỗi đăng nhập",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    } else {
+        // Đăng nhập khách hàng (ví dụ đơn giản)
+        if (username.equals("user") && password.equals("123")) {
+            JOptionPane.showMessageDialog(this,
+                "Đăng nhập khách hàng thành công!",
+                "Thông báo",
+                JOptionPane.INFORMATION_MESSAGE);
+            openCustomerPanel(); // bạn cần tạo phương thức này
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this,
+                "Tên đăng nhập hoặc mật khẩu không đúng!",
+                "Lỗi đăng nhập",
                 JOptionPane.ERROR_MESSAGE);
         }
     }
+}
+
     
     private void attemptRegister() {
         String fullName = fullNameField.getText();
@@ -423,6 +453,14 @@ public class Login extends JFrame {
             "Thông báo", 
             JOptionPane.INFORMATION_MESSAGE);
     }
+    private void openCustomerPanel() {
+        // Tạm thời chỉ hiển thị thông báo
+        JOptionPane.showMessageDialog(this,
+            "Mở giao diện khách hàng (Customer Panel)!",
+            "Thông báo",
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+    
     
     public static void main(String[] args) {
         try {
