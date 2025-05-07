@@ -21,7 +21,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
     @Override
     public boolean create(OrdersDTO entity) {
         String sql = "INSERT INTO donhang (MADH, NGAYLAP, MAKH, DIACHI, TONGTIEN, TRANGTHAI) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = Database1.getConnection();
+        try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, entity.getOrderId());
@@ -42,7 +42,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
     @Override
     public boolean delete(Integer id) {
         String sql = "DELETE FROM donhang WHERE MADH = ?";
-        try (Connection conn = Database1.getConnection();
+        try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -59,7 +59,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
         List<OrdersDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM donhang";
 
-        try (Connection conn = Database1.getConnection();
+        try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
@@ -85,7 +85,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
     @Override
     public OrdersDTO getById(Integer id) {
         String sql = "SELECT * FROM donhang WHERE MADH = ?";
-        try (Connection conn = Database1.getConnection();
+        try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -134,7 +134,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
         List<OrdersDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM donhang WHERE TRANGTHAI = ?";
 
-        try (Connection conn = Database1.getConnection();
+        try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, status);

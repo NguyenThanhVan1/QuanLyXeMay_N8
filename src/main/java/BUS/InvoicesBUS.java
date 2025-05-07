@@ -6,7 +6,7 @@ import java.sql.Date;
 import java.util.List;
 
 import BUS.Interface.InvoicesBUSInterface;
-import DAO.Database1;
+import DAO.Database;
 import DAO.InvoicesDAO;
 import DAO.DetailOrdersDAO;
 import DTO.DetailOrdersDTO;
@@ -20,7 +20,7 @@ public class InvoicesBUS implements InvoicesBUSInterface<InvoicesDTO, Integer> {
 
     public InvoicesBUS() {
         try {
-            this.conn = Database1.getConnection();
+            this.conn = Database.getConnection();
         } catch (Exception e) {
             throw new RuntimeException("Lỗi kết nối cơ sở dữ liệu: " + e.getMessage(), e);
         }

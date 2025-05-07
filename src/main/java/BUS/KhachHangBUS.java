@@ -1,3 +1,4 @@
+package BUS;
 
 import DAO.KhachHangDAO;
 import DTO.KhachHangDTO;

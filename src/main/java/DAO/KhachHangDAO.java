@@ -15,7 +15,7 @@ public class KhachHangDAO {
         ResultSet rs = null;
 
         try {
-            conn = Database1.getConnection();
+            conn = Database.getConnection();
             String sql = "SELECT * FROM KHACHHANG";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
@@ -37,7 +37,7 @@ public class KhachHangDAO {
             try {
                 if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
-                Database1.closeConnection(conn);
+                Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -51,7 +51,7 @@ public class KhachHangDAO {
         PreparedStatement stmt = null;
 
         try {
-            conn = Database1.getConnection();
+            conn = Database.getConnection();
             String sql = "INSERT INTO KHACHHANG (MAKH, HOTEN, SDT, DIACHI, TENDANGNHAP, MATKHAU) VALUES (?, ?, ?, ?, ?, ?)";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, kh.getMakh());
@@ -67,7 +67,7 @@ public class KhachHangDAO {
         } finally {
             try {
                 if (stmt != null) stmt.close();
-                Database1.closeConnection(conn);
+                Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -79,7 +79,7 @@ public class KhachHangDAO {
         PreparedStatement stmt = null;
 
         try {
-            conn = Database1.getConnection();
+            conn = Database.getConnection();
             String sql = "UPDATE KHACHHANG SET HOTEN=?, SDT=?, DIACHI=?, TENDANGNHAP=?, MATKHAU=? WHERE MAKH=?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, kh.getHoten());
@@ -95,7 +95,7 @@ public class KhachHangDAO {
         } finally {
             try {
                 if (stmt != null) stmt.close();
-                Database1.closeConnection(conn);
+                Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -107,7 +107,7 @@ public class KhachHangDAO {
         PreparedStatement stmt = null;
 
         try {
-            conn = Database1.getConnection();
+            conn = Database.getConnection();
             String sql = "DELETE FROM KHACHHANG WHERE MAKH=?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, makh);
@@ -117,7 +117,7 @@ public class KhachHangDAO {
         } finally {
             try {
                 if (stmt != null) stmt.close();
-                Database1.closeConnection(conn);
+                Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -130,7 +130,7 @@ public class KhachHangDAO {
         ResultSet rs = null;
 
         try {
-            conn = Database1.getConnection();
+            conn = Database.getConnection();
             String sql = "SELECT * FROM KHACHHANG WHERE TENDANGNHAP = ? AND MATKHAU = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, username);
