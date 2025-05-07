@@ -187,12 +187,15 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
     @Override
     public List<ProductsDTO> getByTopLimit(int limit, Date fromDate, Date toDate, Connection conn){
         try {
-            String sql = "select xm.*, sum(ct.soluong) as total " +
-            "from xemay xm, chitietdonhang ct, donhang dh " +
-            "where xm.maxe = ct.maxm and dh.madh = ct.madh and dh.trangthai = 'Đã hoàn thành' and dh.ngaylap between ? AND ?" +
-            "group by ct.maxm "+
-            "order by total DESC "+
-            "limit ?;";
+            String sql = "SELECT xm.*, SUM(ct.soluong) AS total " +
+            "FROM xemay xm, chitietdonhang ct, donhang dh " +
+            "WHERE xm.maxe = ct.maxe AND dh.madh = ct.madh AND dh.trangthai = 'Đã hoàn thành' " +
+            "AND dh.ngaylap BETWEEN ? AND ? " +
+            "GROUP BY ct.maxe " +
+            "ORDER BY total DESC " +
+            "LIMIT ?;";
+
+            
             PreparedStatement ps = conn.prepareStatement(sql);
 
             // System.out.println(fromDate);

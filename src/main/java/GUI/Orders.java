@@ -65,4 +65,3 @@ public class Orders extends JPanel {
         repaint(); // Vẽ lại giao diện
     }
 }
-

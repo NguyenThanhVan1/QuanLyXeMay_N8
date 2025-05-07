@@ -34,13 +34,21 @@ import BUS.OrdersBUS;
 
 import javax.swing.JButton;
 import GUI.Orders; // Import the Orders class
+import GUI.Component.Panel.nhanVienGUI;
+import GUI.Component.Panel.SupplierPanel;
 
 public class Admin {
 
 	private JFrame frame;
 	private Orders ordersPanel;
-	private StatisticsPanel statisticPanel; 
+	private StatisticsPanel statisticPanel;
+	private SupplierPanel supplierPanel;
+	private nhanVienGUI nhanVienPanel;
+	private JButton currentActiveButton = null;
 
+	public void showWindow() {
+		frame.setVisible(true);
+	}
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -54,7 +62,6 @@ public class Admin {
 			}
 		});
 	}
-
 
 	public Admin() {
 		initialize();
@@ -81,6 +88,7 @@ public class Admin {
 
 		// Thêm icon xe máy (có thể thay bằng ImageIcon thực tế sau)
 		JLabel iconLabel = new JLabel();
+
 		try {
 			// Tạo icon xe máy đơn giản (có thể thay bằng hình ảnh thực tế)
 			BufferedImage motorcycleIcon = new BufferedImage(40, 40, BufferedImage.TYPE_INT_ARGB);
@@ -93,7 +101,7 @@ public class Admin {
 			g2d.drawLine(10, 25, 35, 15); // Khung xe
 			g2d.drawLine(35, 15, 30, 25); // Tay lái
 			g2d.dispose();
-			
+
 			iconLabel.setIcon(new ImageIcon(motorcycleIcon));
 		} catch (Exception e) {
 			iconLabel.setText("🏍️"); // Fallback nếu không tạo được hình
@@ -168,7 +176,7 @@ public class Admin {
 		JPanel sidebarPanel = new JPanel();
 		sidebarPanel.setPreferredSize(new Dimension(220, 0));
 		sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
-		sidebarPanel.setBackground(new Color(50, 50, 50));  // Màu tối hơn
+		sidebarPanel.setBackground(new Color(50, 50, 50)); // Màu tối hơn
 		sidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, new Color(70, 70, 70)));
 
 		// Thêm khoảng trống phía trên
@@ -183,18 +191,29 @@ public class Admin {
 		logoLabel.setForeground(Color.WHITE);
 		logoPanel.add(logoLabel);
 		sidebarPanel.add(logoPanel);
-		
+
 		// Thêm khoảng trống phía dưới logo
 		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
 		// Tạo các nút menu với style mới
 		JButton btnDonHang = createMenuButton("Đơn hàng", true);
 		JButton btnThongKe = createMenuButton("Thống kê", false);
-		
+		JButton btnNhaCungCap = createMenuButton("Nhà cung cấp", false);
+		JButton btnNhanVien = createMenuButton("Nhân viên", false);
+		JButton btnDangXuat = createMenuButton("Đăng Xuất", false);
+
+		sidebarPanel.add(btnNhanVien);
+		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+		sidebarPanel.add(btnNhaCungCap);
+		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
 		sidebarPanel.add(btnDonHang);
 		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Khoảng cách giữa các nút
 		sidebarPanel.add(btnThongKe);
-		
+		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+		sidebarPanel.add(btnDangXuat);
+
 		// Thêm khoảng trống co giãn ở cuối để đẩy các nút lên trên
 		sidebarPanel.add(Box.createVerticalGlue());
 
@@ -210,35 +229,65 @@ public class Admin {
 		contentPanel.add(ordersPanel, "OrdersPanel");
 
 		// Add Statistics panel
-		// this.ordersPanel = new OrdersBUS(); // Assuming you have this class to manage orders
+		// this.ordersPanel = new OrdersBUS(); // Assuming you have this class to manage
+		// orders
 		this.statisticPanel = new StatisticsPanel();
 		contentPanel.add(this.statisticPanel, "StatisticsPanel");
+
+		this.supplierPanel = new SupplierPanel();
+		contentPanel.add(this.supplierPanel, "SupplierPanel");
+
+		this.nhanVienPanel = new nhanVienGUI();
+		contentPanel.add(this.nhanVienPanel, "nhanVienGUI");
 
 		frame.getContentPane().add(contentPanel, BorderLayout.CENTER);
 
 		// Add ActionListener to "Đơn hàng" button
 		btnDonHang.addActionListener(e -> {
-			// Thiết lập trạng thái active cho nút Đơn hàng
-			setActiveButton(btnDonHang, btnThongKe);
+			setActiveButton(btnDonHang);
 			n.show(contentPanel, "OrdersPanel");
 		});
 
 		// Add ActionListener to "Thống kê" button
 		btnThongKe.addActionListener(e -> {
 			// Thiết lập trạng thái active cho nút Thống kê
-			setActiveButton(btnThongKe, btnDonHang);
+			setActiveButton(btnThongKe);
 
 			ZoneId zoneId = ZoneId.systemDefault();
 			LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
 			Date fromDate = Date.from(startOfDay.atZone(zoneId).toInstant());
 			Date toDate = new Date();
 
-			this.statisticPanel.updateOrdersList(fromDate, toDate); //cập nhật lại đơn hàng (cho trường hợp đã cập nhật ở đơn hàng)
+			this.statisticPanel.updateOrdersList(fromDate, toDate); // cập nhật lại đơn hàng (cho trường hợp đã cập nhật
+																	// ở đơn hàng)
 			n.show(contentPanel, "StatisticsPanel");
 			// this.frame.revalidate();
 			// this.frame.repaint();
-			
+
 		});
+
+		btnNhaCungCap.addActionListener(e -> {
+			setActiveButton(btnNhaCungCap);
+			n.show(contentPanel, "SupplierPanel");
+		});
+		btnNhanVien.addActionListener(e -> {
+			setActiveButton(btnNhanVien);
+			n.show(contentPanel, "nhanVienGUI");
+		});
+
+		btnDangXuat.addActionListener(e -> {
+			int choice = javax.swing.JOptionPane.showConfirmDialog(
+					frame,
+					"Bạn có chắc chắn muốn đăng xuất không?",
+					"Xác nhận đăng xuất",
+					javax.swing.JOptionPane.YES_NO_OPTION);
+
+			if (choice == javax.swing.JOptionPane.YES_OPTION) {
+				frame.dispose(); // Đóng cửa sổ hiện tại
+				new Login().setVisible(true); // Mở lại màn hình đăng nhập
+			}
+		});
+
 	}
 
 	// Phương thức tạo nút menu với style đẹp
@@ -250,7 +299,7 @@ public class Admin {
 		button.setFocusPainted(false);
 		button.setBorderPainted(false);
 		button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
+
 		if (isActive) {
 			button.setBackground(new Color(0, 123, 255)); // Màu xanh khi active
 			button.setForeground(Color.WHITE);
@@ -258,22 +307,27 @@ public class Admin {
 			button.setBackground(new Color(60, 60, 60)); // Màu xám tối khi không active
 			button.setForeground(new Color(200, 200, 200));
 		}
-		
+
 		// Thêm padding
 		button.setMargin(new Insets(10, 15, 10, 15));
-		
+
 		return button;
 	}
 
 	// Phương thức thiết lập trạng thái active cho nút được chọn
-	private void setActiveButton(JButton activeButton, JButton... inactiveButtons) {
+	private void setActiveButton(JButton activeButton) {
+		// Nếu đã có nút active trước đó, reset về màu ban đầu
+		if (currentActiveButton != null) {
+			currentActiveButton.setBackground(new Color(50, 50, 50));
+			currentActiveButton.setForeground(new Color(200, 200, 200));
+		}
+
+		// Đặt nút mới làm active
 		activeButton.setBackground(new Color(0, 123, 255));
 		activeButton.setForeground(Color.WHITE);
-		
-		for (JButton button : inactiveButtons) {
-			button.setBackground(new Color(60, 60, 60));
-			button.setForeground(new Color(200, 200, 200));
-		}
+
+		// Lưu lại nút đang active
+		currentActiveButton = activeButton;
 	}
 
 	protected JButton createArrowButton() {
@@ -289,13 +343,13 @@ public class Admin {
 		Graphics2D g2d = userIcon.createGraphics();
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setColor(Color.WHITE);
-		
+
 		// Vẽ đầu
 		g2d.fillOval(7, 2, 10, 10);
-		
+
 		// Vẽ thân
 		g2d.fillOval(4, 12, 16, 16);
-		
+
 		g2d.dispose();
 		return userIcon;
 	}
