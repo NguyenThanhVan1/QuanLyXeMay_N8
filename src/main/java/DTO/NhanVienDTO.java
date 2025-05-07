@@ -13,7 +13,7 @@ public class NhanVienDTO
     private String manv,hoten,ngaysinh,gioitinh,sdt,diachi,chucvu,tendangnhap,matkhau,quyen;
     public NhanVienDTO(){
     }
-    public NhanVienDTO(String manv, String hoten) {
+public NhanVienDTO(String manv, String hoten) {
         this.manv = manv;
         this.hoten = hoten;
     }

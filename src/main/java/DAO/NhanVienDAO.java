@@ -32,15 +32,27 @@ public class NhanVienDAO {
                 String matkhau = rs.getString("MATKHAU");
                 String quyen = rs.getString("QUYEN");
 
+<<<<<<< HEAD
                 NhanVienDTO nv = new NhanVienDTO(manv, hoten, ngaysinh, gt, sdt, diachi, chucvu, tendangnhap, matkhau, quyen);
+=======
+                NhanVienDTO nv = new NhanVienDTO(manv, hoten, ngaysinh, gt, sdt, diachi, chucvu, tendangnhap, matkhau,
+                        quyen);
+>>>>>>> NTV
                 dsnv.add(nv);
             }
         } catch (SQLException e) {
             Logger.getLogger(NhanVienDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
+<<<<<<< HEAD
                 if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
+=======
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+>>>>>>> NTV
                 Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -72,7 +84,12 @@ public class NhanVienDAO {
             Logger.getLogger(NhanVienDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
+<<<<<<< HEAD
                 if (stmt != null) stmt.close();
+=======
+                if (stmt != null)
+                    stmt.close();
+>>>>>>> NTV
                 Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -104,7 +121,12 @@ public class NhanVienDAO {
             Logger.getLogger(NhanVienDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
+<<<<<<< HEAD
                 if (stmt != null) stmt.close();
+=======
+                if (stmt != null)
+                    stmt.close();
+>>>>>>> NTV
                 Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -125,7 +147,12 @@ public class NhanVienDAO {
             Logger.getLogger(NhanVienDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
+<<<<<<< HEAD
                 if (stmt != null) stmt.close();
+=======
+                if (stmt != null)
+                    stmt.close();
+>>>>>>> NTV
                 Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();

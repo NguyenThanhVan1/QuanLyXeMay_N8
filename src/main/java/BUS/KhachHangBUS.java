@@ -1,13 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package BUS;
 
-/**
- *
- * @author lekha
- */
 import DAO.KhachHangDAO;
 import DTO.KhachHangDTO;
 import java.util.ArrayList;
@@ -101,4 +92,11 @@ public class KhachHangBUS
     public ArrayList<KhachHangDTO> getList() {
         return dskh;
     }
+    public static boolean checkCustomerLogin(String username, String password) {
+        // Khởi tạo đối tượng KhachHangDAO trong phương thức tĩnh
+        KhachHangDAO khachHangDAO = new KhachHangDAO();
+        KhachHangDTO kh = khachHangDAO.checkLogin(username, password);
+        return kh != null;
+    }
 }
+

@@ -10,7 +10,7 @@ import java.util.List;
 import DTO.Statistics.PurchaseDateData;
 import DTO.Statistics.PurchaseTimeData;
 import DTO.Statistics.StatisticsPreciousData;
-import DAO.Database;
+import DAO.Database1;
 
 public class PurchaseStatisticsDAO {
 
@@ -20,7 +20,7 @@ public class PurchaseStatisticsDAO {
         Long countPurchase = 0L;
         String sql = "SELECT IFNULL(COUNT(p.id),0) AS 'purchaseSheet'\n" +
                 "FROM purchaseorders AS p";
-        try(Connection c = Database.getConnection();
+        try(Connection c = Database1.getConnection();
             PreparedStatement pst = c.prepareStatement(sql);
         ){
             try(ResultSet rs = pst.executeQuery()){
@@ -41,7 +41,7 @@ public class PurchaseStatisticsDAO {
         String sql = "SELECT IFNULL(SUM(p.totalAmount),0) AS 'purchaseFee'\n" +
                 "FROM purchaseorders AS p" +
                 "\n WHERE p.`status` = 'Hoàn_Thành'";
-        try(Connection c = Database.getConnection();
+        try(Connection c = Database1.getConnection();
             PreparedStatement pst = c.prepareStatement(sql);
         ){
             try(ResultSet rs = pst.executeQuery()){
@@ -67,7 +67,7 @@ public class PurchaseStatisticsDAO {
                 "    GROUP BY p.id\n" +
                 ") AS purchase_summary;\n";
 
-        try(Connection c = Database.getConnection();
+        try(Connection c = Database1.getConnection();
             PreparedStatement pst = c.prepareStatement(sql);
         ){
             try(ResultSet rs = pst.executeQuery()){
@@ -88,7 +88,7 @@ public class PurchaseStatisticsDAO {
         String sql = "SELECT IFNULL(COUNT(s.id),0) AS 'countSupplier'\n" +
                 "FROM supplier AS s\n" +
                 "WHERE s.isActive = 1";
-        try(Connection c = Database.getConnection();
+        try(Connection c = Database1.getConnection();
             PreparedStatement pst = c.prepareStatement(sql);
         ){
             try(ResultSet rs = pst.executeQuery()){
@@ -126,7 +126,7 @@ public class PurchaseStatisticsDAO {
                 "\n" +
                 "GROUP BY e.id;\n";
 
-        try(Connection c = Database.getConnection();
+        try(Connection c = Database1.getConnection();
             PreparedStatement pst = c.prepareStatement(sql);
         ){
             pst.setString(1,year);
@@ -176,7 +176,7 @@ public class PurchaseStatisticsDAO {
                 "\n" +
                 "GROUP BY s.id;\n";
 
-        try(Connection c = Database.getConnection();
+        try(Connection c = Database1.getConnection();
             PreparedStatement pst = c.prepareStatement(sql)
         ){
             pst.setString(1,year);
@@ -227,7 +227,7 @@ public class PurchaseStatisticsDAO {
                 "\n" +
                 "GROUP BY b.id;\n";
 
-        try(Connection c = Database.getConnection();
+        try(Connection c = Database1.getConnection();
             PreparedStatement pst = c.prepareStatement(sql)
         ){
             pst.setString(1,year);
@@ -294,7 +294,7 @@ public class PurchaseStatisticsDAO {
                 "LEFT JOIN book_purchase AS b ON b.buyMonth = months.month\n" +
                 "GROUP BY months.month\n";
 
-        try(Connection c = Database.getConnection();
+        try(Connection c = Database1.getConnection();
             PreparedStatement pst = c.prepareStatement(sql);
         ){
             pst.setString(1,year);
@@ -360,7 +360,7 @@ public class PurchaseStatisticsDAO {
                 "LEFT JOIN sheet_and_fee AS sf ON sf.year = ye.year\n" +
                 "LEFT JOIN book_purchase AS bp ON bp.year = ye.year";
 
-        try(Connection c = Database.getConnection();
+        try(Connection c = Database1.getConnection();
             PreparedStatement pst = c.prepareStatement(sql)
         ){
             pst.setString(1,beginYear);
@@ -400,7 +400,7 @@ public class PurchaseStatisticsDAO {
                 "GROUP BY p.id\n" +
                 "ORDER BY p.buyDate ASC;\n";
 
-        try(Connection c = Database.getConnection();
+        try(Connection c = Database1.getConnection();
             PreparedStatement pst = c.prepareStatement(sql)
         ){
             pst.setString(1,beginDate);
@@ -430,7 +430,7 @@ public class PurchaseStatisticsDAO {
                 "FROM purchaseorders AS p\n" +
                 "WHERE p.`status`='Hoàn_Thành'";
 
-        try(Connection c = Database.getConnection();
+        try(Connection c = Database1.getConnection();
             PreparedStatement pst = c.prepareStatement(sql)
         ){
             try(ResultSet rs = pst.executeQuery()){

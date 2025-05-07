@@ -1,7 +1,7 @@
 package BUS;
 
 import BUS.Interface.OrdersBUSInterface;
-import DAO.Database;
+import DAO.Database1;
 import DAO.DetailInvoicesDAO;
 import DAO.DetailOrdersDAO;
 import DAO.InvoicesDAO;
@@ -36,7 +36,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
         this.detailInvoicesDAO = new DetailInvoicesDAO();
         this.productsDAO = new ProductsDAO();
         try {
-            this.conn = Database.getConnection();
+            this.conn = Database1.getConnection();
         } catch (Exception e) {
             e.printStackTrace();
         }

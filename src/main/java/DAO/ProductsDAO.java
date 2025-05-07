@@ -16,7 +16,7 @@ public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, Integer> {
 
     public ProductsDAO() {
         try {
-            conn = Database.getConnection();
+            conn = Database1.getConnection();
         } catch (SQLException e) {
             throw new RuntimeException("Lỗi khi kết nối đến cơ sở dữ liệu: " + e.getMessage(), e);
         }

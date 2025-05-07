@@ -13,7 +13,7 @@ public class ProductsBUS implements ProductsBUSInterface<ProductsDTO, Integer> {
 
     public ProductsBUS() {
         try {
-            conn = DAO.Database.getConnection();
+            conn = DAO.Database1.getConnection();
         } catch (Exception e) {
             e.printStackTrace();
         }

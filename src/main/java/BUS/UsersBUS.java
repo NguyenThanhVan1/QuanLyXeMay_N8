@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.util.List;
 
 import BUS.Interface.UsersBUSInterface;
-import DAO.Database;
+import DAO.Database1;
 import DAO.UsersDAO;
 import DTO.UsersDTO;
 
@@ -14,7 +14,7 @@ public class UsersBUS implements UsersBUSInterface<UsersDTO, Integer> {
 
     public UsersBUS() {
         try {
-            conn = Database.getConnection();
+            conn = Database1.getConnection();
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi kết nối đến cơ sở dữ liệu: " + e.getMessage(), e);
         } 

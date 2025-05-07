@@ -15,7 +15,7 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, Integer>{
 
     public UsersDAO() {
        try {
-            conn = Database.getConnection();
+            conn = Database1.getConnection();
         } catch (SQLException e) {
             throw new RuntimeException("Lỗi khi kết nối đến cơ sở dữ liệu: " + e.getMessage(), e);
         }
