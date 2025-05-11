@@ -39,22 +39,22 @@ import GUI.Component.Panel.KhachHangGUI;
 import GUI.Component.Panel.SupplierPanel;
 import GUI.Component.Panel.HomePagePanel;
 
-
 public class Admin {
 
 	private JFrame frame;
 	private Orders ordersPanel;
-	private StatisticsPanel statisticPanel; 
+	private StatisticsPanel statisticPanel;
 	private SupplierPanel supplierPanel;
 	private nhanVienGUI nhanVienPanel;
 	private JButton currentActiveButton = null;
 	private KhachHangGUI khachHangPanel;
 	private HomePagePanel homePagePanel;
+	JButton btnNhaCungCap;
+	JButton btnKhachHang;
+	JButton btnNhanVien;
+	JButton btnThongKe;
 
-	
-
-
-	public void showWindow() {
+	public void showWindow(String Name_admin) {
 		frame.setVisible(true);
 	}
 
@@ -73,6 +73,22 @@ public class Admin {
 
 	public Admin() {
 		initialize();
+	}
+
+	public void NHANVIENBANHANG() {
+		this.btnNhaCungCap.setEnabled(false);
+		this.btnNhanVien.setEnabled(false);
+		this.btnKhachHang.setEnabled(false);
+
+		// Nếu chưa add vào giao diện thì add vào panel ở đây nếu cần
+	}
+
+	public void NHANVIENKHO() {
+		this.btnThongKe.setEnabled(false);
+		this.btnNhanVien.setEnabled(false);
+		this.btnKhachHang.setEnabled(false);
+
+		// add buttons to panel, layout, etc.
 	}
 
 	private void initialize() {
@@ -202,13 +218,12 @@ public class Admin {
 		// Tạo các nút menu với style mới
 
 		JButton btnDonHang = createMenuButton("Đơn hàng", false);
-		JButton btnThongKe = createMenuButton("Thống kê bán hàng", false);
-		JButton btnNhaCungCap = createMenuButton("Nhà cung cấp", false);
-		JButton btnNhanVien = createMenuButton("Nhân viên", false);
-		JButton btnKhachHang = createMenuButton("Khách Hàng", false);
+		btnThongKe = createMenuButton("Thống kê bán hàng", false);
+		btnNhaCungCap = createMenuButton("Nhà cung cấp", false);
+		btnNhanVien = createMenuButton("Nhân viên", false);
+		btnKhachHang = createMenuButton("Khách Hàng", false);
 		JButton btnDangXuat = createMenuButton("Đăng Xuất", false);
 		JButton btnTrangChu = createMenuButton("Trang Chủ", true);
-		
 
 		sidebarPanel.add(btnTrangChu);
 		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -228,7 +243,6 @@ public class Admin {
 		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 		sidebarPanel.add(btnDangXuat);
 
-
 		// Thêm khoảng trống co giãn ở cuối để đẩy các nút lên trên
 		sidebarPanel.add(Box.createVerticalGlue());
 
@@ -247,7 +261,8 @@ public class Admin {
 		contentPanel.add(ordersPanel, "OrdersPanel");
 
 		// Add Statistics panel
-		// this.ordersPanel = new OrdersBUS(); // Assuming you have this class to manage orders
+		// this.ordersPanel = new OrdersBUS(); // Assuming you have this class to manage
+		// orders
 		this.statisticPanel = new StatisticsPanel();
 		contentPanel.add(this.statisticPanel, "StatisticsPanel");
 
@@ -259,7 +274,6 @@ public class Admin {
 
 		this.khachHangPanel = new KhachHangGUI();
 		contentPanel.add(this.khachHangPanel, "KhachHangGUI");
-
 
 		frame.getContentPane().add(contentPanel, BorderLayout.CENTER);
 
@@ -279,11 +293,12 @@ public class Admin {
 			Date fromDate = Date.from(startOfDay.atZone(zoneId).toInstant());
 			Date toDate = new Date();
 
-			this.statisticPanel.updateOrdersList(fromDate, toDate); //cập nhật lại đơn hàng (cho trường hợp đã cập nhật ở đơn hàng)
+			this.statisticPanel.updateOrdersList(fromDate, toDate); // cập nhật lại đơn hàng (cho trường hợp đã cập nhật
+																	// ở đơn hàng)
 			n.show(contentPanel, "StatisticsPanel");
 			// this.frame.revalidate();
 			// this.frame.repaint();
-			
+
 		});
 
 		btnNhaCungCap.addActionListener(e -> {
@@ -302,27 +317,24 @@ public class Admin {
 			setActiveButton(btnKhachHang);
 			n.show(contentPanel, "KhachHangGUI");
 		});
-		
 
 		btnDangXuat.addActionListener(e -> {
 			int choice = javax.swing.JOptionPane.showConfirmDialog(
-				frame,
-				"Bạn có chắc chắn muốn đăng xuất không?",
-				"Xác nhận đăng xuất",
-				javax.swing.JOptionPane.YES_NO_OPTION
-			);
-		
+					frame,
+					"Bạn có chắc chắn muốn đăng xuất không?",
+					"Xác nhận đăng xuất",
+					javax.swing.JOptionPane.YES_NO_OPTION);
+
 			if (choice == javax.swing.JOptionPane.YES_OPTION) {
 				frame.dispose(); // Đóng cửa sổ hiện tại
 				new Login().setVisible(true); // Mở lại màn hình đăng nhập
 			}
 		});
-		
-		
-		
+
 	}
 
 	// Phương thức tạo nút menu với style đẹp
+
 	private JButton createMenuButton(String text, boolean isActive) {
 		JButton button = new JButton(text);
 		button.setFont(new Font("Arial", Font.BOLD, 14));
@@ -353,11 +365,11 @@ public class Admin {
 			currentActiveButton.setBackground(new Color(50, 50, 50));
 			currentActiveButton.setForeground(new Color(200, 200, 200));
 		}
-		
+
 		// Đặt nút mới làm active
 		activeButton.setBackground(new Color(0, 123, 255));
 		activeButton.setForeground(Color.WHITE);
-		
+
 		// Lưu lại nút đang active
 		currentActiveButton = activeButton;
 	}

@@ -28,7 +28,8 @@ public class Login extends JFrame {
 
     private JPasswordField confirmPasswordField;
     private JTextField fullNameField;
-    private JTextField emailField;
+    private JTextField DCField;
+    private JTextField SDTField;
 
     private Color primaryColor = new Color(33, 33, 33);
     private Color accentColor = new Color(0, 123, 255);
@@ -38,7 +39,7 @@ public class Login extends JFrame {
 
     public Login() {
         setTitle("MOTORCYCLE SHOP");
-        setSize(450, 550);
+        setSize(450, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -146,7 +147,6 @@ public class Login extends JFrame {
         formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         formPanel.add(passwordField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 25)));
-        
 
         adminCheckBox = new JCheckBox("Đăng nhập với tư cách Admin");
         adminCheckBox.setFont(mainFont);
@@ -155,7 +155,6 @@ public class Login extends JFrame {
         adminCheckBox.setAlignmentX(Component.CENTER_ALIGNMENT);
         formPanel.add(adminCheckBox);
         formPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-
 
         formPanel.add(loginButton);
         formPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -196,12 +195,17 @@ public class Login extends JFrame {
         fullNameLabel.setForeground(textColor);
         fullNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         fullNameField = createTextField();
+        JLabel SDTLabel = new JLabel("Số Điện Thoại");
+        SDTLabel.setFont(mainFont);
+        SDTLabel.setForeground(textColor);
+        SDTLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        SDTField = createTextField();
 
-        JLabel emailLabel = new JLabel("Email");
-        emailLabel.setFont(mainFont);
-        emailLabel.setForeground(textColor);
-        emailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        emailField = createTextField();
+        JLabel DCLabel = new JLabel("Địa chỉ");
+        DCLabel.setFont(mainFont);
+        DCLabel.setForeground(textColor);
+        DCLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        DCField = createTextField();
 
         JLabel regUsernameLabel = new JLabel("Tên đăng nhập");
         regUsernameLabel.setFont(mainFont);
@@ -255,10 +259,13 @@ public class Login extends JFrame {
         formPanel.add(fullNameLabel);
         formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         formPanel.add(fullNameField);
-        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        formPanel.add(emailLabel);
+        formPanel.add(SDTLabel);
         formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        formPanel.add(emailField);
+        formPanel.add(SDTField);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        formPanel.add(DCLabel);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        formPanel.add(DCField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         formPanel.add(regUsernameLabel);
         formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -394,21 +401,27 @@ public class Login extends JFrame {
                     String quyen = nv.getQuyen();
 
                     // JOptionPane.showMessageDialog(this,
-                    //         "Đăng nhập thành công với quyền: " + quyen,
-                    //         "Thông báo",
-                    //         JOptionPane.INFORMATION_MESSAGE);
+                    // "Đăng nhập thành công với quyền: " + quyen,
+                    // "Thông báo",
+                    // JOptionPane.INFORMATION_MESSAGE);
 
                     switch (quyen.toUpperCase()) {
                         case "ADMIN":
+                            String Name_admin = nv.getGioitinh();
                             // openAdminPanel();
                             Admin admin = new Admin();
-                            admin.showWindow();
+                            admin.showWindow(Name_admin);
                             // mở form dành cho quản trị viên
                             break;
                         case "NHANVIENBANHANG":
+                            Admin admin1 = new Admin();
+                            admin1.NHANVIENBANHANG();
+
                             openBanHangPanel(); // mở form bán hàng
                             break;
                         case "NHANVIENKHO":
+                            Admin admin2 = new Admin();
+                            admin2.NHANVIENKHO();
                             openKhoPanel(); // mở form kho
                             break;
                         default:
@@ -449,13 +462,14 @@ public class Login extends JFrame {
 
     private void attemptRegister() {
         String fullName = fullNameField.getText();
-        String email = emailField.getText();
+        String SDT = SDTField.getText();
+        String DC = DCField.getText();
         String username = regUsernameField.getText();
         String password = new String(regPasswordField.getPassword());
         String confirmPassword = new String(confirmPasswordField.getPassword());
 
         // Validate inputs
-        if (fullName.isEmpty() || email.isEmpty() || username.isEmpty() ||
+        if (fullName.isEmpty() || SDT.isEmpty() || DC.isEmpty() || username.isEmpty() ||
                 password.isEmpty() || confirmPassword.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Vui lòng nhập đầy đủ thông tin đăng ký!",
@@ -481,7 +495,8 @@ public class Login extends JFrame {
 
         // Clear fields and switch to login panel
         fullNameField.setText("");
-        emailField.setText("");
+        DCField.setText("");
+        SDTField.setText("");
         regUsernameField.setText("");
         regPasswordField.setText("");
         confirmPasswordField.setText("");
@@ -489,20 +504,20 @@ public class Login extends JFrame {
     }
 
     // private void openAdminPanel() {
-    //     // In a real application, open your admin panel here
-    //     // For demonstration, just show a message
-    //     JOptionPane.showMessageDialog(this,
-    //             "Mở giao diện quản lý (Admin Panel)!",
-    //             "Thông báo",
-    //             JOptionPane.INFORMATION_MESSAGE);
+    // // In a real application, open your admin panel here
+    // // For demonstration, just show a message
+    // JOptionPane.showMessageDialog(this,
+    // "Mở giao diện quản lý (Admin Panel)!",
+    // "Thông báo",
+    // JOptionPane.INFORMATION_MESSAGE);
     // }
 
     // private void openCustomerPanel() {
-    //     // Tạm thời chỉ hiển thị thông báo
-    //     JOptionPane.showMessageDialog(this,
-    //             "Mở giao diện khách hàng (Customer Panel)!",
-    //             "Thông báo",
-    //             JOptionPane.INFORMATION_MESSAGE);
+    // // Tạm thời chỉ hiển thị thông báo
+    // JOptionPane.showMessageDialog(this,
+    // "Mở giao diện khách hàng (Customer Panel)!",
+    // "Thông báo",
+    // JOptionPane.INFORMATION_MESSAGE);
     // }
 
     private void openBanHangPanel() {
