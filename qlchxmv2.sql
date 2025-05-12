@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 07, 2025 at 05:46 AM
+-- Generation Time: May 12, 2025 at 06:52 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `qlchxm`
+-- Database: `qlchxmv2`
 --
 
 -- --------------------------------------------------------
@@ -56,7 +56,7 @@ CREATE TABLE `chitiethoadon` (
 --
 
 CREATE TABLE `chitietphieunhap` (
-  `MAPN` BIGINT NOT NULL,
+  `MAPN` bigint(20) NOT NULL,
   `MAXE` varchar(10) NOT NULL,
   `SOLUONG` int(11) DEFAULT NULL,
   `DONGIA` int(11) DEFAULT NULL,
@@ -68,9 +68,9 @@ CREATE TABLE `chitietphieunhap` (
 --
 
 INSERT INTO `chitietphieunhap` (`MAPN`, `MAXE`, `SOLUONG`, `DONGIA`, `THANHTIEN`) VALUES
-('1', 'XM001', 3, 18000000, 54000000),
-('2', 'XM002', 3, 21000000, 63000000),
-('3', 'XM003', 1, 35000000, 35000000);
+(1, 'XM001', 3, 18000000, 54000000),
+(2, 'XM002', 3, 21000000, 63000000),
+(3, 'XM003', 1, 35000000, 35000000);
 
 -- --------------------------------------------------------
 
@@ -173,18 +173,19 @@ CREATE TABLE `nhanvien` (
   `CHUCVU` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `TENDANGNHAP` varchar(50) DEFAULT NULL,
   `MATKHAU` varchar(100) DEFAULT NULL,
-  `QUYEN` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+  `QUYEN` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `isActive` smallint(6) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `nhanvien`
 --
 
-INSERT INTO `nhanvien` (`MANV`, `HOTEN`, `NGAYSINH`, `GIOITINH`, `SODIENTHOAI`, `DIACHI`, `CHUCVU`, `TENDANGNHAP`, `MATKHAU`, `QUYEN`) VALUES
-('NV001', 'Huỳnh Chí Văn', '2005-05-15', 'Nam', '0911222333', 'Lâm Đồng', 'Quản lý', 'huynhchivan', '123', 'ADMIN'),
-('NV002', 'Nguyễn Thanh Hiệu', '2005-09-20', 'Nam', '0988111222', 'Hải Phòng', 'Nhân viên bán hàng', 'nguyenthanhieu', '456', 'NHANVIENBANHANG'),
-('NV003', 'Nguyễn Thanh Văn', '2005-12-01', 'Nam', '0909111222', 'Nam Định', 'Nhân viên kho', 'nguyenthanhvan', '789', 'NHANVIENKHO'),
-('nv11', 'khang huy', '2005-08-29', 'Nam', '0123456798', 'abc', 'Nhân viên bán hàng', 'huy', 'huy', 'NHANVENBANHANG');
+INSERT INTO `nhanvien` (`MANV`, `HOTEN`, `NGAYSINH`, `GIOITINH`, `SODIENTHOAI`, `DIACHI`, `CHUCVU`, `TENDANGNHAP`, `MATKHAU`, `QUYEN`, `isActive`) VALUES
+('NV001', 'Huỳnh Chí Văn', '2005-05-15', 'Nam', '0911222333', 'Lâm Đồng', 'Quản lý', 'huynhchivan', '123', 'ADMIN', 1),
+('NV002', 'Nguyễn Thanh Hiệu', '2005-09-20', 'Nam', '0988111222', 'Hải Phòng', 'Nhân viên bán hàng', 'nguyenthanhieu', '456', 'NHANVIENBANHANG', 1),
+('NV003', 'Nguyễn Thanh Văn', '2005-12-01', 'Nam', '0909111222', 'Nam Định', 'Nhân viên kho', 'nguyenthanhvan', '789', 'NHANVIENKHO', 1),
+('nv11', 'khang huy', '2005-08-29', 'Nam', '0123456798', 'abc', 'Nhân viên bán hàng', 'huy', 'huy', 'NHANVENBANHANG', 1);
 
 -- --------------------------------------------------------
 
@@ -193,7 +194,7 @@ INSERT INTO `nhanvien` (`MANV`, `HOTEN`, `NGAYSINH`, `GIOITINH`, `SODIENTHOAI`, 
 --
 
 CREATE TABLE `phieunhap` (
-  `MAPN` BIGINT PRIMARY KEY AUTO_INCREMENT,
+  `MAPN` bigint(20) NOT NULL,
   `NGAYNHAP` date DEFAULT NULL,
   `MANV` varchar(10) NOT NULL,
   `MANCC` varchar(10) NOT NULL,
@@ -206,9 +207,9 @@ CREATE TABLE `phieunhap` (
 --
 
 INSERT INTO `phieunhap` (`MAPN`, `NGAYNHAP`, `MANV`, `MANCC`, `TONGTIEN`, `status`) VALUES
-('1', '2025-03-15', 'NV001', 'NCC001', 54000000, 'Đang_Chờ'),
-('2', '2025-03-18', 'NV001', 'NCC002', 63000000, 'Đang_Chờ'),
-('3', '2025-03-20', 'NV003', 'NCC003', 35000000, 'Đang_Chờ');
+(1, '2025-03-15', 'NV001', 'NCC001', 54000000, 'Đang_Chờ'),
+(2, '2025-03-18', 'NV001', 'NCC002', 63000000, 'Đang_Chờ'),
+(3, '2025-03-20', 'NV003', 'NCC003', 35000000, 'Đang_Chờ');
 
 -- --------------------------------------------------------
 
@@ -301,6 +302,7 @@ ALTER TABLE `nhanvien`
 -- Indexes for table `phieunhap`
 --
 ALTER TABLE `phieunhap`
+  ADD PRIMARY KEY (`MAPN`),
   ADD KEY `MANV` (`MANV`),
   ADD KEY `MANCC` (`MANCC`);
 
@@ -309,6 +311,16 @@ ALTER TABLE `phieunhap`
 --
 ALTER TABLE `xemay`
   ADD PRIMARY KEY (`MAXE`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `phieunhap`
+--
+ALTER TABLE `phieunhap`
+  MODIFY `MAPN` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -332,8 +344,8 @@ ALTER TABLE `chitiethoadon`
 -- Constraints for table `chitietphieunhap`
 --
 ALTER TABLE `chitietphieunhap`
-  ADD FOREIGN KEY (`MAPN`) REFERENCES `phieunhap` (`MAPN`),
-  ADD FOREIGN KEY (`MAXE`) REFERENCES `xemay` (`MAXE`);
+  ADD CONSTRAINT `chitietphieunhap_ibfk_1` FOREIGN KEY (`MAPN`) REFERENCES `phieunhap` (`MAPN`),
+  ADD CONSTRAINT `chitietphieunhap_ibfk_2` FOREIGN KEY (`MAXE`) REFERENCES `xemay` (`MAXE`);
 
 --
 -- Constraints for table `donhang`
