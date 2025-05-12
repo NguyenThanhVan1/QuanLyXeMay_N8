@@ -55,6 +55,7 @@ public class Admin {
 	JButton btnKhachHang;
 	JButton btnNhanVien;
 	JButton btnThongKe;
+	JButton btnPurchaseOrder;
 	private SanPhamPanel sanPhamPanel;
 	private PurchaseOrderPanel purchaseOrderPanel;
 
@@ -83,6 +84,7 @@ public class Admin {
 		this.btnNhaCungCap.setEnabled(false);
 		this.btnNhanVien.setEnabled(false);
 		this.btnKhachHang.setEnabled(false);
+		this.btnPurchaseOrder.setEnabled(false);
 
 		// Nếu chưa add vào giao diện thì add vào panel ở đây nếu cần
 	}
@@ -229,7 +231,7 @@ public class Admin {
 		JButton btnDangXuat = createMenuButton("Đăng Xuất", false);
 		JButton btnTrangChu = createMenuButton("Trang Chủ", false);
 		JButton btnSanPham = createMenuButton("Sản Phẩm", false);
-		JButton btnPurchaseOrder = createMenuButton("Phiếu nhập", false);
+		btnPurchaseOrder = createMenuButton("Phiếu nhập", false);
 		sidebarPanel.add(btnTrangChu);
 		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 		sidebarPanel.add(btnThongKe);
