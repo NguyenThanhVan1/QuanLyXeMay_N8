@@ -40,7 +40,7 @@ public class ChiTietXeDialog extends JDialog {
             Image img = icon.getImage().getScaledInstance(250, 220, Image.SCALE_SMOOTH);
             icon = new ImageIcon(img);
         } catch (Exception e) {
-            icon = new ImageIcon(getClass().getResource("/images/default.png"));
+            icon = new ImageIcon(getClass().getResource("/images/xemay1.png"));
             Image img = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
             icon = new ImageIcon(img);
         }

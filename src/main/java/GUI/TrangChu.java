@@ -18,6 +18,8 @@ public class TrangChu extends JFrame {
         setSize(1600, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        this.getContentPane().setBackground(Color.WHITE);
+
 
         // Panel hiển thị xe
         panelXe = new JPanel(new GridLayout(0, 4, 15, 15));
@@ -189,7 +191,7 @@ public class TrangChu extends JFrame {
             icon = new ImageIcon(getClass().getResource("/images/" + xe.getAnh()));
 
         } catch (Exception e) {
-            icon = new ImageIcon(getClass().getResource("/images/default.png")); // ảnh mặc định nếu lỗi
+            icon = new ImageIcon(getClass().getResource("/images/xemay1.png")); // ảnh mặc định nếu lỗi
         }
         JPanel imgPanel = new ImagePanel(icon);
         imgPanel.setPreferredSize(new Dimension(250, 120));
