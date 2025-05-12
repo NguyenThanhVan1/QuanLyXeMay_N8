@@ -82,12 +82,12 @@ public class PurchaseOrderTable extends JTableCustom {
         tableModel.setRowCount(0);
         for (PurchaseOrderDTO dto : purchaseOrderDTOS) {
             Object[] rowData = {
-                dto.getId(),
-                dto.getSupplierId(),
-                dto.getEmployeeId(),
+                dto.getMaPN(),
+                dto.getMANCC(),
+                dto.getMaNV(),
                 dto.getStatus(),
                 formatDate(dto.getBuyDate()),
-                formatVND(dto.getTotalAmount())
+                formatVND(dto.getTongTien())
             };
             tableModel.addRow(rowData);
         }

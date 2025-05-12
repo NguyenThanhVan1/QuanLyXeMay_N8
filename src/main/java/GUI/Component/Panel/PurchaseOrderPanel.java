@@ -33,7 +33,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-public class PurchaseOrderPanel extends JPanel {
+public class PurchaseOrderPanel extends javax.swing.JPanel {
     private final PurchaseOrderTable purchaseOrderTable = new PurchaseOrderTable();
     private final PurchaseOrderBUS purchaseOrderBUS = new PurchaseOrderBUS();
 
@@ -61,7 +61,7 @@ public class PurchaseOrderPanel extends JPanel {
     private TableRowSorter<TableModel> sorter;
 
 
-    public PurchaseOrderPanel(JFrame parentFrame) {
+    public PurchaseOrderPanel() {
         this.parentFrame = parentFrame;
         setLayout(new BorderLayout(0, 5));
 
@@ -107,15 +107,15 @@ public class PurchaseOrderPanel extends JPanel {
                 PurchaseOrderDTO selectedPO = purchaseOrderTable.getSelectedPurchaseOrder();
                 if (selectedPO != null) {
                     // Lấy thông tin từ BUS
-                    NhanVienDTO employee = new NhanVienBUS().getEmployeeById(selectedPO.getEmployeeId()); // Đảm bảo employeeId là long
-                    SupplierDTO supplier = new SupplierBUS().getSupplierById(selectedPO.getSupplierId()); // Đảm bảo supplierId là String
+                    NhanVienDTO employee = new NhanVienBUS().getNhanVienById(selectedPO.getMaNV()); // Đảm bảo employeeId là long
+                    SupplierDTO supplier = new SupplierBUS().getSupplierById(selectedPO.getMANCC()); // Đảm bảo supplierId là String
         
                     // Cập nhật thông tin nhân viên và nhà cung cấp
                     updateEmployeePanel(employee);
                     updateSupplierPanel(supplier);
         
                     // Lấy chi tiết phiếu nhập và cập nhật bảng chi tiết
-                    List<PurchaseOrderDetailDTO> details = purchaseOrderBUS.getPurchaseOrderDetailsByOrderId(selectedPO.getId());
+                    List<PurchaseOrderDetailDTO> details = purchaseOrderBUS.getPurchaseOrderDetailsByOrderId(selectedPO.getMaPN());
                     updatePurchaseOrderDetailsTable(details);  // Cập nhật bảng chi tiết phiếu nhập
                 }
             }

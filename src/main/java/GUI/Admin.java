@@ -38,6 +38,10 @@ import GUI.Component.Panel.nhanVienGUI;
 import GUI.Component.Panel.KhachHangGUI;
 import GUI.Component.Panel.SupplierPanel;
 import GUI.Component.Panel.HomePagePanel;
+import GUI.Component.Panel.SanPhamPanel;
+import GUI.Component.Panel.PurchaseOrderPanel;
+
+
 
 
 public class Admin {
@@ -50,6 +54,9 @@ public class Admin {
 	private JButton currentActiveButton = null;
 	private KhachHangGUI khachHangPanel;
 	private HomePagePanel homePagePanel;
+	private SanPhamPanel sanPhamPanel;
+	private PurchaseOrderPanel purchaseOrderPanel;
+
 
 	
 
@@ -207,8 +214,9 @@ public class Admin {
 		JButton btnNhanVien = createMenuButton("Nhân viên", false);
 		JButton btnKhachHang = createMenuButton("Khách Hàng", false);
 		JButton btnDangXuat = createMenuButton("Đăng Xuất", false);
-		JButton btnTrangChu = createMenuButton("Trang Chủ", true);
-		
+		JButton btnTrangChu = createMenuButton("Trang Chủ", false);
+		JButton btnSanPham = createMenuButton("Sản Phẩm", false);
+		JButton btnPurchaseOrder = createMenuButton("Phiếu nhập", false);
 
 		sidebarPanel.add(btnTrangChu);
 		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -218,8 +226,12 @@ public class Admin {
 		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 		sidebarPanel.add(btnKhachHang);
 		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+		sidebarPanel.add(btnSanPham);
+		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 		sidebarPanel.add(btnNhaCungCap);
 		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+		sidebarPanel.add(btnPurchaseOrder);
+        sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
 		sidebarPanel.add(btnDonHang);
 		sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Khoảng cách giữa các nút
@@ -260,6 +272,13 @@ public class Admin {
 		this.khachHangPanel = new KhachHangGUI();
 		contentPanel.add(this.khachHangPanel, "KhachHangGUI");
 
+		this.sanPhamPanel = new SanPhamPanel();
+		contentPanel.add(this.sanPhamPanel, "sanPhamPanel");
+		// Thêm sau các panel khác
+        this.purchaseOrderPanel = new PurchaseOrderPanel();
+        contentPanel.add(this.purchaseOrderPanel, "PurchaseOrderPanel");
+
+
 
 		frame.getContentPane().add(contentPanel, BorderLayout.CENTER);
 
@@ -294,6 +313,10 @@ public class Admin {
 			setActiveButton(btnNhanVien);
 			n.show(contentPanel, "nhanVienGUI");
 		});
+		btnSanPham.addActionListener(e -> {
+			setActiveButton(btnSanPham);
+			n.show(contentPanel, "sanPhamPanel");
+		});
 		btnTrangChu.addActionListener(e -> {
 			setActiveButton(btnTrangChu);
 			n.show(contentPanel, "HomePagePanel");
@@ -301,6 +324,10 @@ public class Admin {
 		btnKhachHang.addActionListener(e -> {
 			setActiveButton(btnKhachHang);
 			n.show(contentPanel, "KhachHangGUI");
+		});
+		btnPurchaseOrder.addActionListener(e -> {
+			setActiveButton(btnPurchaseOrder);
+			n.show(contentPanel, "PurchaseOrderPanel");
 		});
 		
 

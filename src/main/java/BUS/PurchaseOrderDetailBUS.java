@@ -1,7 +1,7 @@
 package BUS;
 
-import DAL.PurchaseOrderDetailDAL;
-import DTO.Book;
+import DAO.PurchaseOrderDetailDAO;
+import DTO.SanPhamDTO;
 import DTO.PurchaseOrderDetailDTO;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 public class PurchaseOrderDetailBUS {
     private PurchaseOrderDetailDAO purchaseOrderDetailDAL = new PurchaseOrderDetailDAO();
     public static List<PurchaseOrderDetailDTO> purchaseOrderDetailList;
-    private final BookBUS bookBUS = new BookBUS();
+    private final SanPhamBUS sanPhamBUS = new SanPhamBUS();
 
     public PurchaseOrderDetailBUS() {
         if (purchaseOrderDetailList == null) {
@@ -66,7 +66,7 @@ public class PurchaseOrderDetailBUS {
                 PurchaseOrderDetailDTO detail = iterator.next();
                 if (detail.getPurchaseOrderId().equals(purchaseOrderId)) {
                     iterator.remove();
-                    purchaseOrderDetailDAL.deleteByCompositeKey(detail.getPurchaseOrderId(), detail.getBookId());
+                    purchaseOrderDetailDAL.deleteByCompositeKey(detail.getPurchaseOrderId(), detail.getMaXe());
 
                 }
             }
@@ -81,7 +81,7 @@ public class PurchaseOrderDetailBUS {
                 for (int i = 0; i < purchaseOrderDetailList.size(); i++) {
                     PurchaseOrderDetailDTO existing = purchaseOrderDetailList.get(i);
                     if (existing.getPurchaseOrderId().equals(detail.getPurchaseOrderId()) &&
-                        existing.getBookId().equals(detail.getBookId())) {
+                        existing.getMaXe().equals(detail.getMaXe())) {
                         purchaseOrderDetailList.set(i, detail);
                         break;
                     }

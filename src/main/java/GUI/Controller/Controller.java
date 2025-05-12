@@ -46,8 +46,12 @@ public class Controller {
     }
 
     public static String formatDate(Date date){
-        return  DATE_FMT.format(date);
+        if (date == null) {
+            return "Không xác định"; // hoặc return ""; nếu bạn không muốn hiển thị gì
+        }
+        return DATE_FMT.format(date);
     }
+    
     public static String formatVND(BigDecimal money) {
         return String.format("%,.0f đ", money);
     }

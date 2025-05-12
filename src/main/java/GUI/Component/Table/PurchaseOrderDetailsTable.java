@@ -1,8 +1,8 @@
 package GUI.Component.Table;
 
-import BUS.BookBUS;
-import DTO.Book;
-import DTO.BookViewModel;
+import BUS.SanPhamBUS;
+import DTO.SanPhamDTO;
+// import DTO.SanPhamBUS;
 import DTO.PurchaseOrderDetailDTO;
 
 import javax.swing.table.DefaultTableModel;
@@ -15,7 +15,7 @@ public class PurchaseOrderDetailsTable extends JTableCustom{
     private static final String HEADER[] = {"Tên Sách", "Số lượng", "Đơn giá", "Tổng tiền"};
     private DefaultTableModel tableModel;
     private static List<PurchaseOrderDetailDTO> purchaseOrderDetailDTOS;
-    private final BookBUS bookBUS = new BookBUS();
+    private final SanPhamBUS SanPhamBUS = new SanPhamBUS();
     public PurchaseOrderDetailsTable() {
         super(new DefaultTableModel(HEADER, 0));
         this.tableModel = (DefaultTableModel) getModel();
@@ -76,14 +76,15 @@ public class PurchaseOrderDetailsTable extends JTableCustom{
     public void refreshTable() {
         tableModel.setRowCount(0);
         for (PurchaseOrderDetailDTO purchaseOrderDetailDTO : purchaseOrderDetailDTOS) {
-            BookViewModel book = bookBUS.getBookByIdForDisplay(purchaseOrderDetailDTO.getBookId());
+            SanPhamDTO sanPhamDTO = SanPhamBUS.getSanPhamById(purchaseOrderDetailDTO.getMaXe());
+            String tenXe = (sanPhamDTO != null) ? sanPhamDTO.getTenXe() : "Không tìm thấy";
+    
             tableModel.addRow(new Object[]{
-                    book.getName(),
+                    tenXe,
                     purchaseOrderDetailDTO.getQuantity(),
                     formatVND(purchaseOrderDetailDTO.getUnitPrice()),
                     formatVND(purchaseOrderDetailDTO.getSubTotal())
             });
         }
     }
-
 }

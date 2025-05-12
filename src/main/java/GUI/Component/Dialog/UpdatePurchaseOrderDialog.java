@@ -6,7 +6,7 @@ import DTO.Enum.PurchaseStatus;
 import DTO.Enum.Status;
 import GUI.Component.Button.ButtonChosen;
 import GUI.Component.Button.ButtonIcon;
-import GUI.Component.Panel.BookPanel;
+import GUI.Component.Panel.SanPhamPanel;
 import GUI.Component.Panel.PurchaseOrderPanel;
 import GUI.Component.Panel.Statistics.Components.EventBusManager;
 import GUI.Component.Panel.Statistics.Components.PurchaseChangeEvent;
@@ -28,8 +28,8 @@ public class UpdatePurchaseOrderDialog extends JDialog {
     private PurchaseOrderBUS purchaseOrderBUS = new PurchaseOrderBUS();
     private PurchaseOrderDetailBUS purchaseOrderDetailBUS = new PurchaseOrderDetailBUS();
     private SupplierBUS supplierBUS = new SupplierBUS();
-    private EmployeeBUS employeeBUS = new EmployeeBUS();
-    private BookBUS bookBUS = new BookBUS();
+    private NhanVienBUS employeeBUS = new NhanVienBUS();
+    private SanPhamBUS bookBUS = new SanPhamBUS();
 
     private JLabel supplierLabel;
     private JLabel supplierNameLabel;
@@ -61,7 +61,7 @@ public class UpdatePurchaseOrderDialog extends JDialog {
     private JComboBox<String> statusComboBox;
 
     private SupplierDTO currentSupplier;
-    private Employee currentEmployee;
+    private NhanVienDTO currentEmployee;
     private PurchaseOrderPanel purchaseOrderPanel;
     private PurchaseOrderDTO currentPurchaseOrder;
     private List<PurchaseOrderDetailDTO> pendingOrderDetails = new ArrayList<>();
@@ -308,8 +308,8 @@ public class UpdatePurchaseOrderDialog extends JDialog {
 
     private void loadPurchaseOrderData() {
         if (currentPurchaseOrder != null) {
-            supplierField.setText(currentPurchaseOrder.getSupplierId());
-            employeeField.setText(String.valueOf(currentPurchaseOrder.getEmployeeId()));
+            supplierField.setText(currentPurchaseOrder.getMANCC());
+            employeeField.setText(String.valueOf(currentPurchaseOrder.getMaNV()));
             buyDateChooser.setDate(currentPurchaseOrder.getBuyDate());
             statusComboBox.setSelectedItem(currentPurchaseOrder.getStatus().toString().replace("_", " "));
 
@@ -338,9 +338,9 @@ public class UpdatePurchaseOrderDialog extends JDialog {
         try {
             currentSupplier = supplierBUS.getSupplierById(supplierId);
             if (currentSupplier != null) {
-                supplierNameLabel.setText("     Tên nhà cung cấp: " + currentSupplier.getName());
-                supplierPhoneLabel.setText("     Điện thoại: " + currentSupplier.getPhone());
-                supplierAddressLabel.setText("     Địa chỉ: " + currentSupplier.getAddress());
+                supplierNameLabel.setText("     Tên nhà cung cấp: " + currentSupplier.getTENNCC());
+                supplierPhoneLabel.setText("     Điện thoại: " + currentSupplier.getSODIENTHOAI());
+                supplierAddressLabel.setText("     Địa chỉ: " + currentSupplier.getDIACHI());
             } else {
                 supplierNameLabel.setText("     Tên nhà cung cấp: ");
                 supplierPhoneLabel.setText("     Điện thoại: ");
@@ -359,9 +359,9 @@ public class UpdatePurchaseOrderDialog extends JDialog {
             return;
         }
         try {
-            currentEmployee = employeeBUS.getEmployeeById(Long.parseLong(employeeId));
+            currentEmployee = employeeBUS.getNhanVienById(employeeId);
             if (currentEmployee != null) {
-                employeeNameLabel.setText("     Tên NV: " + currentEmployee.getFirstName() + " " + currentEmployee.getLastName());
+                employeeNameLabel.setText("     Tên NV: " + currentEmployee.getHoten());
             } else {
                 employeeNameLabel.setText("     Tên NV: ");
             }
@@ -378,7 +378,7 @@ public class UpdatePurchaseOrderDialog extends JDialog {
         chooseSupplierDialog.setVisible(true);
         if (chooseSupplierDialog.getSelectedSupplier() != null) {
             currentSupplier = chooseSupplierDialog.getSelectedSupplier();
-            supplierField.setText(currentSupplier.getId());
+            supplierField.setText(currentSupplier.getMANCC());
             showSupplierInfo();
         }
     }
@@ -388,7 +388,7 @@ public class UpdatePurchaseOrderDialog extends JDialog {
         chooseEmployeeDialog.setVisible(true);
         if (chooseEmployeeDialog.getSelectedEmployee() != null) {
             currentEmployee = chooseEmployeeDialog.getSelectedEmployee();
-            employeeField.setText(currentEmployee.getId().toString());
+            employeeField.setText(currentEmployee.getManv());
             showEmployeeInfo();
         }
     }
@@ -399,7 +399,7 @@ public class UpdatePurchaseOrderDialog extends JDialog {
         if (addDetailDialog.getCurrentOrderDetail() != null) {
             PurchaseOrderDetailDTO newDetail = addDetailDialog.getCurrentOrderDetail();
             for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
-                if (detail.getBookId() == newDetail.getBookId()) {
+                if (detail.getMaXe() == newDetail.getMaXe()) {
                     detail.setQuantity(detail.getQuantity() + newDetail.getQuantity());
                     BigDecimal subTotal = detail.getUnitPrice().multiply(new BigDecimal(detail.getQuantity()));
                     detail.setSubTotal(subTotal);
@@ -503,8 +503,8 @@ public class UpdatePurchaseOrderDialog extends JDialog {
         if (!validateInput()) return;
 
         try {
-            currentPurchaseOrder.setSupplierId(supplierField.getText());
-            currentPurchaseOrder.setEmployeeId(Long.parseLong(employeeField.getText()));
+            currentPurchaseOrder.setMANCC(supplierField.getText());
+            currentPurchaseOrder.setMaNV(employeeField.getText());
             currentPurchaseOrder.setBuyDate(buyDateChooser.getDate());
             currentPurchaseOrder.setStatus(PurchaseStatus.valueOf(statusComboBox.getSelectedItem().toString().replace(" ", "_")));
             BigDecimal totalAmount = BigDecimal.ZERO;
@@ -514,7 +514,7 @@ public class UpdatePurchaseOrderDialog extends JDialog {
                 totalAmount = totalAmount.add(subTotal);
 
                 if (detail.getPurchaseOrderId() == 0) {
-                    detail.setPurchaseOrderId(currentPurchaseOrder.getId());
+                    detail.setPurchaseOrderId(currentPurchaseOrder.getMaPN());
                     purchaseOrderDetailBUS.addPurchaseOrderDetail(detail);
                 } else {
                     boolean updated = purchaseOrderDetailBUS.updatePurchaseOrderDetail(detail);
@@ -526,15 +526,15 @@ public class UpdatePurchaseOrderDialog extends JDialog {
             //tang so luong sach
             if (currentPurchaseOrder.getStatus() == PurchaseStatus.Hoàn_Thành) {
                 for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
-                    Book book = bookBUS.getBookById(detail.getBookId());
-                    if (book != null) {
-                        book.setQuantity(book.getQuantity() + detail.getQuantity());
-                        bookBUS.updateBook(book);
+                    SanPhamDTO sanPhamDTO = SanPhamBUS.getSanPhamById(detail.getMaXe());
+                    if (sanPhamDTO != null) {
+                        sanPhamDTO.setQuantity(sanPhamDTO.getSoLuong() + detail.getQuantity());
+                        SanPhamBUS.updateBook(sanPhamDTO);
                     }
                 }
-                BookPanel.loadData();
+                SanPhamPanel.loadData();
             }
-            currentPurchaseOrder.setTotalAmount(totalAmount);
+            currentPurchaseOrder.setTongTien(totalAmount);
             boolean orderUpdated = purchaseOrderBUS.updatePurchaseOrder(currentPurchaseOrder);
             if (!orderUpdated) {
                 throw new Exception("Không thể cập nhật thông tin phiếu nhập");

@@ -7,7 +7,7 @@ import DTO.Enum.PurchaseStatus;
 import GUI.Component.Button.ButtonBack;
 import GUI.Component.Button.ButtonChosen;
 import GUI.Component.Button.ButtonIcon;
-import GUI.panel.ProductPanel;
+import GUI.Component.Panel.SanPhamPanel;
 import GUI.Component.Panel.PurchaseOrderPanel;
 import GUI.Component.Panel.Statistics.Components.DataRefreshListener;
 import GUI.Component.Panel.Statistics.Components.EventBusManager;
@@ -30,8 +30,8 @@ public class AddPurchaseOrderDialog extends JDialog {
     private PurchaseOrderBUS purchaseOrderBUS = new PurchaseOrderBUS();
     private PurchaseOrderDetailBUS purchaseOrderDetailBUS = new PurchaseOrderDetailBUS();
     private SupplierBUS supplierBUS = new SupplierBUS();
-    private EmployeeBUS employeeBUS = new EmployeeBUS();
-    private BookBUS bookBUS = new BookBUS();
+    private NhanVienBUS employeeBUS = new NhanVienBUS();
+    private SanPhamBUS bookBUS = new SanPhamBUS();
 
     private JLabel supplierLabel;
     private JLabel supplierNameLabel;
@@ -63,7 +63,7 @@ public class AddPurchaseOrderDialog extends JDialog {
     private JComboBox<String> statusComboBox;
 
     private SupplierDTO currentSupplier;
-    private Employee currentEmployee;
+    private NhanVienDTO currentEmployee;
     private PurchaseOrderPanel purchaseOrderPanel;
     private List<PurchaseOrderDetailDTO> pendingOrderDetails = new ArrayList<>();
     private Long currentPurchaseId;
@@ -264,9 +264,9 @@ public class AddPurchaseOrderDialog extends JDialog {
             try {
                 currentSupplier = supplierBUS.getSupplierById(supplierId);
                 // Cập nhật thông tin nhà cung cấp lên giao diện
-                supplierNameLabel.setText("    Tên nhà cung cấp: " + currentSupplier.getName());
-                supplierPhoneLabel.setText("    Điện thoại: " + currentSupplier.getPhone());
-                supplierAddressLabel.setText("    Địa chỉ: " + currentSupplier.getAddress());
+                supplierNameLabel.setText("    Tên nhà cung cấp: " + currentSupplier.getTENNCC());
+                supplierPhoneLabel.setText("    Điện thoại: " + currentSupplier.getSODIENTHOAI());
+                supplierAddressLabel.setText("    Địa chỉ: " + currentSupplier.getDIACHI());
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -279,9 +279,9 @@ public class AddPurchaseOrderDialog extends JDialog {
             return;
         } else {
             try {
-                currentEmployee = employeeBUS.getEmployeeById(Long.parseLong(employeeId));
+                currentEmployee = employeeBUS.getNhanVienById(employeeId);
                 // Update labels with employee info
-                employeeNameLabel.setText("    Tên NV: " + currentEmployee.getFirstName() + " " + currentEmployee.getLastName());
+                employeeNameLabel.setText("    Tên NV: " + currentEmployee.getHoten());
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -293,7 +293,7 @@ public class AddPurchaseOrderDialog extends JDialog {
         chooseSupplierDialog.setVisible(true);
         if (chooseSupplierDialog.getSelectedSupplier() != null) {
             currentSupplier = chooseSupplierDialog.getSelectedSupplier();
-            supplierField.setText(currentSupplier.getId());
+            supplierField.setText(currentSupplier.getMANCC());
             showSupplierInfo();
             // Update supplier info labels
         }
@@ -304,7 +304,7 @@ public class AddPurchaseOrderDialog extends JDialog {
         chooseEmployeeDialog.setVisible(true);
         if (chooseEmployeeDialog.getSelectedEmployee() != null) {
             currentEmployee = chooseEmployeeDialog.getSelectedEmployee();
-            employeeField.setText(currentEmployee.getId().toString());
+            employeeField.setText(currentEmployee.getManv().toString());
             showEmployeeInfo();
             // Update employee info labels
         }
@@ -316,7 +316,7 @@ public class AddPurchaseOrderDialog extends JDialog {
         if (addDetailDialog.getCurrentOrderDetail() != null) {
             PurchaseOrderDetailDTO newDetail = addDetailDialog.getCurrentOrderDetail();
             for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
-                if (detail.getBookId() == newDetail.getBookId()) {
+                if (detail.getMaXe() == newDetail.getMaXe()) {
                     detail.setQuantity(detail.getQuantity() + newDetail.getQuantity());
                     BigDecimal subTotal = detail.getUnitPrice().multiply(new BigDecimal(detail.getQuantity()));
                     detail.setSubTotal(subTotal);
@@ -432,7 +432,7 @@ public class AddPurchaseOrderDialog extends JDialog {
         try {
             setCurrentID();
             String supplierId = supplierField.getText().trim();
-            long employeeId = Long.parseLong(employeeField.getText().trim());
+            String employeeId = employeeField.getText().trim();
             Date buyDate = new java.sql.Timestamp(buyDateChooser.getDate().getTime());
             PurchaseStatus status = PurchaseStatus.valueOf(statusComboBox.getSelectedItem().toString());
     
@@ -445,17 +445,17 @@ public class AddPurchaseOrderDialog extends JDialog {
     
             // Khởi tạo PurchaseOrderDTO
             PurchaseOrderDTO purchaseOrderDTO = new PurchaseOrderDTO();
-            purchaseOrderDTO.setId(currentPurchaseId);
-            purchaseOrderDTO.setSupplierId(supplierId);
-            purchaseOrderDTO.setEmployeeId(employeeId);
+            purchaseOrderDTO.setMaPN(currentPurchaseId);
+            purchaseOrderDTO.setMANCC(supplierId);
+            purchaseOrderDTO.setMaNV(employeeId);
             purchaseOrderDTO.setBuyDate(buyDate);
             purchaseOrderDTO.setStatus(status);
-            purchaseOrderDTO.setTotalAmount(totalAmount);
+            purchaseOrderDTO.setTongTien(totalAmount);
             boolean success = purchaseOrderBUS.addPurchaseOrder(purchaseOrderDTO);
             if (success) {
                 purchaseOrderPanel.addPurchaseOrder(purchaseOrderDTO);
                 for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
-                    detail.setPurchaseOrderId(purchaseOrderDTO.getId());
+                    detail.setPurchaseOrderId(purchaseOrderDTO.getMaPN());
                     purchaseOrderDetailBUS.addPurchaseOrderDetail(detail);
                 }
             }

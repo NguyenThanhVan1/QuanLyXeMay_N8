@@ -1,10 +1,10 @@
 package GUI.Component.Dialog;
 
-import BUS.EmployeeBUS;
-import DTO.Employee;
+import BUS.NhanVienBUS;
+import DTO.NhanVienDTO;
 import DTO.Enum.Gender;
 import GUI.Component.Button.ButtonRefresh;
-import GUI.Component.Table.EmployeeTable;
+import GUI.Component.Table.NhanVienTable;
 import GUI.Component.TextField.RoundedTextField;
 
 import javax.swing.*;
@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChooseEmployeeDialog extends JDialog {
-    private final EmployeeTable employeeTable = new EmployeeTable();
-    private final EmployeeBUS employeeBUS = new EmployeeBUS();
-    private Employee selectedEmployee;
+    private final NhanVienTable employeeTable = new NhanVienTable();
+    private final NhanVienBUS employeeBUS = new NhanVienBUS();
+    private NhanVienDTO selectedEmployee;
     private RoundedTextField searchfield;
     private JComboBox<String> searchOptionsComboBox;
     private JRadioButton allRadioButton;
@@ -28,6 +28,7 @@ public class ChooseEmployeeDialog extends JDialog {
     private JRadioButton femaleRadioButton;
     private ButtonGroup buttonGroup;
     private ButtonRefresh buttonRefresh;
+    private List<NhanVienDTO> nhanVienList;
 
     private TableRowSorter<TableModel> sorter;
 
@@ -46,12 +47,13 @@ public class ChooseEmployeeDialog extends JDialog {
         JScrollPane scrollPane = new JScrollPane(employeeTable);
         add(scrollPane, BorderLayout.CENTER);
         ((JComponent) getContentPane()).setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
         employeeTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if (evt.getClickCount() == 2 || evt.getClickCount() == 3) {
                     int selectedRow = employeeTable.getSelectedRow();
                     if (selectedRow != -1) {
-                        selectedEmployee = employeeTable.getSelectedEmployee();
+                        selectedEmployee = employeeTable.getSelectedNhanVien();
                         dispose();
                     }
                 }
@@ -60,12 +62,12 @@ public class ChooseEmployeeDialog extends JDialog {
         loadData();
     }
 
-    public Employee getSelectedEmployee() {
+    public NhanVienDTO getSelectedEmployee() {
         return selectedEmployee;
     }
 
     private void loadData() {
-        List<Employee> employees = EmployeeBUS.employeeList;
+        List<NhanVienDTO> employees = NhanVienBUS.employeeList;
         if (employees != null) {
             employeeTable.setEmployees(employees);
         } else {
@@ -212,10 +214,11 @@ public class ChooseEmployeeDialog extends JDialog {
         }
     }
     public void refreshData() {
-        employeeTable.refreshTable();
+        employeeTable.loadData(nhanVienList);
         sorter.setRowFilter(null);
         searchfield.setText("");
         buttonGroup.clearSelection();
         allRadioButton.setSelected(true);
     }
+
 }
