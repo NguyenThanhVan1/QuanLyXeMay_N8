@@ -15,7 +15,7 @@ public class TrangChu extends JFrame {
 
     public TrangChu() {
         setTitle("Trang Chủ Cửa Hàng Xe");
-        setSize(1200, 700);
+        setSize(1600, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 

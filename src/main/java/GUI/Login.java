@@ -407,22 +407,25 @@ public class Login extends JFrame {
 
                     switch (quyen.toUpperCase()) {
                         case "ADMIN":
-                            String Name_admin = nv.getGioitinh();
+                            String Name_admin = nv.getHoten();
                             // openAdminPanel();
                             Admin admin = new Admin();
                             admin.showWindow(Name_admin);
                             // mở form dành cho quản trị viên
                             break;
                         case "NHANVIENBANHANG":
+                            String Name_admin_1 = nv.getHoten();
                             Admin admin1 = new Admin();
                             admin1.NHANVIENBANHANG();
-
-                            openBanHangPanel(); // mở form bán hàng
+                            admin1.showWindow(Name_admin_1);
+                            // openBanHangPanel(); // mở form bán hàng
                             break;
                         case "NHANVIENKHO":
+                            String Name_admin_2 = nv.getHoten();
                             Admin admin2 = new Admin();
                             admin2.NHANVIENKHO();
-                            openKhoPanel(); // mở form kho
+                            admin2.showWindow(Name_admin_2);
+                            // openKhoPanel(); // mở form kho
                             break;
                         default:
                             JOptionPane.showMessageDialog(this,
@@ -477,7 +480,10 @@ public class Login extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
-
+        KhachHangDAO dao = new KhachHangDAO();
+        String newMaKH = dao.generateNextMaKH();
+        KhachHangDTO kh = new KhachHangDTO(newMaKH, fullName, SDT, DC, username, password);
+        dao.add(kh);
         if (!password.equals(confirmPassword)) {
             JOptionPane.showMessageDialog(this,
                     "Mật khẩu xác nhận không khớp!",
@@ -520,21 +526,21 @@ public class Login extends JFrame {
     // JOptionPane.INFORMATION_MESSAGE);
     // }
 
-    private void openBanHangPanel() {
-        // Trong ứng dụng thực tế, bạn sẽ mở giao diện dành cho nhân viên bán hàng
-        JOptionPane.showMessageDialog(this,
-                "Mở giao diện Nhân viên bán hàng!",
-                "Thông báo",
-                JOptionPane.INFORMATION_MESSAGE);
-    }
+    // private void openBanHangPanel() {
+    // // Trong ứng dụng thực tế, bạn sẽ mở giao diện dành cho nhân viên bán hàng
+    // JOptionPane.showMessageDialog(this,
+    // "Mở giao diện Nhân viên bán hàng!",
+    // "Thông báo",
+    // JOptionPane.INFORMATION_MESSAGE);
+    // }
 
-    private void openKhoPanel() {
-        // Trong ứng dụng thực tế, bạn sẽ mở giao diện dành cho nhân viên kho
-        JOptionPane.showMessageDialog(this,
-                "Mở giao diện Nhân viên kho!",
-                "Thông báo",
-                JOptionPane.INFORMATION_MESSAGE);
-    }
+    // private void openKhoPanel() {
+    // // Trong ứng dụng thực tế, bạn sẽ mở giao diện dành cho nhân viên kho
+    // JOptionPane.showMessageDialog(this,
+    // "Mở giao diện Nhân viên kho!",
+    // "Thông báo",
+    // JOptionPane.INFORMATION_MESSAGE);
+    // }
 
     public static void main(String[] args) {
         try {

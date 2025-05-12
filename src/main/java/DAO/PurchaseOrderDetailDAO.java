@@ -1,109 +1,86 @@
 package DAO;
 
-import DAO.Interface.IRepositoryBase;
-import DAO.Interface.RowMapper;
 import DTO.PurchaseOrderDetailDTO;
-import DTO.PurchaseOrderDTO; // Import PurchaseOrderDTO
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.math.BigDecimal;
+import DAO.GenericDAO;
+import DAO.Interface.RowMapper;
 
-public class PurchaseOrderDetailDAO{
-    private final GenericDAO genericDAL = new GenericDAO();
+public class PurchaseOrderDetailDAO {
+    private final GenericDAO genericDAO = new GenericDAO(); // Đổi tên biến để tuân theo quy ước
     private final RowMapper<PurchaseOrderDetailDTO> detailRowMapper = (ResultSet rs) -> {
         PurchaseOrderDetailDTO detail = new PurchaseOrderDetailDTO();
         detail.setPurchaseOrderId(rs.getLong("purchaseOrderId"));
-        detail.setBookId(rs.getLong("bookId"));
+        detail.setMaXe(rs.getString("maXe")); // Đã sửa lại tên cột
         detail.setQuantity(rs.getInt("quantity"));
         detail.setUnitPrice(rs.getBigDecimal("unitPrice"));
-        detail.setSubTotal(rs.getBigDecimal("SubTotal"));
+        detail.setSubTotal(rs.getBigDecimal("subTotal")); // Đã sửa lại tên cột
         return detail;
     };
 
-   
-    // @Override
-    // public PurchaseOrderDetailDTO findById(Long id) {
-    //     throw new UnsupportedOperationException("findById không được hỗ trợ cho khóa chính composite.  Sử dụng findByCompositeKey(Long purchaseOrderId, Long bookId)");
-    // }
-
-    public PurchaseOrderDetailDTO findByCompositeKey(Long purchaseOrderId, Long bookId) {
-        String sql = "SELECT * FROM purchaseordersdetails WHERE purchaseOrderId = ? AND bookId = ?";
-        return genericDAL.queryForObject(sql, detailRowMapper, purchaseOrderId, bookId);
+    public PurchaseOrderDetailDTO findByCompositeKey(Long purchaseOrderId, String maXe) { // Tham số là String maXe
+        String sql = "SELECT * FROM chitietdonhang WHERE MADH = ? AND MAXE = ?"; //Sửa tên bảng và cột cho đúng với database
+        return genericDAO.queryForObject(sql, detailRowMapper, purchaseOrderId, maXe);
     }
 
-
     public List<PurchaseOrderDetailDTO> findAll() {
-        String sql = "SELECT * FROM purchaseorderdetails";
-        return genericDAL.queryForList(sql, detailRowMapper);
+        String sql = "SELECT * FROM chitietdonhang";  //Sửa tên bảng cho đúng với database
+        return genericDAO.queryForList(sql, detailRowMapper);
     }
 
     public List<PurchaseOrderDetailDTO> getDetailsByOrderId(Long orderId) {
-        String sql = "SELECT * FROM purchaseorderdetails WHERE purchaseOrderId = ?";
-        return genericDAL.queryForList(sql, detailRowMapper, orderId);
+        String sql = "SELECT * FROM chitietdonhang WHERE MADH = ?";  //Sửa tên bảng và cột cho đúng với database
+        return genericDAO.queryForList(sql, detailRowMapper, orderId);
     }
 
     public Long create(PurchaseOrderDetailDTO detail) {
-        String sql = "INSERT INTO purchaseorderdetails (purchaseOrderId, bookId, quantity, unitPrice, SubTotal) VALUES (?, ?, ?, ?, ?)";
-        return genericDAL.insert(sql,
+        String sql = "INSERT INTO chitietdonhang (MADH, MAXE, SOLUONG, GIATRI, THANHTIEN) VALUES (?, ?, ?, ?, ?)"; //Sửa tên bảng và cột cho đúng với database
+        return genericDAO.insert(sql,
                 detail.getPurchaseOrderId(),
-                detail.getBookId(),
+                detail.getMaXe(), //Đã sửa lại getMaXe
                 detail.getQuantity(),
                 detail.getUnitPrice(),
-                detail.getSubTotal()
+                detail.getSubTotal() //Đã sửa lại getSubTotal()
         );
     }
+
     public boolean update(PurchaseOrderDetailDTO detail) {
-        String sql = "UPDATE purchaseorderdetails SET quantity = ?, unitPrice = ?, SubTotal = ? WHERE purchaseOrderId = ? AND bookId = ?";
-        return genericDAL.update(sql,
+        String sql = "UPDATE chitietdonhang SET SOLUONG = ?, GIATRI = ?, THANHTIEN = ? WHERE MADH = ? AND MAXE = ?";  //Sửa tên bảng và cột cho đúng với database
+        return genericDAO.update(sql,
                 detail.getQuantity(),
                 detail.getUnitPrice(),
-                detail.getSubTotal(),
+                detail.getSubTotal(),  //Đã sửa lại getSubTotal()
                 detail.getPurchaseOrderId(),
-                detail.getBookId()
+                detail.getMaXe() //Đã sửa lại getMaXe()
         );
     }
+    // Hàm này không cần thiết và gây nhầm lẫn vì đã có updateByCompositeKey
+    // public boolean updateByOrderId(PurchaseOrderDetailDTO detail, Long oldOrderId) {
+    //         String sql = "UPDATE purchaseorderdetails SET quantity = ?, unitPrice = ?, SubTotal = ? WHERE purchaseOrderId = ?";
+    //         return genericDAL.update(sql,
+    //                 detail.getQuantity(),
+    //                 detail.getUnitPrice(),
+    //                 detail.getSubTotal(),
+    //                 oldOrderId
+    //         );
+    //     }
 
-    // Thêm phương thức update theo Order ID
-    public boolean updateByOrderId(PurchaseOrderDetailDTO detail, Long oldOrderId) {
-        String sql = "UPDATE purchaseorderdetails SET quantity = ?, unitPrice = ?, SubTotal = ? WHERE purchaseOrderId = ?";
-        return genericDAL.update(sql,
-                detail.getQuantity(),
-                detail.getUnitPrice(),
-                detail.getSubTotal(),
-                oldOrderId
-        );
+
+    public boolean delete(Long orderId) {
+        String sql = "DELETE FROM chitietdonhang WHERE MADH = ?"; //Sửa tên bảng và cột cho đúng với database // Xóa theo PurchaseOrderID
+        return genericDAO.delete(sql, orderId);
     }
 
-    
-    public boolean delete(Long id) {
-        String sql = "DELETE FROM purchaseorderdetails WHERE purchaseOrderId = ?"; // Xóa theo PurchaseOrderID
-        return genericDAL.delete(sql, id);
+
+    public boolean deleteByCompositeKey(Long purchaseOrderId, String maXe) { // Tham số là String maXe
+        String sql = "DELETE FROM chitietdonhang WHERE MADH = ? AND MAXE = ?";  //Sửa tên bảng và cột cho đúng với database
+        return genericDAO.delete(sql, purchaseOrderId, maXe);
     }
-
-
-    public boolean deleteByCompositeKey(Long purchaseOrderId, Long bookId) {
-        String sql = "DELETE FROM purchaseorderdetails WHERE purchaseOrderId = ? AND bookId = ?";
-        return genericDAL.delete(sql, purchaseOrderId, bookId);
-    }
-
-//    public BigDecimal getTotalAmountByOrderId(Long orderId) {
-//        String sql = "SELECT SUM(SubTotal) AS total FROM purchaseorderdetails WHERE purchaseOrderId = ?";
-//        try {
-//            ResultSet rs = genericDAL.query(sql, orderId);
-//            if (rs.next()) {
-//                BigDecimal total = rs.getBigDecimal("total");
-//                return total != null ? total : BigDecimal.ZERO;
-//            }
-//            return BigDecimal.ZERO;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return BigDecimal.ZERO;
-//        }
-//    }
 
     public long getCurrentID() {
-        String sql = "SELECT MAX(purchaseOrderId) FROM purchaseorderdetails";
-        return genericDAL.getMaxID(sql);
+        String sql = "SELECT MAX(MADH) FROM chitietdonhang"; //Sửa tên bảng và cột cho đúng với database
+        return genericDAO.getMaxID(sql);
     }
 }

@@ -134,4 +134,44 @@ public class NhanVienDAO {
             }
         }
     }
+    public NhanVienDTO findById(String id) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        NhanVienDTO nv = null;
+
+        try {
+            conn = Database.getConnection();
+            String sql = "SELECT * FROM NHANVIEN WHERE MANV = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, id);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                String manv = rs.getString("MANV");
+                String hoten = rs.getString("HOTEN");
+                String ngaysinh = rs.getString("NGAYSINH");
+                String gt = rs.getString("GIOITINH");
+                String sdt = rs.getString("SODIENTHOAI");
+                String diachi = rs.getString("DIACHI");
+                String chucvu = rs.getString("CHUCVU");
+                String tendangnhap = rs.getString("TENDANGNHAP");
+                String matkhau = rs.getString("MATKHAU");
+                String quyen = rs.getString("QUYEN");
+
+                nv = new NhanVienDTO(manv, hoten, ngaysinh, gt, sdt, diachi, chucvu, tendangnhap, matkhau, quyen);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(NhanVienDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                Database.closeConnection(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return nv;
+    }
 }

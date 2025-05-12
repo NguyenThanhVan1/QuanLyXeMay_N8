@@ -2,14 +2,11 @@ package DAO;
 
 import DTO.PurchaseOrderDTO;
 import DTO.Enum.PurchaseStatus;
-import DAO.Interface.IRepositoryBase;
 import DAO.Interface.RowMapper;
 
 import java.sql.*;
 import java.util.List;
-import java.util.ArrayList;
 
-import DTO.PurchaseOrderDetailDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,20 +14,22 @@ public class PurchaseOrderDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(PurchaseOrderDAO.class);
     private final GenericDAO genericDAL;
+
     private final RowMapper<PurchaseOrderDTO> purchaseOrderRowMapper = (ResultSet rs) -> {
         PurchaseStatus status = null;
         try {
-            status = PurchaseStatus.valueOf(rs.getString("status"));
+            status = PurchaseStatus.valueOf(rs.getString("Status"));
         } catch (IllegalArgumentException e) {
-            logger.warn("Giá trị trạng thái không hợp lệ trong cơ sở dữ liệu: " + rs.getString("status"));
-            status = PurchaseStatus.Đang_Chờ; // Đặt giá trị mặc định
+            logger.warn("Giá trị trạng thái không hợp lệ trong cơ sở dữ liệu: " + rs.getString("Status"));
+            status = PurchaseStatus.Đang_Chờ; // Giá trị mặc định
         }
+
         PurchaseOrderDTO dto = new PurchaseOrderDTO();
-        dto.setId(rs.getLong("id"));
-        dto.setSupplierId(rs.getString("supplierId"));
-        dto.setEmployeeId(rs.getLong("employeeId"));
-        dto.setTotalAmount(rs.getBigDecimal("totalAmount"));
-        dto.setBuyDate(rs.getTimestamp("buyDate"));
+        dto.setMaPN(rs.getLong("MaPN"));
+        dto.setMANCC(rs.getString("MANCC"));
+        dto.setMaNV(rs.getString("MaNV"));
+        dto.setTongTien(rs.getBigDecimal("TongTien"));
+        dto.setBuyDate(rs.getTimestamp("NGAYNHAP"));
         dto.setStatus(status);
         return dto;
     };
@@ -40,7 +39,7 @@ public class PurchaseOrderDAO {
     }
 
     public PurchaseOrderDTO findById(Long id) throws SQLException {
-        String sql = "SELECT id, supplierId, employeeId, totalAmount, buyDate, status FROM PurchaseOrders WHERE id = ?";
+        String sql = "SELECT MaPN, MANCC, MaNV, TongTien, NGAYNHAP, Status FROM phieunhap WHERE MaPN = ?";
         PurchaseOrderDTO order = genericDAL.queryForObject(sql, purchaseOrderRowMapper, id);
         if (order == null) {
             logger.error("Không tìm thấy phiếu nhập với ID " + id);
@@ -50,31 +49,38 @@ public class PurchaseOrderDAO {
     }
 
     public List<PurchaseOrderDTO> findAll() throws SQLException {
-        String sql = "SELECT id, supplierId, employeeId, totalAmount, buyDate, status FROM PurchaseOrders";
+        String sql = "SELECT MaPN, MANCC, MaNV, TongTien, NGAYNHAP, Status FROM phieunhap";
         return genericDAL.queryForList(sql, purchaseOrderRowMapper);
     }
 
     public Long create(PurchaseOrderDTO purchaseOrderDTO) throws SQLException {
-        String sql = "INSERT INTO PurchaseOrders (supplierId, employeeId, totalAmount, buyDate, status) VALUES (?, ?, ?, ?, ?)";
-        return genericDAL.insert(sql, purchaseOrderDTO.getSupplierId(), purchaseOrderDTO.getEmployeeId(),
-        purchaseOrderDTO.getTotalAmount(), purchaseOrderDTO.getBuyDate(), purchaseOrderDTO.getStatus().name());
+        String sql = "INSERT INTO phieunhap (MANCC, MaNV, TongTien, NGAYNHAP, Status) VALUES (?, ?, ?, ?, ?)";
+        return genericDAL.insert(sql,
+                purchaseOrderDTO.getMANCC(),
+                purchaseOrderDTO.getMaNV(),
+                purchaseOrderDTO.getTongTien(),
+                purchaseOrderDTO.getBuyDate(),
+                purchaseOrderDTO.getStatus().name());
     }
 
     public boolean update(PurchaseOrderDTO purchaseOrderDTO) throws SQLException {
-        String sql = "UPDATE PurchaseOrders SET supplierId = ?, employeeId = ?, totalAmount = ?, buyDate = ?, status = ? WHERE id = ?";
-        return genericDAL.update(sql, purchaseOrderDTO.getSupplierId(), purchaseOrderDTO.getEmployeeId(),
-                purchaseOrderDTO.getTotalAmount(), purchaseOrderDTO.getBuyDate(), purchaseOrderDTO.getStatus().name(),
-                purchaseOrderDTO.getId());
+        String sql = "UPDATE phieunhap SET MANCC = ?, MaNV = ?, TongTien = ?, NGAYNHAP = ?, Status = ? WHERE MaPN = ?";
+        return genericDAL.update(sql,
+                purchaseOrderDTO.getMANCC(),
+                purchaseOrderDTO.getMaNV(),
+                purchaseOrderDTO.getTongTien(),
+                purchaseOrderDTO.getBuyDate(),
+                purchaseOrderDTO.getStatus().name(),
+                purchaseOrderDTO.getMaPN());
     }
 
     public boolean delete(Long id) throws SQLException {
-        String sql = "DELETE FROM PurchaseOrders WHERE id = ?";
+        String sql = "DELETE FROM phieunhap WHERE MaPN = ?";
         return genericDAL.delete(sql, id);
     }
 
     public Long getCurrentID() throws SQLException {
-        String sql = "SELECT MAX(id) from PurchaseOrders";
+        String sql = "SELECT MAX(MaPN) FROM phieunhap";
         return genericDAL.getMaxID(sql);
     }
-
 }

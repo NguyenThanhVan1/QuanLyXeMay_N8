@@ -11,9 +11,13 @@ package BUS;
 import DAO.NhanVienDAO;
 import DTO.NhanVienDTO;
 import java.util.ArrayList;
+import java.util.List;
 public class NhanVienBUS 
 {
-    private ArrayList<NhanVienDTO> dsnv;
+    // private ArrayList<NhanVienDTO> employeeList;
+    public static List<NhanVienDTO> employeeList = new ArrayList<>();
+    private final NhanVienDAO employeeDAL = new NhanVienDAO();
+    
     public NhanVienBUS(int i1)
     {
         listNV();
@@ -22,7 +26,7 @@ public class NhanVienBUS
     }
     public NhanVienDTO get(String MaNV)
     {
-        for(NhanVienDTO nv : dsnv )
+        for(NhanVienDTO nv : employeeList )
         {
             if(nv.getManv().equals(MaNV))
             {
@@ -34,23 +38,23 @@ public class NhanVienBUS
     public void listNV()
     {
         NhanVienDAO nvDAO = new NhanVienDAO();
-        dsnv = new ArrayList<>();
-        dsnv = nvDAO.list();
+        employeeList = new ArrayList<>();
+        employeeList = nvDAO.list();
     }
     public void addNV(NhanVienDTO sp)
     {
-        dsnv.add(sp);
+        employeeList.add(sp);
         NhanVienDAO nvDAO = new NhanVienDAO();
         nvDAO.add(sp);
     }
 
     public void deleteNV(String MaNV)
     {
-        for(NhanVienDTO nv : dsnv )
+        for(NhanVienDTO nv : employeeList )
         {
             if(nv.getManv().equals(MaNV))
             {
-                dsnv.remove(nv);
+                employeeList.remove(nv);
                 NhanVienDAO nvDAO = new NhanVienDAO();
                 nvDAO.delete(MaNV);
                 return;
@@ -59,11 +63,11 @@ public class NhanVienBUS
     }
     public void setNV(NhanVienDTO s)
     {
-        for(int i = 0 ; i < dsnv.size() ; i++)
+        for(int i = 0 ; i < employeeList.size() ; i++)
         {
-            if(dsnv.get(i).getManv().equals(s.getManv()))
+            if(employeeList.get(i).getManv().equals(s.getManv()))
             {
-                dsnv.set(i, s);
+                employeeList.set(i, s);
                 NhanVienDAO nvDAO = new NhanVienDAO();
                 nvDAO.set(s);
                 return;
@@ -72,7 +76,7 @@ public class NhanVienBUS
     }
     public boolean check(String manv)
     {
-        for(NhanVienDTO nv : dsnv)
+        for(NhanVienDTO nv : employeeList)
         {
             if(nv.getManv().equals(manv))
             {
@@ -88,7 +92,7 @@ public class NhanVienBUS
         ten = ten.isEmpty()?ten = "": ten;
         chucvu = chucvu.isEmpty()?chucvu = "": chucvu;
         dc = dc.isEmpty()?dc = "": dc;
-        for(NhanVienDTO nv : dsnv)
+        for(NhanVienDTO nv : employeeList)
         {
             if( nv.getManv().contains(manv) && 
                 nv.getHoten()   .contains(ten) &&
@@ -100,7 +104,16 @@ public class NhanVienBUS
         }
         return search;
     }
-    public ArrayList<NhanVienDTO> getList() {
-        return dsnv;
+    public List<NhanVienDTO> getList() {
+        return employeeList;
     }
+    public NhanVienDTO getNhanVienById(String employeeId) {
+        return employeeDAL.findById(employeeId);
+    }
+    // public NhanVienDTO getEmployeeById(String MaNV) {
+    //     if (MaNV <= 0) {
+    //         throw new IllegalArgumentException("ID must be greater than 0");
+    //     }
+    //     return NhanVienDAO.findById(MaNV);
+    // }
 }

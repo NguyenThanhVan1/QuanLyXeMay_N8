@@ -45,7 +45,7 @@ public class PurchaseOrderBUS {
     // Lấy phiếu nhập theo ID
     public PurchaseOrderDTO getPurchaseOrderById(long id) {
         for (PurchaseOrderDTO order : purchaseOrderList) {
-            if (order.getId() == id) {
+            if (order.getMaPN() == id) {
                 return order;
             }
         }
@@ -57,7 +57,7 @@ public class PurchaseOrderBUS {
         try {
             Long newOrderId = purchaseOrderDAL.create(order);
             if (newOrderId != null && newOrderId > 0) {
-                order.setId(newOrderId);
+                order.setMaPN(newOrderId);
                 purchaseOrderList.add(order);
                 return true;
             }
@@ -88,7 +88,7 @@ public class PurchaseOrderBUS {
         try {
             boolean success = purchaseOrderDAL.delete(id);
             if (success) {
-                purchaseOrderList.removeIf(order -> order.getId() == id);
+                purchaseOrderList.removeIf(order -> order.getMaPN() == id);
                 return true;
             }
             return false;
@@ -101,7 +101,7 @@ public class PurchaseOrderBUS {
     // Cập nhật danh sách phiếu nhập khi có thay đổi
     private void updatePurchaseOrderList(PurchaseOrderDTO order) {
         for (int i = 0; i < purchaseOrderList.size(); i++) {
-            if (purchaseOrderList.get(i).getId() == order.getId()) {
+            if (purchaseOrderList.get(i).getMaPN() == order.getMaPN()) {
                 purchaseOrderList.set(i, order);
                 return;
             }

@@ -8,6 +8,7 @@ package GUI.Component.Panel;
  *
  * @author lekha
  */
+import GUI.Component.Table.NhanVienTable;
 import com.formdev.flatlaf.FlatLightLaf;
 import GUI.Component.Panel.RoundedTextField;
 import DTO.NhanVienDTO;
@@ -25,13 +26,12 @@ import javax.swing.*;
 import javax.swing.table.*;
 public class nhanVienGUI extends javax.swing.JPanel
 {
-    private NhanVienBUS nvBUS=new NhanVienBUS();
-    private JLabel lblthem,lblsua,lblxoa,lbltimkiem,lbltailai,lblthemnv;
+    private NhanVienBUS nvBUS = new NhanVienBUS();
+    private JLabel lblthem, lblsua, lblxoa, lbltimkiem, lbltailai, lblthemnv;
     private RoundedTextField txttimkiem;
-    private DefaultTableModel tblmodel;
-    private JTable table;
-    private JScrollPane scrollPane;
-    JComboBox<String> comboboxtimkiem;
+    private NhanVienTable nhanVienTable;
+    private JComboBox<String> comboboxtimkiem;
+    private TableRowSorter<TableModel> sorter;
     final int DEFALUT_WIDTH_JPANEL = 1200, DEFAULT_HEIGHT_JPANEL = 700;
     public nhanVienGUI()
     {
@@ -43,10 +43,15 @@ public class nhanVienGUI extends javax.swing.JPanel
         this.setLayout(null);
         this.setSize(DEFALUT_WIDTH_JPANEL,DEFAULT_HEIGHT_JPANEL);
         this.setBackground(Color.white);
-        Table();
-        scrollPane.setBounds(0,100,DEFALUT_WIDTH_JPANEL,DEFAULT_HEIGHT_JPANEL);
-        scrollPane.setBackground(null);
-        this.add(scrollPane);
+       
+        nhanVienTable = new NhanVienTable();
+        nhanVienTable.getScrollPane().setBounds(0, 100, DEFALUT_WIDTH_JPANEL, DEFAULT_HEIGHT_JPANEL);
+        nhanVienTable.getScrollPane().setBackground(null);
+        this.add(nhanVienTable.getScrollPane());
+        
+        // Load dữ liệu
+        if (nvBUS.getList() == null) nvBUS.listNV();
+        nhanVienTable.loadData(nvBUS.getList());
         
         
         lblthem=new JLabel("Thêm");
@@ -96,16 +101,9 @@ public class nhanVienGUI extends javax.swing.JPanel
         lblsua.setBackground(Color.white);
         lblsua.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                int selectedRow = table.getSelectedRow();
-                if (selectedRow == -1) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một nhân viên để sửa!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                int modelRow = table.convertRowIndexToModel(selectedRow);
-                String manv = table.getModel().getValueAt(modelRow, 0).toString();
-                NhanVienDTO nv = nvBUS.get(manv);
+                NhanVienDTO nv = nhanVienTable.getSelectedNhanVien();
                 if (nv == null) {
-                    JOptionPane.showMessageDialog(null, "Không tìm thấy nhân viên!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một nhân viên để sửa!", "Thông báo", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 showSuaDialog(nv);
@@ -139,13 +137,12 @@ public class nhanVienGUI extends javax.swing.JPanel
         lblxoa.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) 
             {
-                int row=table.getSelectedRow();
-                if(row==-1)
-                {
+                String manv = nhanVienTable.getSelectedMaNV();
+                if (manv == null) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần xóa!");
                     return;
                 }
-                String manv = table.getValueAt(row, 0).toString();
+                // String manv = table.getValueAt(row, 0).toString();
                 int confirm = JOptionPane.showConfirmDialog(null,
                         "Bạn có chắc muốn xóa nhân viên có mã: " + manv + "?", 
                         "Xác nhận xóa",     
@@ -184,9 +181,9 @@ public class nhanVienGUI extends javax.swing.JPanel
         lbltailai.setIconTextGap(8);
         lbltailai.setBackground(Color.white);
         lbltailai.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) 
-            {
-                listSP();
+            public void mouseClicked(MouseEvent e) {
+                if (nvBUS.getList() == null) nvBUS.listNV();
+                nhanVienTable.loadData(nvBUS.getList());
                 repaint();
                 txttimkiem.setText("");
                 comboboxtimkiem.setSelectedIndex(0);
@@ -232,8 +229,7 @@ public class nhanVienGUI extends javax.swing.JPanel
         lbltimkiem.setBorder(BorderFactory.createLineBorder(Color.black,0));
         lbltimkiem.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) 
-            {
+            public void mouseClicked(MouseEvent e) {
                 String keyword = txttimkiem.getText().trim().toLowerCase();
                 String option = comboboxtimkiem.getSelectedItem().toString();
 
@@ -273,7 +269,7 @@ public class nhanVienGUI extends javax.swing.JPanel
                 }
 
         
-                showDataToTable(searchResult);
+                nhanVienTable.loadData(searchResult);
             }
             public void mouseEntered(MouseEvent e)
             {
@@ -288,54 +284,54 @@ public class nhanVienGUI extends javax.swing.JPanel
 
         this.add(lbltimkiem);
     }
-     public void Table()
-    {
+    //  public void Table()
+    // {
         
-        String columns[]={"Mã nhân viên","Họ tên","Ngày sinh","Giới tính","SĐT","Địa chỉ","Chức vụ","Tên đăng nhập","Mật khẩu","Quyền"};
-        tblmodel=new DefaultTableModel(columns,5);
-        table=new JTable(tblmodel);
-        listSP();
-        table.getColumnModel().getColumn(0).setPreferredWidth(80);
-        table.getColumnModel().getColumn(1).setPreferredWidth(120);
-        table.getColumnModel().getColumn(2).setPreferredWidth(60);
-        table.getColumnModel().getColumn(3).setPreferredWidth(60);
-        table.getColumnModel().getColumn(4).setPreferredWidth(60);
-        table.getColumnModel().getColumn(5).setPreferredWidth(120);
-        table.getColumnModel().getColumn(6).setPreferredWidth(100);
-        table.getColumnModel().getColumn(7).setPreferredWidth(100);
-        table.getColumnModel().getColumn(8).setPreferredWidth(100);
-        table.getColumnModel().getColumn(9).setPreferredWidth(110);
-        table.setRowHeight(30);
-        table.setShowGrid(true);
-        table.setGridColor(Color.gray);
-        table.setBackground(Color.white);
-        table.setFillsViewportHeight(true);
-        JTableHeader header=table.getTableHeader();
-        header.setPreferredSize(new Dimension(header.getPreferredSize().width,40));
-        header.setBackground(new Color(51, 204, 255));
-        header.setForeground(Color.black);
-        header.setFont(new Font("Arial",Font.BOLD,13));
-        scrollPane=new JScrollPane(table);
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(tblmodel);
-        table.setRowSorter(sorter);
+    //     String columns[]={"Mã nhân viên","Họ tên","Ngày sinh","Giới tính","SĐT","Địa chỉ","Chức vụ","Tên đăng nhập","Mật khẩu","Quyền"};
+    //     tblmodel=new DefaultTableModel(columns,5);
+    //     table=new JTable(tblmodel);
+    //     listSP();
+    //     table.getColumnModel().getColumn(0).setPreferredWidth(80);
+    //     table.getColumnModel().getColumn(1).setPreferredWidth(120);
+    //     table.getColumnModel().getColumn(2).setPreferredWidth(60);
+    //     table.getColumnModel().getColumn(3).setPreferredWidth(60);
+    //     table.getColumnModel().getColumn(4).setPreferredWidth(60);
+    //     table.getColumnModel().getColumn(5).setPreferredWidth(120);
+    //     table.getColumnModel().getColumn(6).setPreferredWidth(100);
+    //     table.getColumnModel().getColumn(7).setPreferredWidth(100);
+    //     table.getColumnModel().getColumn(8).setPreferredWidth(100);
+    //     table.getColumnModel().getColumn(9).setPreferredWidth(110);
+    //     table.setRowHeight(30);
+    //     table.setShowGrid(true);
+    //     table.setGridColor(Color.gray);
+    //     table.setBackground(Color.white);
+    //     table.setFillsViewportHeight(true);
+    //     JTableHeader header=table.getTableHeader();
+    //     header.setPreferredSize(new Dimension(header.getPreferredSize().width,40));
+    //     header.setBackground(new Color(51, 204, 255));
+    //     header.setForeground(Color.black);
+    //     header.setFont(new Font("Arial",Font.BOLD,13));
+    //     scrollPane=new JScrollPane(table);
+    //     TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(tblmodel);
+    //     table.setRowSorter(sorter);
 
-        table.getTableHeader().addMouseListener(new MouseAdapter() {
-            private int lastSortedColumn = -1;
-            private boolean ascending = true;
+    //     table.getTableHeader().addMouseListener(new MouseAdapter() {
+    //         private int lastSortedColumn = -1;
+    //         private boolean ascending = true;
 
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int column = table.columnAtPoint(e.getPoint());
-                if (column == lastSortedColumn) {
-                    ascending = !ascending;
-                } else {
-                    ascending = true;
-                }
-                lastSortedColumn = column;
-                sorter.setSortKeys(Collections.singletonList(new RowSorter.SortKey(column, ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING)));
-            }
-        });
-    }
+    //         @Override
+    //         public void mouseClicked(MouseEvent e) {
+    //             int column = table.columnAtPoint(e.getPoint());
+    //             if (column == lastSortedColumn) {
+    //                 ascending = !ascending;
+    //             } else {
+    //                 ascending = true;
+    //             }
+    //             lastSortedColumn = column;
+    //             sorter.setSortKeys(Collections.singletonList(new RowSorter.SortKey(column, ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING)));
+    //         }
+    //     });
+    // }
     public void showAddNhanVienDialog()
     {
         JDialog dialog=new JDialog((Frame) null,"Thêm nhân viên",true);
@@ -709,42 +705,40 @@ public class nhanVienGUI extends javax.swing.JPanel
         dialog.add(btnLuu);
         dialog.setVisible(true);
     }
-    public void showDataToTable(ArrayList<NhanVienDTO> list) 
-    {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0);
+//     public void showDataToTable(ArrayList<NhanVienDTO> list) 
+//     {
+//         DefaultTableModel model = (DefaultTableModel) table.getModel();
+//         model.setRowCount(0);
 
-        for (NhanVienDTO nv : list) {
-            model.addRow(new Object[]{nv.getManv(), nv.getHoten(), nv.getNgaysinh(),nv.getGioitinh(), nv.getSdt(), nv.getDiachi(),
-                nv.getChucvu(),nv.getTendangnhap(), nv.getMatkhau(),nv.getQuyen()});
-        }
-}
+//         for (NhanVienDTO nv : list) {
+//             model.addRow(new Object[]{nv.getManv(), nv.getHoten(), nv.getNgaysinh(),nv.getGioitinh(), nv.getSdt(), nv.getDiachi(),
+//                 nv.getChucvu(),nv.getTendangnhap(), nv.getMatkhau(),nv.getQuyen()});
+//         }
+// }
 
-    public void outModel(DefaultTableModel model,ArrayList<NhanVienDTO> nv)
-    {
-        Vector data;
-        model.setRowCount(0);
-        for(NhanVienDTO n:nv)
-        {
-            data=new Vector();
-            data.add(n.getManv());
-            data.add(n.getHoten());
-            data.add(n.getNgaysinh());
-            data.add(n.getGioitinh());
-            data.add(n.getSdt());
-            data.add(n.getDiachi());
-            data.add(n.getChucvu());
-            data.add(n.getTendangnhap());
-            data.add(n.getMatkhau());
-            data.add(n.getQuyen());
-            model.addRow(data);
-        }
-        table.setModel(model);
-    }
-    public void listSP()
-    {
-        if(nvBUS.getList()==null) nvBUS.listNV();
-        ArrayList<NhanVienDTO> nv=nvBUS.getList();
-        outModel(tblmodel,nv);
+    // public void outModel(DefaultTableModel model,ArrayList<NhanVienDTO> nv)
+    // {
+    //     Vector data;
+    //     model.setRowCount(0);
+    //     for(NhanVienDTO n:nv)
+    //     {
+    //         data=new Vector();
+    //         data.add(n.getManv());
+    //         data.add(n.getHoten());
+    //         data.add(n.getNgaysinh());
+    //         data.add(n.getGioitinh());
+    //         data.add(n.getSdt());
+    //         data.add(n.getDiachi());
+    //         data.add(n.getChucvu());
+    //         data.add(n.getTendangnhap());
+    //         data.add(n.getMatkhau());
+    //         data.add(n.getQuyen());
+    //         model.addRow(data);
+    //     }
+    //     table.setModel(model);
+    // }
+    public void listSP() {
+        if (nvBUS.getList() == null) nvBUS.listNV();
+        nhanVienTable.loadData(nvBUS.getList());
     }
 }

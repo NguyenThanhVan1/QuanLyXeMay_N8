@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class PurchaseOrderDetailDTO {
     private Long purchaseOrderId;
-    private Long productId;
+    private String maXe;
     private int quantity;
     private BigDecimal unitPrice;
     private BigDecimal subTotal;
@@ -12,9 +12,9 @@ public class PurchaseOrderDetailDTO {
     public PurchaseOrderDetailDTO() {
     }
 
-    public PurchaseOrderDetailDTO(Long purchaseOrderId, Long productId, int quantity, BigDecimal unitPrice, BigDecimal subTotal) {
+    public PurchaseOrderDetailDTO(Long purchaseOrderId, String maXe, int quantity, BigDecimal unitPrice, BigDecimal subTotal) {
         this.purchaseOrderId = purchaseOrderId;
-        this.productId = productId;
+        this.maXe = maXe;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.subTotal = subTotal;
@@ -28,12 +28,12 @@ public class PurchaseOrderDetailDTO {
         this.purchaseOrderId = purchaseOrderId;
     }
 
-    public Long getProductId() {
-        return productId;
+    public String getMaXe() {
+        return maXe;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public void setMaXe(String maXe) {
+        this.maXe = maXe;
     }
 
     public int getQuantity() {

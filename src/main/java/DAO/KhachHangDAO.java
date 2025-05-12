@@ -35,8 +35,10 @@ public class KhachHangDAO {
             Logger.getLogger(KhachHangDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
                 Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -66,7 +68,8 @@ public class KhachHangDAO {
             Logger.getLogger(KhachHangDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
-                if (stmt != null) stmt.close();
+                if (stmt != null)
+                    stmt.close();
                 Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -94,7 +97,8 @@ public class KhachHangDAO {
             Logger.getLogger(KhachHangDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
-                if (stmt != null) stmt.close();
+                if (stmt != null)
+                    stmt.close();
                 Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -116,7 +120,8 @@ public class KhachHangDAO {
             Logger.getLogger(KhachHangDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
-                if (stmt != null) stmt.close();
+                if (stmt != null)
+                    stmt.close();
                 Database.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -151,14 +156,50 @@ public class KhachHangDAO {
             Logger.getLogger(KhachHangDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+                if (conn != null)
+                    conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
 
         return null;
+    }
+
+    public String generateNextMaKH() {
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        String newId = "";
+
+        try {
+            conn = Database.getConnection();
+            String sql = "SELECT COUNT(*) AS total FROM KHACHHANG";
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+
+            if (rs.next()) {
+                int count = rs.getInt("total") + 1;
+                newId = String.format("KH%03d", count);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(KhachHangDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+                Database.closeConnection(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return newId;
     }
 }
