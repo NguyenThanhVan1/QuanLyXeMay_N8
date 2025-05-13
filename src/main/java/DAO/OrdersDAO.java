@@ -236,9 +236,8 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer> {
     public static String themHoacLayDonHangTam(String makh, String diachi) throws SQLException {
         Connection conn = Database.getConnection();
 
-        // Kiểm tra xem đã có đơn hàng tạm thời chưa (giả sử TRANGTHAI =
-        // 'CHUA_XAC_NHAN')
-        String query = "SELECT MADH FROM DONHANG WHERE MAKH = ? AND status = 'CHUA_XAC_NHAN'";
+        // Kiểm tra xem đã có đơn hàng tạm thời chưa (trạng thái 'CHUA_XAC_NHAN')
+        String query = "SELECT MADH FROM DONHANG WHERE MAKH = ? AND TRANGTHAI = 'CHUA_XAC_NHAN'";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, makh);
         ResultSet rs = ps.executeQuery();
@@ -247,9 +246,24 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer> {
             return rs.getString("MADH");
         }
 
-        // Nếu chưa có thì tạo mới
-        String madh = "DH" + System.currentTimeMillis(); // hoặc dùng UUID, sequence tùy hệ thống
-        String insert = "INSERT INTO DONHANG (MADH, NGAYLAP, MAKH, DIACHI, TONGTIEN, status) VALUES (?, GETDATE(), ?, ?, 0, 'CHUA_XAC_NHAN')";
+        // Nếu chưa có, tạo mã mới dựa trên số dòng hiện có
+        String countQuery = "SELECT COUNT(*) AS total FROM DONHANG";
+        PreparedStatement countStmt = conn.createStatement();
+        ResultSet countRs = countStmt.executeQuery(countQuery);
+
+        int count = 0;
+        if (countRs.next()) {
+            count = countRs.getInt("total");
+        }
+
+        count++; // Tăng lên 1 để tạo mã mới
+
+        // Format mã đơn hàng thành dạng DH0001
+        String madh = String.format("DH%04d", count);
+
+        // Thêm đơn hàng mới
+        String insert = "INSERT INTO DONHANG (MADH, NGAYLAP, MAKH, DIACHI, TONGTIEN, TRANGTHAI) " +
+                "VALUES (?, GETDATE(), ?, ?, 0, 'CHUA_XAC_NHAN')";
         ps = conn.prepareStatement(insert);
         ps.setString(1, madh);
         ps.setString(2, makh);
