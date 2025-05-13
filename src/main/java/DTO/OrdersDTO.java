@@ -5,13 +5,13 @@ import java.util.Date;
 public class OrdersDTO {
     private int orderId;
     private Date createdDate;
-    private int customerId;
+    private String customerId;
     private String address;
     private BigDecimal totalAmount;
     private String status;
 
 
-    public OrdersDTO(Date createdDate, int customerId, String address, BigDecimal totalAmount,
+    public OrdersDTO(Date createdDate, String customerId, String address, BigDecimal totalAmount,
         String status) {
         this.createdDate = createdDate;
         this.customerId = customerId;
@@ -20,7 +20,7 @@ public class OrdersDTO {
         this.status = status;
     }
 
-    public OrdersDTO(int orderId, Date createdDate, int customerId, String address,
+    public OrdersDTO(int orderId, Date createdDate, String customerId, String address,
         BigDecimal totalAmount, String status) {
         this.orderId = orderId;
         this.createdDate = createdDate;
@@ -57,12 +57,12 @@ public class OrdersDTO {
     }
 
 
-    public int getCustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 

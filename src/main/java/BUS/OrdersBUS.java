@@ -43,7 +43,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
     }
 
     @Override
-    public List<OrdersDTO> getByCustomerID(Integer customerId) {
+    public List<OrdersDTO> getByCustomerID(String customerId) {
         
         return ordersDAO.getByCustomerID(customerId, conn);
     }

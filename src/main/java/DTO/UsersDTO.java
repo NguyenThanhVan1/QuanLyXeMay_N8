@@ -1,7 +1,7 @@
 package DTO;
 
 public class UsersDTO {
-    private int id;
+    private String id;
     private String name;
     private String phone;
     private String address;
@@ -20,7 +20,7 @@ public class UsersDTO {
         this.role = role;
     }
 
-    public UsersDTO(int id, String name, String phone, String address, String userName, String password,
+    public UsersDTO(String id, String name, String phone, String address, String userName, String password,
             String role) {
         this.id = id;
         this.name = name;
@@ -36,10 +36,10 @@ public class UsersDTO {
     }
 
     
-    public int getId() {
+    public String getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
     public String getName() {

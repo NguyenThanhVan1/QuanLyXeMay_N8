@@ -10,7 +10,7 @@ import java.util.List;
 import DAO.Interface.UsersDAOInterface;
 import DTO.UsersDTO;
 
-public class UsersDAO implements UsersDAOInterface<UsersDTO, Integer>{
+public class UsersDAO implements UsersDAOInterface<UsersDTO, String>{
     private Connection conn;
 
     public UsersDAO() {
@@ -40,11 +40,11 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, Integer>{
     }
 
     @Override
-    public boolean delete(Integer id, Connection conn) {
+    public boolean delete(String id, Connection conn) {
         try {
             String sql = "DELETE FROM khachhang WHERE MAKH = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, id);
+            ps.setString(1, id);
             int row = ps.executeUpdate();
             return row > 0;
         } catch (Exception e) {
@@ -60,7 +60,7 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, Integer>{
             ResultSet rs = ps.executeQuery();
             List<UsersDTO> usersList = new ArrayList<>();
             while (rs.next()) {
-                UsersDTO user = new UsersDTO(rs.getInt("MAKH"), rs.getString("HOTEN"), rs.getString("SDT"),
+                UsersDTO user = new UsersDTO(rs.getString("MAKH"), rs.getString("HOTEN"), rs.getString("SDT"),
                         rs.getString("DIACHI"), rs.getString("TENDANGNHAP"), rs.getString("MATKHAU"),
                         rs.getString("QUYEN"));
                 usersList.add(user);
@@ -72,14 +72,14 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, Integer>{
     }
 
     @Override
-    public UsersDTO getById(Integer id, Connection conn) {
+    public UsersDTO getById(String id, Connection conn) {
         try {
             String sql = "SELECT * FROM khachhang WHERE MAKH = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, id);
+            ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new UsersDTO(rs.getInt("MAKH"), rs.getString("HOTEN"), rs.getString("SDT"),
+                return new UsersDTO(rs.getString("MAKH"), rs.getString("HOTEN"), rs.getString("SDT"),
                         rs.getString("DIACHI"), rs.getString("TENDANGNHAP"), rs.getString("MATKHAU"),
                         rs.getString("QUYEN"));
             }
@@ -100,7 +100,7 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, Integer>{
             ps.setString(4, entity.getUserName());
             ps.setString(5, entity.getPassword());
             ps.setString(6, entity.getRole());
-            ps.setInt(7, entity.getId());
+            ps.setString(7, entity.getId());
             int rowsUpdated = ps.executeUpdate();
             return rowsUpdated > 0;
         } catch (Exception e) {

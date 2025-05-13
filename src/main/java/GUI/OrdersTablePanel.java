@@ -291,7 +291,7 @@ public class OrdersTablePanel extends JPanel {
 
         if (order != null) {
             // Thông tin khách hàng
-            int userID = order.getCustomerId();
+            String userID = order.getCustomerId();
             UsersBUS userBUS = new UsersBUS();
             UsersDTO user = userBUS.getById(userID);
             

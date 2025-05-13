@@ -1,17 +1,17 @@
 package GUI;
 
 public class IdCurrentUser {
-    private static int currentUserId = 1;  
+    private static String currentUserId = "";  
 
-    public IdCurrentUser(int id) {
+    public IdCurrentUser(String id) {
         this.currentUserId = id; 
     }
 
-    public static int getCurrentUserId() {
+    public static String getCurrentUserId() {
         return currentUserId;
     }
 
-    public static void setCurrentUserId(int userId) {
+    public static void setCurrentUserId(String userId) {
         currentUserId = userId;
     }
 }

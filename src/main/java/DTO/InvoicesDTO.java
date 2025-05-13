@@ -6,8 +6,8 @@ import java.util.Date;
 public class InvoicesDTO {
     private int id;
     private Date date;
-    private int customerId;
-    private int employerID;
+    private String customerId;
+    private String employerID;
     private BigDecimal totalPrice;
     private int orderID;
 
@@ -21,7 +21,7 @@ public class InvoicesDTO {
     public InvoicesDTO() {
     }
 
-    public InvoicesDTO(int id, Date date, int customerId, int employerID, BigDecimal totalPrice, int orderID) {
+    public InvoicesDTO(int id, Date date, String customerId, String employerID, BigDecimal totalPrice, int orderID) {
         this.id = id;
         this.date = date;
         this.customerId = customerId;
@@ -30,7 +30,7 @@ public class InvoicesDTO {
         this.orderID = orderID;
     }
 
-    public InvoicesDTO(Date date, int customerId, int employerID, BigDecimal totalPrice, int orderID) {
+    public InvoicesDTO(Date date, String customerId, String employerID, BigDecimal totalPrice, int orderID) {
         this.date = date;
         this.customerId = customerId;
         this.employerID = employerID;
@@ -54,19 +54,19 @@ public class InvoicesDTO {
         this.date = date;
     }
 
-    public int getCustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 
-    public int getEmployerID() {
+    public String getEmployerID() {
         return employerID;
     }
 
-    public void setEmployerID(int employerID) {
+    public void setEmployerID(String employerID) {
         this.employerID = employerID;
     }
 

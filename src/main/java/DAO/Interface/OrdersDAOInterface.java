@@ -16,7 +16,7 @@ public interface OrdersDAOInterface<T, ID> {
     List<T> getAll();
     T getById(ID orderId);
     List<T> getByStatus(String status);
-    List<T> getByCustomerID(ID customerID, Connection conn);
+    List<T> getByCustomerID(String customerID, Connection conn);
     List<ProductsDTO> getByTopLimit(int limit, Date fromDate, Date toDate, Connection conn);
     BigDecimal getDoanhThuTheoThang(int thang, int nam, Connection conn);
 

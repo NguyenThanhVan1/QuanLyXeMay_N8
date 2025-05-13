@@ -8,7 +8,7 @@ import DAO.Database;
 import DAO.UsersDAO;
 import DTO.UsersDTO;
 
-public class UsersBUS implements UsersBUSInterface<UsersDTO, Integer> {
+public class UsersBUS implements UsersBUSInterface<UsersDTO, String> {
     private UsersDAO usersDAO;
     private Connection conn;
 
@@ -33,7 +33,7 @@ public class UsersBUS implements UsersBUSInterface<UsersDTO, Integer> {
     }
 
     @Override
-    public boolean delete(Integer id) {
+    public boolean delete(String id) {
         try {
             this.usersDAO.delete(id, conn);
             return true;
@@ -54,7 +54,7 @@ public class UsersBUS implements UsersBUSInterface<UsersDTO, Integer> {
     }
 
     @Override
-    public UsersDTO getById(Integer id){
+    public UsersDTO getById(String id){
         try {
             return this.usersDAO.getById(id, conn);
         } catch (Exception e) {

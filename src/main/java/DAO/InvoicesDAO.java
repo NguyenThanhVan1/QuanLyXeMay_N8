@@ -19,8 +19,8 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             
             pstmt.setDate(1, new java.sql.Date(invoice.getDate().getTime()));
-            pstmt.setInt(2, invoice.getCustomerId());
-            pstmt.setInt(3, invoice.getEmployerID());
+            pstmt.setString(2, invoice.getCustomerId());
+            pstmt.setString(3, invoice.getEmployerID());
             pstmt.setBigDecimal(4, invoice.getTotalPrice());
             pstmt.setInt(5, invoice.getOrderID());
             
@@ -63,8 +63,8 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
                 InvoicesDTO invoice = new InvoicesDTO();
                 invoice.setId(rs.getInt("MAHD"));
                 invoice.setDate(rs.getDate("NGAYLAP"));
-                invoice.setCustomerId(rs.getInt("MAKH"));
-                invoice.setEmployerID(rs.getInt("MANV"));
+                invoice.setCustomerId(rs.getString("MAKH"));
+                invoice.setEmployerID(rs.getString("MANV"));
                 invoice.setTotalPrice(rs.getBigDecimal("TONGTIEN"));
                 invoice.setOrderID(rs.getInt("MADH"));
                 
@@ -96,8 +96,8 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
                 InvoicesDTO invoice = new InvoicesDTO();
                 invoice.setId(rs.getInt("MAHD"));
                 invoice.setDate(rs.getDate("NGAYLAP"));
-                invoice.setCustomerId(rs.getInt("MAKH"));
-                invoice.setEmployerID(rs.getInt("MANV"));
+                invoice.setCustomerId(rs.getString("MAKH"));
+                invoice.setEmployerID(rs.getString("MANV"));
                 invoice.setTotalPrice(rs.getBigDecimal("TONGTIEN"));
                 invoice.setOrderID(rs.getInt("MADH"));
                 

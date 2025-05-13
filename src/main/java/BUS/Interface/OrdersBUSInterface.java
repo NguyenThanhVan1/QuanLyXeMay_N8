@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface OrdersBUSInterface<T, ID>{
-    List<T> getByCustomerID(ID customerId);
+    List<T> getByCustomerID(String customerId);
 
     List<T> getAll();
 

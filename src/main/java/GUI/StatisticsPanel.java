@@ -227,7 +227,7 @@ public class StatisticsPanel extends JPanel {
         // List<UsersDTO> customers = this.usersBUS.getAll();
         for(OrdersDTO order : this.ordersBUS.getOrdersByFilters(fromDate, toDate, null, null)){
             if(order.getStatus().equals("Đã hoàn thành")){
-                int customerID = order.getCustomerId();
+                String customerID = order.getCustomerId();
                 boolean newCheck = true;
                 for(OrdersDTO orderByCustomer : this.ordersBUS.getByCustomerID(customerID)){
                     if(orderByCustomer.getCreatedDate().before(fromDate)){

@@ -26,7 +26,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
 
             ps.setInt(1, entity.getOrderId());
             ps.setDate(2, new java.sql.Date(entity.getCreatedDate().getTime()));
-            ps.setInt(3, entity.getCustomerId());
+            ps.setString(3, entity.getCustomerId());
             ps.setString(4, entity.getAddress());
             ps.setBigDecimal(5, entity.getTotalAmount());
             ps.setString(6, entity.getStatus());
@@ -67,7 +67,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
                 OrdersDTO order = new OrdersDTO(
                         rs.getInt("MADH"),
                         rs.getDate("NGAYLAP"),
-                        rs.getInt("MAKH"),
+                        rs.getString("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
                         rs.getString("TRANGTHAI")
@@ -95,7 +95,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
                 return new OrdersDTO(
                         rs.getInt("MADH"),
                         rs.getDate("NGAYLAP"),
-                        rs.getInt("MAKH"),
+                        rs.getString("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
                         rs.getString("TRANGTHAI")
@@ -115,7 +115,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setDate(1, new java.sql.Date(entity.getCreatedDate().getTime()));
-            ps.setInt(2, entity.getCustomerId());
+            ps.setString(2, entity.getCustomerId());
             ps.setString(3, entity.getAddress());
             ps.setBigDecimal(4, entity.getTotalAmount());
             ps.setString(5, entity.getStatus());
@@ -144,7 +144,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
                 OrdersDTO order = new OrdersDTO(
                         rs.getInt("MADH"),
                         rs.getDate("NGAYLAP"),
-                        rs.getInt("MAKH"),
+                        rs.getString("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
                         rs.getString("TRANGTHAI")
@@ -160,18 +160,18 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
     }
 
     @Override
-    public List<OrdersDTO> getByCustomerID(Integer customerId, Connection conn) {
+    public List<OrdersDTO> getByCustomerID(String customerId, Connection conn) {
         try {
             String sql = "SELECT * FROM donhang WHERE MAKH = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, customerId);
+            ps.setString(1, customerId);
             ResultSet rs = ps.executeQuery();
             List<OrdersDTO> orders = new ArrayList<>();
             while(rs.next()) {
                 OrdersDTO order = new OrdersDTO(
                         rs.getInt("MADH"),
                         rs.getDate("NGAYLAP"),
-                        rs.getInt("MAKH"),
+                        rs.getString("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
                         rs.getString("TRANGTHAI")
