@@ -11,7 +11,7 @@ import java.util.List;
 import DAO.Interface.ProductsDAOInterface;
 import DTO.ProductsDTO;
 
-public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, Integer> {
+public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, String> {
     private Connection conn;
 
     public ProductsDAO() {
@@ -30,26 +30,44 @@ public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, Integer> {
     }
 
     @Override
-    public boolean delete(Integer id, Connection conn) {
+    public boolean delete(String id, Connection conn) {
         
         return false;
     }
 
     @Override
     public List<ProductsDTO> getAll(Connection conn) {
+        try {
+            String sql = "SELECT * FROM xemay";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            List<ProductsDTO> productsList = new ArrayList<>();
+            while (rs.next()) {
+                String productId = rs.getString("MAXE");
+                String productName = rs.getString("TENXE");
+                String brand = rs.getString("HANGXE");
+                BigDecimal price = rs.getBigDecimal("GIABAN");
+                int quantity = rs.getInt("SOLUONG");
+
+                ProductsDTO productDTO = new ProductsDTO(productId, productName, brand, price, quantity);
+                productsList.add(productDTO);
+            }
+            return productsList;
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi lấy danh sách sản phẩm: " + e.getMessage(), e);
+        }
         
-        return null;
     }
 
     @Override
-    public ProductsDTO getById(Integer id, Connection conn) {
+    public ProductsDTO getById(String id, Connection conn) {
         try {
             String sql = "SELECT * FROM xemay where MAXE = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, id);
+            ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                int productId = rs.getInt("MAXE");
+                String productId = rs.getString("MAXE");
                 String productName = rs.getString("TENXE");
                 String brand = rs.getString("HANGXE");
                 BigDecimal price = rs.getBigDecimal("GIABAN");
@@ -74,7 +92,7 @@ public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, Integer> {
                 ps.setString(2, product.getBrand());
                 ps.setBigDecimal(3, product.getPrice());
                 ps.setInt(4, product.getQuantity());
-                ps.setInt(5, product.getProductId());
+                ps.setString(5, product.getProductId());
                 ps.addBatch();
             }
 
@@ -89,5 +107,18 @@ public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, Integer> {
             }
             throw new RuntimeException("Lỗi khi cập nhật thông tin sản phẩm: " + e.getMessage(), e);
         }
+    }
+
+    public boolean updateQuantity(ProductsDTO entity, Connection conn) {
+        try {
+            String sql = "UPDATE xemay SET SOLUONG = ? WHERE MAXE = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, entity.getQuantity());
+            ps.setString(2, entity.getProductId());
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi khi cập nhật số lượng sản phẩm: " + e.getMessage(), e);
+        } 
     }
 }

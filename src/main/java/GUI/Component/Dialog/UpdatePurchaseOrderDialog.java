@@ -72,7 +72,7 @@ public class UpdatePurchaseOrderDialog extends JDialog {
         super(parent, "Cập Nhật Phiếu Nhập", true); 
         this.purchaseOrderPanel = purchaseOrderPanel; // Lưu trữ PurchaseOrderPanel để sau này gọi reloadPurchaseOrderTable()
         this.currentPurchaseOrder = purchaseOrder; // Lưu trữ phiếu nhập đang được cập nhật
-        this.pendingOrderDetails = purchaseOrderDetailBUS.getPurchaseOrderDetailsByOrderId(purchaseOrder.getId());
+        this.pendingOrderDetails = purchaseOrderDetailBUS.getPurchaseOrderDetailsByOrderId(purchaseOrder.getIdXe());
         initComponents(); // Khởi tạo các thành phần giao diện
         loadPurchaseOrderData(); // Tải dữ liệu của phiếu nhập vào các thành phần giao diện
         setSize(800, 700); // Đặt kích thước của dialog

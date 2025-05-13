@@ -140,7 +140,7 @@ public class DeletePurchaseOrderDialog extends java.awt.Dialog {
     }
 
     private void btnDeleteActionPerformed(ActionEvent evt) {
-        boolean deleted = purchaseOrderBUS.deletePurchaseOrder(purchaseOrderToDelete.getId());
+        boolean deleted = purchaseOrderBUS.deletePurchaseOrder(purchaseOrderToDelete.getIdXe());
         if (deleted) {
             purchaseOrderPanel.deletePurchaseOrder(purchaseOrderToDelete);
             AlertDialog successDeleteAlert = new AlertDialog(this, "Xóa phiếu nhập hàng thành công!");

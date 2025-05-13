@@ -106,8 +106,8 @@ public class BorrowStatistics extends JPanel{
             Map<Long, String> employeesName = new HashMap<>();
 
             for (Employee e : EmployeeBUS.employeeList) {
-                employeeStats.put(e.getId(), new int[4]);
-                employeesName.put(e.getId(), e.getFirstName() + " " + e.getLastName());
+                employeeStats.put(e.getIdXe(), new int[4]);
+                employeesName.put(e.getIdXe(), e.getFirstName() + " " + e.getLastName());
             }
 
             for (QuarterData d : data) {
@@ -198,8 +198,8 @@ public class BorrowStatistics extends JPanel{
             Map<String, String> readerNames = new HashMap<>();
 
             for (ReaderDTO r : ReaderBUS.readerList) {
-                readerStats.put(r.getId(), new int[4]);
-                readerNames.put(r.getId(), r.getLastName() + " " + r.getFirstName());
+                readerStats.put(r.getIdXe(), new int[4]);
+                readerNames.put(r.getIdXe(), r.getLastName() + " " + r.getFirstName());
             }
 
             for (QuarterDataStringId d : data) {
@@ -291,8 +291,8 @@ public class BorrowStatistics extends JPanel{
             Map<Long, String> bookNames = new HashMap<>();
 
             for (BookViewModel b : bookBUS.getAllBooksForDisplay()) {
-                bookStats.put(b.getId(), new int[4]);
-                bookNames.put(b.getId(), b.getName());
+                bookStats.put(b.getIdXe(), new int[4]);
+                bookNames.put(b.getIdXe(), b.getName());
             }
             for (QuarterData d : data) {
                 int quarter = d.getQuarter() - 1;
@@ -389,8 +389,8 @@ public class BorrowStatistics extends JPanel{
             Map<Long, String> bookNames = new HashMap<>();
 
             for (BookViewModel b : bookBUS.getAllBooksForDisplay()) {
-                bookStats.put(b.getId(), new int[4]);
-                bookNames.put(b.getId(), b.getName());
+                bookStats.put(b.getIdXe(), new int[4]);
+                bookNames.put(b.getIdXe(), b.getName());
             }
             for (QuarterData d : data) {
                 int quarter = d.getQuarter() - 1;
@@ -488,8 +488,8 @@ public class BorrowStatistics extends JPanel{
             Map<String, String> readerNames = new HashMap<>();
 
             for (ReaderDTO r : ReaderBUS.readerList) {
-                readerStats.put(r.getId(), new int[4]);
-                readerNames.put(r.getId(), r.getLastName() + " " + r.getFirstName());
+                readerStats.put(r.getIdXe(), new int[4]);
+                readerNames.put(r.getIdXe(), r.getLastName() + " " + r.getFirstName());
             }
 
             for (QuarterDataStringId d : data) {
@@ -591,8 +591,8 @@ public class BorrowStatistics extends JPanel{
             Map<Long, String> employeesName = new HashMap<>();
 
             for (Employee e : EmployeeBUS.employeeList) {
-                employeeStats.put(e.getId(), new int[4]);
-                employeesName.put(e.getId(), e.getFirstName() + " " + e.getLastName());
+                employeeStats.put(e.getIdXe(), new int[4]);
+                employeesName.put(e.getIdXe(), e.getFirstName() + " " + e.getLastName());
             }
 
             for (QuarterData d : data) {

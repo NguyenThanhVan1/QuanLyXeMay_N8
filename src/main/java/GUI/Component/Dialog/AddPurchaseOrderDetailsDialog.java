@@ -197,7 +197,7 @@ public class AddPurchaseOrderDetailsDialog extends JDialog {
         dialog.setVisible(true);
         currentBook = dialog.getSelectedBook();
         if (currentBook != null) {
-            bookIDField.setText(currentBook.getId().toString());
+            bookIDField.setText(currentBook.getIdXe().toString());
             titleLabel.setText("Tên sách: " + currentBook.getName());
             authorLabel.setText("Tác giả: " + currentBook.getAuthorName());
             categoryLabel.setText("Thể loại: " + currentBook.getCategoryName());

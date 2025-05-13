@@ -57,7 +57,7 @@ public class DeletePublisherDialog extends JDialog {
         yesButton.addActionListener(e -> {
             confirmed = true;
             publisherPanel.deletePublisher(publisherToDelete);
-            publisherBUS.deletePublisher(publisherToDelete.getId());
+            publisherBUS.deletePublisher(publisherToDelete.getIdXe());
             dispose();
         });
 

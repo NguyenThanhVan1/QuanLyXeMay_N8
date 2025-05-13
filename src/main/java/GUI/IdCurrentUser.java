@@ -6,6 +6,9 @@ public class IdCurrentUser {
     public IdCurrentUser(String id) {
         this.currentUserId = id; 
     }
+    public IdCurrentUser() {
+        // Default constructor
+    }
 
     public static String getCurrentUserId() {
         return currentUserId;

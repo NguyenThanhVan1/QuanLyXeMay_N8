@@ -207,7 +207,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
             ResultSet rs = ps.executeQuery();
             List<ProductsDTO> products = new ArrayList<>();
             while(rs.next()){
-                ProductsDTO product = new ProductsDTO(rs.getInt("MAXE"),
+                ProductsDTO product = new ProductsDTO(rs.getString("MAXE"),
                 rs.getString("TENXE"),
                 rs.getString("HANGXE"),
                 rs.getBigDecimal("GIABAN"),

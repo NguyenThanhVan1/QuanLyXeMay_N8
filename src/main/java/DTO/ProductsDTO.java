@@ -3,7 +3,7 @@ package DTO;
 import java.math.BigDecimal;
 
 public class ProductsDTO {
-    private int productId; 
+    private String productId; 
     private String productName; 
     private String brand; 
     private BigDecimal price; 
@@ -17,7 +17,7 @@ public class ProductsDTO {
         this.quantity = quantity;
     }
 
-    public ProductsDTO(int productId, String productName, String brand, BigDecimal price, int quantity) {
+    public ProductsDTO(String productId, String productName, String brand, BigDecimal price, int quantity) {
         this.productId = productId;
         this.productName = productName;
         this.brand = brand;
@@ -31,11 +31,11 @@ public class ProductsDTO {
     }
 
     
-    public int getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 

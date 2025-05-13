@@ -50,7 +50,7 @@ public class ProductsBUS implements ProductsBUSInterface<ProductsDTO, Integer> {
     @Override
     public java.util.List<DTO.ProductsDTO> getAll() {
         
-        return null;
+        return this.productDAO.getAll(conn);
     }
     
 }
