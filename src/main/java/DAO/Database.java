@@ -11,7 +11,7 @@ public class Database {
             // Load SQL Server JDBC driver
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             // Kết nối đến SQL Server
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=QLCHXM1;" +
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=Xemayn8;" +
                     "encrypt=true;" +
                     "trustServerCertificate=true";
             String username = "sa"; // tài khoản SQL Server của bạn

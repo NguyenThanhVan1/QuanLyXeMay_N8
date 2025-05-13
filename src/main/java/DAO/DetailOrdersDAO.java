@@ -19,14 +19,13 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
         }
     }
 
-
     @Override
     public boolean create(List<DetailOrdersDTO> detailOrder) {
         try {
             String sql = "INSERT INTO chitietdonhang (MADH, MAXM, SOLUONG, GIATRI, THANHTIEN) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
-    
+
             for (DetailOrdersDTO order : detailOrder) {
                 ps.setInt(1, order.getOrderId());
                 ps.setInt(2, order.getXeId());
@@ -36,7 +35,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
                 ps.addBatch();
             }
             ps.executeBatch();
-    
+
             conn.commit();
             return true;
         } catch (SQLException e) {
@@ -55,7 +54,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
         String sql = "SELECT * FROM chitietdonhang WHERE MADH = ?";
 
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, orderId);
             ResultSet rs = ps.executeQuery();
@@ -66,8 +65,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
                         rs.getInt("MAXM"),
                         rs.getInt("SOLUONG"),
                         rs.getBigDecimal("GIATRI"),
-                        rs.getBigDecimal("THANHTIEN")
-                );
+                        rs.getBigDecimal("THANHTIEN"));
                 detailOrders.add(detailOrder);
             }
 
@@ -92,12 +90,11 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
                         rs.getInt("MAXM"),
                         rs.getInt("SOLUONG"),
                         rs.getBigDecimal("GIATRI"),
-                        rs.getBigDecimal("THANHTIEN")
-                );
+                        rs.getBigDecimal("THANHTIEN"));
                 detailOrders.add(detailOrder);
             }
             return detailOrders;
-            
+
         } catch (SQLException e) {
             throw new RuntimeException("Lỗi khi lấy danh sách chi tiết đơn hàng: " + e.getMessage(), e);
         }
@@ -112,7 +109,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
     public boolean delete(Integer orderId) {
         String sql = "DELETE FROM chitietdonhang WHERE MADH = ?";
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, orderId);
 
@@ -122,5 +119,19 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
         } catch (SQLException e) {
             throw new RuntimeException("Lỗi khi xóa chi tiết đơn hàng: " + e.getMessage(), e);
         }
+    }
+
+    public static void themChiTietDonHang(String madh, String maxe, int soLuong, int donGia, int thanhTien)
+            throws SQLException {
+        Connection conn = Database.getConnection();
+
+        String sql = "INSERT INTO CHITIETDONHANG (MADH, MAXE, SOLUONG, DONGIA, THANHTIEN) VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, madh);
+        ps.setString(2, maxe);
+        ps.setInt(3, soLuong);
+        ps.setInt(4, donGia);
+        ps.setInt(5, thanhTien);
+        ps.executeUpdate();
     }
 }

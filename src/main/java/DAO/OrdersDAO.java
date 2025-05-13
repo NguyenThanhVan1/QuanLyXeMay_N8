@@ -16,13 +16,13 @@ import java.util.function.BiConsumer;
 
 import javax.swing.text.html.HTMLDocument.HTMLReader.PreAction;
 
-public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
+public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer> {
 
     @Override
     public boolean create(OrdersDTO entity) {
         String sql = "INSERT INTO donhang (MADH, NGAYLAP, MAKH, DIACHI, TONGTIEN, TRANGTHAI) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, entity.getOrderId());
             ps.setDate(2, new java.sql.Date(entity.getCreatedDate().getTime()));
@@ -43,7 +43,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
     public boolean delete(Integer id) {
         String sql = "DELETE FROM donhang WHERE MADH = ?";
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             ps.executeUpdate();
@@ -60,8 +60,8 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
         String sql = "SELECT * FROM donhang";
 
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 OrdersDTO order = new OrdersDTO(
@@ -70,8 +70,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
                         rs.getInt("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
-                        rs.getString("TRANGTHAI")
-                );
+                        rs.getString("TRANGTHAI"));
                 list.add(order);
             }
 
@@ -86,7 +85,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
     public OrdersDTO getById(Integer id) {
         String sql = "SELECT * FROM donhang WHERE MADH = ?";
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -98,8 +97,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
                         rs.getInt("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
-                        rs.getString("TRANGTHAI")
-                );
+                        rs.getString("TRANGTHAI"));
             }
 
         } catch (SQLException e) {
@@ -130,12 +128,12 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
     }
 
     @Override
-    public List<OrdersDTO> getByStatus(String status){
+    public List<OrdersDTO> getByStatus(String status) {
         List<OrdersDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM donhang WHERE TRANGTHAI = ?";
 
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, status);
             ResultSet rs = ps.executeQuery();
@@ -147,8 +145,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
                         rs.getInt("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
-                        rs.getString("TRANGTHAI")
-                );
+                        rs.getString("TRANGTHAI"));
                 list.add(order);
             }
 
@@ -167,15 +164,14 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
             ps.setInt(1, customerId);
             ResultSet rs = ps.executeQuery();
             List<OrdersDTO> orders = new ArrayList<>();
-            while(rs.next()) {
+            while (rs.next()) {
                 OrdersDTO order = new OrdersDTO(
                         rs.getInt("MADH"),
                         rs.getDate("NGAYLAP"),
                         rs.getInt("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
-                        rs.getString("TRANGTHAI")
-                );
+                        rs.getString("TRANGTHAI"));
                 orders.add(order);
             }
             return orders;
@@ -185,17 +181,16 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
     }
 
     @Override
-    public List<ProductsDTO> getByTopLimit(int limit, Date fromDate, Date toDate, Connection conn){
+    public List<ProductsDTO> getByTopLimit(int limit, Date fromDate, Date toDate, Connection conn) {
         try {
             String sql = "SELECT xm.*, SUM(ct.soluong) AS total " +
-            "FROM xemay xm, chitietdonhang ct, donhang dh " +
-            "WHERE xm.maxe = ct.maxe AND dh.madh = ct.madh AND dh.trangthai = 'Đã hoàn thành' " +
-            "AND dh.ngaylap BETWEEN ? AND ? " +
-            "GROUP BY ct.maxe " +
-            "ORDER BY total DESC " +
-            "LIMIT ?;";
+                    "FROM xemay xm, chitietdonhang ct, donhang dh " +
+                    "WHERE xm.maxe = ct.maxe AND dh.madh = ct.madh AND dh.trangthai = 'Đã hoàn thành' " +
+                    "AND dh.ngaylap BETWEEN ? AND ? " +
+                    "GROUP BY ct.maxe " +
+                    "ORDER BY total DESC " +
+                    "LIMIT ?;";
 
-            
             PreparedStatement ps = conn.prepareStatement(sql);
 
             // System.out.println(fromDate);
@@ -203,25 +198,24 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
             ps.setDate(1, new java.sql.Date(fromDate.getTime()));
             ps.setDate(2, new java.sql.Date(toDate.getTime()));
             ps.setInt(3, limit);
-            
+
             ResultSet rs = ps.executeQuery();
             List<ProductsDTO> products = new ArrayList<>();
-            while(rs.next()){
+            while (rs.next()) {
                 ProductsDTO product = new ProductsDTO(rs.getInt("MAXE"),
-                rs.getString("TENXE"),
-                rs.getString("HANGXE"),
-                rs.getBigDecimal("GIABAN"),
-                rs.getInt("SOLUONG"));
+                        rs.getString("TENXE"),
+                        rs.getString("HANGXE"),
+                        rs.getBigDecimal("GIABAN"),
+                        rs.getInt("SOLUONG"));
                 products.add(product);
             }
             // System.out.println(products);
             return products;
-           
+
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi lấy top xe" + e.getMessage(), e);
         }
     }
-
 
     @Override
     public BigDecimal getDoanhThuTheoThang(int thang, int nam, Connection conn) {
@@ -237,5 +231,31 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
             throw new RuntimeException("Lỗi khi lấy doanh thu theo tháng: " + e.getMessage(), e);
         }
         return BigDecimal.ZERO;
+    }
+
+    public static String themHoacLayDonHangTam(String makh, String diachi) throws SQLException {
+        Connection conn = Database.getConnection();
+
+        // Kiểm tra xem đã có đơn hàng tạm thời chưa (giả sử TRANGTHAI =
+        // 'CHUA_XAC_NHAN')
+        String query = "SELECT MADH FROM DONHANG WHERE MAKH = ? AND status = 'CHUA_XAC_NHAN'";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1, makh);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            return rs.getString("MADH");
+        }
+
+        // Nếu chưa có thì tạo mới
+        String madh = "DH" + System.currentTimeMillis(); // hoặc dùng UUID, sequence tùy hệ thống
+        String insert = "INSERT INTO DONHANG (MADH, NGAYLAP, MAKH, DIACHI, TONGTIEN, status) VALUES (?, GETDATE(), ?, ?, 0, 'CHUA_XAC_NHAN')";
+        ps = conn.prepareStatement(insert);
+        ps.setString(1, madh);
+        ps.setString(2, makh);
+        ps.setString(3, diachi);
+        ps.executeUpdate();
+
+        return madh;
     }
 }

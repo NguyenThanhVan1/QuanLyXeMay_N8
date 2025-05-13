@@ -10,22 +10,35 @@ import DTO.XeMay;
 
 public class TrangChu extends JFrame {
     private JPanel panelXe;
+    private String makh;
+    private String dc;
     private JTextField txtTen, txtGiaTu, txtGiaDen;
     private ArrayList<XeMay> danhSachXe = new ArrayList<>();
 
-    public TrangChu() {
+    public TrangChu(String makh, String dc) {
+        this.makh = makh;
+        this.dc = dc;
+        String makh2 = makh;
+        String dc2 = dc;
         setTitle("Trang Chủ Cửa Hàng Xe");
-        setSize(1600, 900);
+        setSize(1600, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         // Panel hiển thị xe
         panelXe = new JPanel(new GridLayout(0, 4, 15, 15));
+        // Hiển thị thông tin khách hàng
+        JLabel lblKhachHang = new JLabel("Mã KH: " + makh2);
+        lblKhachHang.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblDiaChi = new JLabel("Địa chỉ: " + dc2);
+        lblDiaChi.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         panelXe.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         JScrollPane scrollPane = new JScrollPane(panelXe);
 
         // Panel tìm kiếm
-        JPanel panelTimKiem = createSearchPanel();
+        JPanel panelTimKiem = createSearchPanel(lblKhachHang, lblDiaChi);
 
         // Chia trái/phải
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panelTimKiem, scrollPane);
@@ -35,7 +48,9 @@ public class TrangChu extends JFrame {
         loadData();
     }
 
-    private JPanel createSearchPanel() {
+    private JPanel createSearchPanel(JLabel makh, JLabel dc) {
+        JLabel ma = makh;
+        JLabel dckh = dc;
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm"));
@@ -71,6 +86,11 @@ public class TrangChu extends JFrame {
         btnTim.setBackground(new Color(0, 123, 255)); // Màu xanh dương
         btnTim.setForeground(Color.WHITE);
         btnTim.setMaximumSize(new Dimension(200, 35));
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(ma);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(dckh);
+        panel.add(Box.createVerticalStrut(10));
 
         // Thêm các thành phần tìm kiếm vào panel
         panel.add(Box.createVerticalStrut(10));
@@ -124,6 +144,22 @@ public class TrangChu extends JFrame {
 
         // Sự kiện tìm kiếm
         btnTim.addActionListener(e -> locVaHienThiXe());
+        btnDangXuat.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                    this, "Bạn có chắc chắn muốn đăng xuất?", "Đăng xuất", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                dispose(); // Đóng cửa sổ hiện tại
+                new Login().setVisible(true); // Hiển thị form đăng nhập
+            }
+        });
+        btnXemDonHang.addActionListener(e -> {
+            XemDonHangDialog dialog = new XemDonHangDialog(this, makh.getText(), "CHUA_XAC_NHAN");
+            dialog.setVisible(true);
+        });
+        btnXemLichSu.addActionListener(e -> {
+            XemDonHangDialog dialog = new XemDonHangDialog(this, makh.getText(), "DA_XAC_NHAN");
+            dialog.setVisible(true);
+        });
 
         return panel;
     }
@@ -210,13 +246,13 @@ public class TrangChu extends JFrame {
         // Sự kiện click panel
         p.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                new ChiTietXeDialog(TrangChu.this, xe).setVisible(true);
+                new ChiTietXeDialog(TrangChu.this, xe, makh, dc).setVisible(true);
             }
         });
         return p;
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new TrangChu().setVisible(true));
+        SwingUtilities.invokeLater(() -> new TrangChu("1", "2").setVisible(true));
     }
 }

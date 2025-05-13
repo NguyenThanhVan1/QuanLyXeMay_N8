@@ -3,11 +3,15 @@ package GUI;
 import DTO.XeMay;
 
 import javax.swing.*;
+
 import java.awt.*;
+
+import DAO.DetailOrdersDAO;
+import DAO.OrdersDAO;
 
 public class ChiTietXeDialog extends JDialog {
 
-    public ChiTietXeDialog(JFrame parent, XeMay xe) {
+    public ChiTietXeDialog(JFrame parent, XeMay xe, String makh, String dc) {
         super(parent, "Chi Tiết Xe", true);
         setLayout(new BorderLayout());
         setSize(450, 300); // Tăng chiều rộng để chứa ảnh
@@ -55,8 +59,20 @@ public class ChiTietXeDialog extends JDialog {
 
         JButton btnThemGio = new JButton("Thêm vào giỏ hàng");
         btnThemGio.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Đã thêm vào giỏ hàng!");
-            dispose(); // Đóng dialog
+            int soLuong = 1; // Giả định số lượng mặc định là 1
+            int donGia = xe.getGiaBan();
+            int thanhTien = soLuong * donGia;
+
+            // Gọi DAO để thêm đơn hàng và chi tiết
+            try {
+                String madh = OrdersDAO.themHoacLayDonHangTam(makh, dc); // tạo hoặc lấy mã đơn hàng tạm thời
+                DetailOrdersDAO.themChiTietDonHang(madh, xe.getMaXe(), soLuong, donGia, thanhTien);
+                JOptionPane.showMessageDialog(this, "Đã thêm vào giỏ hàng!");
+                dispose();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Lỗi khi thêm vào giỏ hàng!");
+            }
         });
 
         // Thiết lập chiều cao cho nút

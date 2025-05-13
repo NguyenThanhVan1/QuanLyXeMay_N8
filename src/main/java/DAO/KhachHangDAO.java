@@ -202,4 +202,41 @@ public class KhachHangDAO {
 
         return newId;
     }
+
+    public static KhachHangDTO getMakhAndDiachi(String username, String password) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = Database.getConnection();
+            String sql = "SELECT MAKH, DIACHI FROM KHACHHANG WHERE TENDANGNHAP = ? AND MATKHAU = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                KhachHangDTO kh = new KhachHangDTO();
+                kh.setMakh(rs.getString("MAKH"));
+                kh.setDiachi(rs.getString("DIACHI"));
+                return kh;
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(KhachHangDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
 }
