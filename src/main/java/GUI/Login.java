@@ -450,12 +450,12 @@ public class Login extends JFrame {
 
             // Đăng nhập khách hàng (ví dụ đơn giản)
             if (checkCustomerLogin(username, password)) {
-                new TrangChu().setVisible(true);
                 JOptionPane.showMessageDialog(this,
                         "Đăng nhập khách hàng thành công!",
                         "Thông báo",
                         JOptionPane.INFORMATION_MESSAGE);
                 // openCustomerPanel();
+                new TrangChu().setVisible(true);
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this,

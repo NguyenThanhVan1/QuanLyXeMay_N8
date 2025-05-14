@@ -3,6 +3,9 @@ package GUI.Customer;
 import javax.swing.JFrame;
 
 public class TrangChu extends JFrame{
+    public TrangChu() {
+        new MainFrame().setVisible(true);
+    }
     public static void main(String[] args) {
         // Thiết lập look and feel hiện đại
         try {

@@ -1,17 +1,18 @@
 package GUI.Customer;
 
+import BUS.KhachHangBUS;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Objects;
-
 public class MainFrame extends JFrame {
     JPanel contentPanel;
     private SanPhamPanel sanPhamPanel;
     private GioHangPanel gioHangPanel;
     private ThongTinPanel thongTinPanel;
     private DoiMatKhauPanel doiMatKhauPanel;
+    private KhachHangBUS khBUS = new KhachHangBUS();
     CardLayout cardLayout;
     
     // Các thành phần mới cho giao diện hiện đại
