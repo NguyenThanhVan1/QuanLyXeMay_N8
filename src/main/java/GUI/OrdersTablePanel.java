@@ -9,6 +9,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import BUS.DetailInvoicesBUS;
 import BUS.DetailOrdersBUS;
 import BUS.InvoicesBUS;
+import BUS.NhanVienBUS;
 import BUS.OrdersBUS;
 import BUS.ProductsBUS;
 import BUS.UsersBUS;
@@ -16,11 +17,13 @@ import DAO.UsersDAO;
 import DTO.DetailInvoicesDTO;
 import DTO.DetailOrdersDTO;
 import DTO.InvoicesDTO;
+import DTO.NhanVienDTO;
 import DTO.OrdersDTO;
 import DTO.ProductsDTO;
 import DTO.UsersDTO;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -70,11 +73,13 @@ public class OrdersTablePanel extends JPanel {
             }
         });
 
-        // Tùy chỉnh header của bảng
+        // Thiết lập header
         JTableHeader header = ordersTable.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        header.setBackground(Color.WHITE); // Bootstrap primary
-        header.setForeground(Color.BLACK); // Chữ màu trắng cho header
+        header.setBackground(Color.WHITE);
+        header.setForeground(new Color(33, 37, 41));
+        // Căn giữa tất cả tiêu đề cột
+        ((DefaultTableCellRenderer)header.getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 
         // Tùy chỉnh renderer cho cột "Chi Tiết" và "Cập Nhật"
         ordersTable.getColumnModel().getColumn(6).setCellRenderer(new ButtonRenderer("Chi Tiết", new Color(40, 167, 69))); // Xanh lá
@@ -84,6 +89,7 @@ public class OrdersTablePanel extends JPanel {
         tableScrollPane.setBorder(BorderFactory.createLineBorder(new Color(206, 212, 218))); // Viền bảng
 
         add(tableScrollPane, BorderLayout.CENTER);
+        
 
         loadTableData();
     }
@@ -99,46 +105,80 @@ public class OrdersTablePanel extends JPanel {
         return instance;
     }
     
-    // Renderer cho các nút
     private static class ButtonRenderer extends JButton implements TableCellRenderer {
         private Color backgroundColor;
+        private boolean isEnabled = true;
+        private boolean isSelected = false;
+        private String text;
 
         public ButtonRenderer(String text, Color backgroundColor) {
             this.backgroundColor = backgroundColor;
-            setText(text);
-            setFont(new Font("Segoe UI", Font.BOLD, 12));
-            setBackground(backgroundColor); // Màu nền của nút
-            setForeground(Color.WHITE); // Chữ màu trắng
-            setFocusPainted(false);
-            setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(backgroundColor.darker(), 1), // Viền đậm hơn màu nền
-                    BorderFactory.createEmptyBorder(5, 10, 5, 10) // Padding bên trong
-            ));
-            setContentAreaFilled(true);
+            this.text = text;
             setOpaque(true);
+            setBorderPainted(false);
+            setContentAreaFilled(false); // Quan trọng: Tắt vẽ mặc định
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, 
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            this.text = (value == null) ? "" : value.toString();
+            this.isSelected = isSelected;
+            
+            // Kiểm tra trạng thái đơn hàng để quyết định bật/tắt nút
             String status = table.getValueAt(row, 5).toString();
-
-            if((status.equals("Đã hoàn thành") || status.equals("Đã hủy")) && column == 7) {
-                setEnabled(false); // Vô hiệu hóa nút nếu đơn hàng đã hoàn thành
-            } else {
-                setEnabled(true); // Kích hoạt nút nếu đơn hàng chưa hoàn thành
-            }
-
-            if (isSelected) {
-                setBackground(backgroundColor.darker()); // Màu đậm hơn khi chọn
-            } else {
-                setBackground(backgroundColor); // Màu mặc định
-            }
+            this.isEnabled = !((status.equals("Đã hoàn thành") || status.equals("Đã hủy")) && column == 7);
+            
             return this;
         }
+        
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            
+            int width = getWidth();
+            int height = getHeight();
+            
+            // Quyết định màu nền dựa trên trạng thái
+            Color buttonColor;
+            if (!isEnabled) {
+                buttonColor = new Color(200, 200, 200); // Xám nhạt cho nút vô hiệu
+            } else if (isSelected) {
+                buttonColor = backgroundColor.darker(); // Tối hơn khi được chọn
+            } else {
+                buttonColor = backgroundColor;
+            }
+            
+            // Vẽ nền nút với góc bo tròn
+            g2d.setColor(buttonColor);
+            g2d.fillRoundRect(0, 0, width, height, 8, 8);
+            
+            // Vẽ viền
+            g2d.setColor(buttonColor.darker());
+            g2d.drawRoundRect(0, 0, width - 1, height - 1, 8, 8);
+            
+            // Vẽ text
+            FontMetrics fm = g2d.getFontMetrics();
+            Rectangle2D r = fm.getStringBounds(text, g2d);
+            int x = (width - (int) r.getWidth()) / 2;
+            int y = (height - (int) r.getHeight()) / 2 + fm.getAscent();
+            
+            g2d.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            
+            if (isEnabled) {
+                g2d.setColor(Color.WHITE);
+            } else {
+                g2d.setColor(new Color(150, 150, 150)); // Màu text nhạt hơn cho nút vô hiệu
+            }
+            
+            g2d.drawString(text, x, y);
+            g2d.dispose();
+        }
     }
-
-    private void loadTableData() {
+    public void loadTableData() {
         List<OrdersDTO> ordersData = ordersBUS.getAll(); // Giả sử phương thức này trả về danh sách dữ liệu đơn hàng
+        System.out.println(ordersData); 
         tableModel.setRowCount(0); // Xóa dữ liệu cũ trong bảng
         for (OrdersDTO order : ordersData) {
             Object[] rowData = {
@@ -228,16 +268,16 @@ public class OrdersTablePanel extends JPanel {
             // Đổi màu trạng thái tùy theo nội dung
             Color statusColor;
             switch (order.getStatus().toLowerCase()) {
-                case "hoàn thành":
+                case "Đã hoàn thành":
                     statusColor = new Color(46, 204, 113); // Xanh lá
                     break;
-                case "đang xử lý":
+                case "Đang giao hàng":
                     statusColor = new Color(52, 152, 219); // Xanh dương
                     break; 
-                case "đã hủy":
+                case "Đã hủy":
                     statusColor = new Color(231, 76, 60); // Đỏ
                     break;
-                case "chờ xác nhận":
+                case "Chờ xử lý":
                     statusColor = new Color(243, 156, 18); // Cam
                     break;
                 default:
@@ -596,8 +636,10 @@ public class OrdersTablePanel extends JPanel {
             
             // Nếu người dùng chọn YES
             if (option == JOptionPane.YES_OPTION) {
+                String statusBefore = order.getStatus();
                 order.setStatus("Đã hủy");
-                ordersBUS.update(order);
+                ordersBUS.update(order, statusBefore);
+                
                 JOptionPane.showMessageDialog(updateDialog, "Đã xác nhận hủy đơn hàng!");
                 updateDialog.dispose();
 
@@ -618,14 +660,14 @@ public class OrdersTablePanel extends JPanel {
                 //tạo hóa đơn
                 order.setStatus("Đã hoàn thành");
                 OrdersBUS ordersBUS = new OrdersBUS();
-                if(!ordersBUS.update(order)){
+                if(!ordersBUS.update(order, "")){
                     JOptionPane.showMessageDialog(updateDialog, "Cập nhật thất bại!");
                     return;
                 }
 
             } else {
                 order.setStatus("Đang giao hàng");
-                ordersBUS.update(order);
+                ordersBUS.update(order, "");
             }
 
             JOptionPane.showMessageDialog(updateDialog, "Đã xác nhận cập nhật!");
@@ -780,11 +822,12 @@ public class OrdersTablePanel extends JPanel {
             paymentDetailsPanel.setBackground(Color.WHITE);
     
             JLabel invoiceIdLabel = createInfoLabel("Mã hóa đơn:", String.valueOf(invoice.getId()), normalFont, infoFont);
-            JLabel orderIdLabel = createInfoLabel("Mã đơn hàng:", String.valueOf(invoice.getId()), normalFont, infoFont);
+            JLabel orderIdLabel = createInfoLabel("Mã đơn hàng:", String.valueOf(orderId), normalFont, infoFont);
     
             // Fetch employee info
-            UsersDTO employee = userBUS.getById(invoice.getEmployerID());
-            JLabel employeeLabel = createInfoLabel("Nhân viên:", employee.getName(), normalFont, infoFont);
+            NhanVienBUS nvBUS = new NhanVienBUS();
+            NhanVienDTO employee = nvBUS.get(invoice.getEmployerID());
+            JLabel employeeLabel = createInfoLabel("Nhân viên:", employee.getHoten(), normalFont, infoFont);
     
             // Format total amount
             NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
@@ -929,4 +972,5 @@ public class OrdersTablePanel extends JPanel {
         invoiceDialog.setVisible(true);
     }
 
+    
 }

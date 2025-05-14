@@ -14,12 +14,12 @@ public class DetailInvoicesDAO  implements DetailInvoicesDAOInterface<DetailInvo
     public void create(List<DetailInvoicesDTO> detailInvoices, Connection conn) {
         try {
             // System.out.println(detailInvoices);
-            String sql = "INSERT INTO chitiethoadon (MAHD, MAXE, SOLUONG, DONGGIA, THANHTIEN) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO chitiethoadon (MAHD, MAXE, SOLUONG, DONGIA, THANHTIEN) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
             for(DetailInvoicesDTO detail : detailInvoices) {
                 preparedStatement.setInt(1, detail.getOrderID());
-                preparedStatement.setInt(2, detail.getProductID());
+                preparedStatement.setString(2, detail.getProductID());
                 preparedStatement.setInt(3, detail.getQuantity());
                 preparedStatement.setBigDecimal(4, detail.getPrice());
                 preparedStatement.setBigDecimal(5, detail.getTotalPrice());
@@ -52,9 +52,9 @@ public class DetailInvoicesDAO  implements DetailInvoicesDAOInterface<DetailInvo
             while (rs.next()) {
                 DetailInvoicesDTO detailInvoice = new DetailInvoicesDTO();
                 detailInvoice.setOrderID(rs.getInt("MAHD"));
-                detailInvoice.setProductID(rs.getInt("MAXE"));
+                detailInvoice.setProductID(rs.getString("MAXE"));
                 detailInvoice.setQuantity(rs.getInt("SOLUONG"));
-                detailInvoice.setPrice(rs.getBigDecimal("DONGGIA"));
+                detailInvoice.setPrice(rs.getBigDecimal("DONGIA"));
                 detailInvoice.setTotalPrice(rs.getBigDecimal("THANHTIEN"));
                 detailInvoices.add(detailInvoice);
             }

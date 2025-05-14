@@ -524,30 +524,7 @@ public class SanPhamPanel extends JPanel {
     }
 
     private List<ProductsDTO> getFilteredProducts() {
-        String keyword = txtTimKiem.getText().toLowerCase();
-        String loai = (String) cboLoai.getSelectedItem();
-        String giaOption = (String) cboGia.getSelectedItem();
-        
-        List<ProductsDTO> filteredList = new ArrayList<>();
-        
-        for (ProductsDTO sp : danhSachSanPham) {
-            // Filter by keyword
-            boolean matchKeyword = keyword.isEmpty() || 
-                                 sp.getTen().toLowerCase().contains(keyword) || 
-                                 sp.getMa().toLowerCase().contains(keyword);
-            
-            // Filter by category
-            boolean matchLoai = loai.equals("Tất cả") || sp.getLoai().equals(loai);
-            
-            // Filter by price
-            boolean matchGia = giaOption.equals("Tất cả") || checkPriceRange(sp.getGia(), giaOption);
-            
-            if (matchKeyword && matchLoai && matchGia) {
-                filteredList.add(sp);
-            }
-        }
-        
-        return filteredList;
+        return null;
     }
     
     private boolean checkPriceRange(long gia, String giaOption) {

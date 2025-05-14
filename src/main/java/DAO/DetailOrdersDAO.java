@@ -65,7 +65,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
                         rs.getInt("MADH"),
                         rs.getString("MAXE"),
                         rs.getInt("SOLUONG"),
-                        rs.getBigDecimal("GIATRI"),
+                        rs.getBigDecimal("DONGIA"),
                         rs.getBigDecimal("THANHTIEN")
                 );
                 detailOrders.add(detailOrder);

@@ -8,7 +8,7 @@ import BUS.Interface.ProductsBUSInterface;
 import DAO.ProductsDAO;
 import DTO.ProductsDTO;
 
-public class ProductsBUS implements ProductsBUSInterface<ProductsDTO, Integer> {
+public class ProductsBUS implements ProductsBUSInterface<ProductsDTO, String> {
     private Connection conn;
     private ProductsDAO productDAO;
     
@@ -35,13 +35,13 @@ public class ProductsBUS implements ProductsBUSInterface<ProductsDTO, Integer> {
     }
 
     @Override
-    public boolean delete(Integer id) {
+    public boolean delete(String id) {
         
         return false;
     }
 
     @Override
-    public DTO.ProductsDTO getById(Integer id) {
+    public DTO.ProductsDTO getById(String id) {
         try {
             return this.productDAO.getById(id, conn);
         } catch (Exception e) {

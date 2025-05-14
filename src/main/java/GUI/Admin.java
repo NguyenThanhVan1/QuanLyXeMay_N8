@@ -29,6 +29,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import BUS.OrdersBUS;
 
@@ -77,6 +79,22 @@ public class Admin {
 	}
 
 	public Admin() {
+		// Xóa tất cả các thuộc tính đã đặt trong Login
+    UIManager.put("Button.background", null);
+    UIManager.put("Button.foreground", null);
+    UIManager.put("Panel.background", null);
+    UIManager.put("OptionPane.background", null);
+    UIManager.put("OptionPane.messageForeground", null);
+    UIManager.put("TextField.background", null);
+    UIManager.put("TextField.foreground", null);
+    UIManager.put("Label.foreground", null);
+    
+    // Thiết lập lại Look and Feel mặc định
+    try {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
 		initialize();
 	}
 
@@ -268,7 +286,7 @@ public class Admin {
 		this.homePagePanel = new HomePagePanel();
 		contentPanel.add(this.homePagePanel, "HomePagePanel");
 		// Add Orders panel
-		this.ordersPanel = new Orders();
+		this.ordersPanel = Orders.getInstance();
 		contentPanel.add(ordersPanel, "OrdersPanel");
 
 		// Add Statistics panel
@@ -296,6 +314,7 @@ public class Admin {
 
 		// Add ActionListener to "Đơn hàng" button
 		btnDonHang.addActionListener(e -> {
+			Orders.getInstance().reRender(); // Gọi lại phương thức reRender() để cập nhật lại bảng
 			setActiveButton(btnDonHang);
 			n.show(contentPanel, "OrdersPanel");
 		});

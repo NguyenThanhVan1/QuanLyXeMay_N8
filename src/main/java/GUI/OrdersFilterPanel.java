@@ -89,12 +89,24 @@ public class OrdersFilterPanel extends JPanel {
         sortComboBox.setBackground(Color.WHITE);
         
         // Nút lọc
-        JButton filterButton = new JButton("Lọc");
-        filterButton.setPreferredSize(BUTTON_SIZE);
-        filterButton.setBackground(PRIMARY_BLUE);
+        JButton filterButton = new JButton("Lọc") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(0, 120, 215));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 5, 5);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
         filterButton.setForeground(Color.WHITE);
-        filterButton.setFont(BOLD_FONT);
-        filterButton.setFocusPainted(false);
+        filterButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        filterButton.setBorderPainted(false);
+        filterButton.setContentAreaFilled(false); // Tắt tô màu vùng nội dung mặc định
+        filterButton.setMaximumSize(new Dimension(150, 40));
+        filterButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        filterButton.setFocusPainted(false); 
         filterButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         // Thêm vào panel lọc (ROW 1)
@@ -132,27 +144,52 @@ public class OrdersFilterPanel extends JPanel {
         searchField.setToolTipText("Tìm kiếm đơn hàng theo ID...");
         
         // Nút tìm kiếm
-        JButton searchButton = new JButton("Tìm");
-        searchButton.setPreferredSize(BUTTON_SIZE);
-        searchButton.setBackground(PRIMARY_BLUE);
+        JButton searchButton = new JButton("Tìm") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(0, 120, 215));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 5, 5);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
         searchButton.setForeground(Color.WHITE);
-        searchButton.setFont(BOLD_FONT);
-        searchButton.setFocusPainted(false);
+        searchButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        searchButton.setBorderPainted(false);
+        searchButton.setContentAreaFilled(false); // Tắt tô màu vùng nội dung mặc định
+        searchButton.setMaximumSize(new Dimension(150, 40));
+        searchButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        searchButton.setFocusPainted(false); 
         searchButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        // searchButton.addActionListener(e -> handleSearchID(searchButton));
         
         // Nút xóa thay đổi
-        JButton deleteChangeButton = new JButton("Xóa thay đổi");
-        deleteChangeButton.setPreferredSize(new Dimension(120, 35));
-        deleteChangeButton.setBackground(PRIMARY_RED);
+        JButton deleteChangeButton = new JButton("Xóa thay đổi") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(0, 120, 215));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 5, 5);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
         deleteChangeButton.setForeground(Color.WHITE);
-        deleteChangeButton.setFont(BOLD_FONT);
-        deleteChangeButton.setFocusPainted(false);
+        deleteChangeButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        deleteChangeButton.setBorderPainted(false);
+        deleteChangeButton.setContentAreaFilled(false); // Tắt tô màu vùng nội dung mặc định
+        deleteChangeButton.setMaximumSize(new Dimension(150, 40));
+        deleteChangeButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        deleteChangeButton.setFocusPainted(false); 
         deleteChangeButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         // Thêm vào panel tìm kiếm (ROW 2)
         searchRow.add(searchLabel);
         searchRow.add(searchField);
-        searchRow.add(searchButton);
+        searchRow.add(deleteChangeButton);
         searchRow.add(Box.createRigidArea(new Dimension(SPACING * 5, 0)));
         searchRow.add(deleteChangeButton);
         
@@ -164,7 +201,7 @@ public class OrdersFilterPanel extends JPanel {
         add(mainPanel, BorderLayout.NORTH);
         
         // Thêm sự kiện tìm kiếm
-        handleSearchID(searchButton);
+        handleSearchID(deleteChangeButton);
         handleFilter(filterButton);
         handleDeleteFilter(deleteChangeButton);
     }

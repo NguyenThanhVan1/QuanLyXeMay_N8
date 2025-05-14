@@ -90,7 +90,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
     }
 
     @Override
-    public boolean update(OrdersDTO order) {       
+    public boolean update(OrdersDTO order, String statusBefore) {       
         if(order.getStatus().equals("Đã hoàn thành")){
             try {
                 this.conn.setAutoCommit(false);
@@ -102,6 +102,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
                     total = total.add(detailOrder.getTotalPrice()); 
                 }
 
+                System.out.println("Nhân viên đang đăng nhập admin: " + IdCurrentUser.getCurrentUserId());
                 InvoicesDTO invoice = new InvoicesDTO(date, order.getCustomerId(), IdCurrentUser.getCurrentUserId(), total, order.getOrderId());
                 // System.out.println("chưa tạo" + invoice.getId());
                 this.invoicesDAO.create(invoice, conn);
@@ -115,7 +116,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
                     // System.out.println(detailInvoice);
                 }
                 this.detailInvoicesDAO.create(invoicesList, conn);
-
+                // order.setStatus("Đang giao hàng");
                 this.ordersDAO.update(order, conn);
 
                 conn.commit();
@@ -134,16 +135,16 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
             try {
                 this.conn.setAutoCommit(false);
                 List<DetailOrdersDTO> list = this.detailOrdersDAO.getById(order.getOrderId()); 
-                List<ProductsDTO> productList = new ArrayList<>();
-
-                for(DetailOrdersDTO detailOrder : list) {
-                    ProductsDTO product = this.productsDAO.getById(detailOrder.getXeId(), conn);
-                    int quantity = product.getQuantity() + detailOrder.getQuantity(); 
-                    product.setQuantity(quantity); 
-                    productList.add(product);
+                if(statusBefore.equals("Đang giao hàng")){
+                    List<ProductsDTO> productList = new ArrayList<>();
+                    for(DetailOrdersDTO detailOrder : list) {
+                        ProductsDTO product = this.productsDAO.getById(detailOrder.getXeId(), conn);
+                        int quantity = product.getQuantity() + detailOrder.getQuantity(); 
+                        product.setQuantity(quantity); 
+                        productList.add(product);
+                    }
+                    this.productsDAO.update(productList, conn);
                 }
-
-                this.productsDAO.update(productList, conn);
                 this.ordersDAO.update(order, conn); 
                 conn.commit();
                 return true;

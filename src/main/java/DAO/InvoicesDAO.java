@@ -23,7 +23,7 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
             pstmt.setString(3, invoice.getEmployerID());
             pstmt.setBigDecimal(4, invoice.getTotalPrice());
             pstmt.setInt(5, invoice.getOrderID());
-            
+                        
             int rowsAffected = pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {

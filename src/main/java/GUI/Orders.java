@@ -7,24 +7,33 @@ public class Orders extends JPanel {
     private OrdersFilterPanel filterPanel;
     private OrdersTablePanel tablePanel;
     private OrdersSummaryPanel summaryPanel;
+    private static Orders instance;
 
     public Orders() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(new Color(248, 249, 250)); // Màu nền tổng thể
+        // Sử dụng BorderLayout để phù hợp với phương thức reRender()
+        setLayout(new BorderLayout());
+        setBackground(new Color(248, 249, 250));
 
         // === Phần thống kê ===
         summaryPanel = OrdersSummaryPanel.getInstance(this, false);
-        add(summaryPanel);
+        add(summaryPanel, BorderLayout.NORTH);
 
         // === Phần bộ lọc ===
         filterPanel =  OrdersFilterPanel.getInstance(this, false);
-        filterPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding xung quanh
-        add(filterPanel);
+        filterPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(filterPanel, BorderLayout.CENTER);
 
         // === Phần bảng ===
         tablePanel = OrdersTablePanel.getInstance(this, false);
-        tablePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding xung quanh
-        add(tablePanel);
+        tablePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(tablePanel, BorderLayout.SOUTH);
+    }
+
+    public static Orders getInstance() {
+        if (instance == null) {
+            instance = new Orders();
+        }
+        return instance;
     }
 
     public OrdersSummaryPanel getSummaryPanel() {

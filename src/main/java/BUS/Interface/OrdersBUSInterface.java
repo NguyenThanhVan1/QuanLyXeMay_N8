@@ -16,7 +16,7 @@ public interface OrdersBUSInterface<T, ID>{
 
     T create(T order, List<ProductsDTO> productList);
 
-    boolean update(T order);
+    boolean update(T order, String statusBefore);
 
     boolean delete(ID orderId);
 

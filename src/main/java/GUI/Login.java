@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 import javax.swing.border.*;
 
+import com.itextpdf.styledxmlparser.jsoup.select.Evaluator.Id;
+
 import BUS.KhachHangBUS;
 import BUS.UsersBUS;
 import DAO.KhachHangDAO;
@@ -420,6 +422,7 @@ public class Login extends JFrame {
                 if (username.equals(nv.getTendangnhap()) && password.equals(nv.getMatkhau())) {
                     found = true;
                     String quyen = nv.getQuyen();
+                    IdCurrentUser.setCurrentUserId(nv.getManv());
 
                     // JOptionPane.showMessageDialog(this,
                     // "Đăng nhập thành công với quyền: " + quyen,
