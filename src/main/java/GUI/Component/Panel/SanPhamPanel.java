@@ -728,21 +728,21 @@ public class SanPhamPanel extends JPanel
         }
         table.setModel(model);
     }
-    public void listSP()
-    {
-        if(spBUS.getList()==null) spBUS.listSP();
-        ArrayList<SanPhamDTO> sp=spBUS.getList();
-        outModel(tblmodel,sp);
+    public void listSP() {
+    spBUS.listSP(); // Luôn gọi để cập nhật từ database
+    ArrayList<SanPhamDTO> sp = spBUS.getList();
+    outModel(tblmodel, sp);
     }
-    // public static void main(String[] args)
-    // {
-    //     JFrame frame=new JFrame("Quản lý thông tin sản phẩm");
-    //     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    //     frame.setSize(1200,700);
-    //     frame.setLayout(new BorderLayout());
-    //     SanPhamGUI sp =new SanPhamGUI();
-    //     frame.add(sp,BorderLayout.CENTER);
-    //     frame.setLocationRelativeTo(null);
-    //     frame.setVisible(true);
-    // }
+
+    public static void main(String[] args)
+    {
+        JFrame frame=new JFrame("Quản lý thông tin sản phẩm");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1200,700);
+        frame.setLayout(new BorderLayout());
+        SanPhamPanel sp =new SanPhamPanel();
+        frame.add(sp,BorderLayout.CENTER);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
 }

@@ -431,4 +431,15 @@ public class PurchaseOrderPanel extends javax.swing.JPanel {
     public void updatePurchaseOrder(PurchaseOrderDTO purchaseOrder) {
         purchaseOrderTable.updatePurchaseOrder(purchaseOrder);
     }
+    public static void main(String[] args)
+    {
+        JFrame frame=new JFrame("Quản lý nhân viên");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1200,700);
+        frame.setLayout(new BorderLayout());
+        PurchaseOrderPanel nv=new PurchaseOrderPanel();
+        frame.add(nv,BorderLayout.CENTER);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
 }

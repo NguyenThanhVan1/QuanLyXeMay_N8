@@ -13,7 +13,7 @@ import java.util.Date;
 public class Controller {
     private static final String nameRegex = "^[A-Za-zÀ-Ỹà-ỹ]+(?:[-'][A-Za-zÀ-Ỹà-ỹ]+)?( [A-Za-zÀ-Ỹà-ỹ]+(?:[-'][A-Za-zÀ-Ỹà-ỹ]+)?)+$";
     private static final String phoneRegex = "^0\\d{9}$";
-    private static final DateFormat DATE_FMT = new SimpleDateFormat("dd-MM-yyyy");
+    private static final DateFormat DATE_FMT = new SimpleDateFormat("yyyy-MM-đ");
 
 
     public static boolean checkSalary(float salary) { return salary >= 0 ; }
@@ -47,7 +47,7 @@ public class Controller {
 
     public static String formatDate(Date date){
         if (date == null) {
-            return "Không xác định"; // hoặc return ""; nếu bạn không muốn hiển thị gì
+            return ""; // hoặc return ""; nếu bạn không muốn hiển thị gì
         }
         return DATE_FMT.format(date);
     }

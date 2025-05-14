@@ -138,6 +138,9 @@ public class Login extends JFrame {
 
         registerLinkPanel.add(registerPrompt);
         registerLinkPanel.add(registerLink);
+        formPanel.add(loginButton);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        formPanel.add(registerLinkPanel);
 
         // Add components to form panel
         formPanel.add(usernameLabel);
@@ -157,7 +160,10 @@ public class Login extends JFrame {
         formPanel.add(adminCheckBox);
         formPanel.add(Box.createRigidArea(new Dimension(0, 15)));
 
-        formPanel.add(loginButton);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(primaryColor);
+        buttonPanel.add(loginButton);
+        formPanel.add(buttonPanel);
         formPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         formPanel.add(registerLinkPanel);
 
@@ -227,6 +233,8 @@ public class Login extends JFrame {
         confirmPasswordField = createPasswordField();
 
         JButton registerButton = createButton("Đăng ký");
+        registerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         registerButton.addActionListener(e -> attemptRegister());
 
         JPanel loginLinkPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -369,7 +377,7 @@ public class Login extends JFrame {
         button.setFocusPainted(false);
         button.setBorderPainted(false);
         button.setMaximumSize(new Dimension(5000, 40));
-        button.setPreferredSize(new Dimension(100, 40));
+        button.setPreferredSize(new Dimension(150, 40));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         return button;
@@ -442,12 +450,12 @@ public class Login extends JFrame {
 
             // Đăng nhập khách hàng (ví dụ đơn giản)
             if (checkCustomerLogin(username, password)) {
-                new TrangChu().setVisible(true);
                 JOptionPane.showMessageDialog(this,
                         "Đăng nhập khách hàng thành công!",
                         "Thông báo",
                         JOptionPane.INFORMATION_MESSAGE);
                 // openCustomerPanel();
+                new TrangChu().setVisible(true);
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this,

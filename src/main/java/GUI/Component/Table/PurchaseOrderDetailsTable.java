@@ -12,7 +12,7 @@ import java.util.List;
 import static GUI.Controller.Controller.formatVND;
 
 public class PurchaseOrderDetailsTable extends JTableCustom{
-    private static final String HEADER[] = {"Tên Sách", "Số lượng", "Đơn giá", "Tổng tiền"};
+    private static final String HEADER[] = {"Tên xe", "Số lượng", "Đơn giá", "Tổng tiền"};
     private DefaultTableModel tableModel;
     private static List<PurchaseOrderDetailDTO> purchaseOrderDetailDTOS;
     private final SanPhamBUS SanPhamBUS = new SanPhamBUS();
@@ -81,9 +81,9 @@ public class PurchaseOrderDetailsTable extends JTableCustom{
     
             tableModel.addRow(new Object[]{
                     tenXe,
-                    purchaseOrderDetailDTO.getQuantity(),
-                    formatVND(purchaseOrderDetailDTO.getUnitPrice()),
-                    formatVND(purchaseOrderDetailDTO.getSubTotal())
+                    purchaseOrderDetailDTO.getSoLuong(),
+                    formatVND(purchaseOrderDetailDTO.getDonGia()),
+                    formatVND(purchaseOrderDetailDTO.getThanhTien())
             });
         }
     }

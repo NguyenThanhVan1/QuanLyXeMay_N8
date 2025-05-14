@@ -17,13 +17,15 @@ public class NhanVienBUS
     // private ArrayList<NhanVienDTO> employeeList;
     public static List<NhanVienDTO> employeeList = new ArrayList<>();
     private final NhanVienDAO employeeDAL = new NhanVienDAO();
+    private static NhanVienBUS instance;
     
     public NhanVienBUS(int i1)
     {
         listNV();
     }
-    public NhanVienBUS(){
-    }
+    public NhanVienBUS() {
+    listNV(); 
+}
     public NhanVienDTO get(String MaNV)
     {
         for(NhanVienDTO nv : employeeList )
@@ -105,6 +107,9 @@ public class NhanVienBUS
         return search;
     }
     public List<NhanVienDTO> getList() {
+        if (employeeList == null || employeeList.isEmpty()) {
+            listNV(); // Tự động load nếu chưa có dữ liệu
+        }
         return employeeList;
     }
     public NhanVienDTO getNhanVienById(String employeeId) {
@@ -116,4 +121,10 @@ public class NhanVienBUS
     //     }
     //     return NhanVienDAO.findById(MaNV);
     // }
+    public static synchronized NhanVienBUS getInstance() {
+        if (instance == null) {
+            instance = new NhanVienBUS();
+        }
+        return instance;
+    }
 }

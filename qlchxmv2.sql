@@ -199,7 +199,7 @@ CREATE TABLE `phieunhap` (
   `MANV` varchar(10) NOT NULL,
   `MANCC` varchar(10) NOT NULL,
   `TONGTIEN` int(11) DEFAULT NULL,
-  `status` enum('Đang_Chờ','Hoàn_Thành','Đã_Hủy') NOT NULL DEFAULT 'Đang_Chờ'
+  `status` enum('Đang_Chờ','Hoàn_Thành','Đã_Hủy') NOT NULL DEFAULT 'Hoàn_Thành'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --

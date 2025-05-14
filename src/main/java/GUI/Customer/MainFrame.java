@@ -1,11 +1,13 @@
 package GUI.Customer;
 
+import BUS.KhachHangBUS;
+import GUI.Login;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Objects;
-
 public class MainFrame extends JFrame {
     JPanel contentPanel;
     private SanPhamPanel sanPhamPanel;
@@ -161,6 +163,8 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(MainFrame.this, "Đã đăng xuất khỏi hệ thống!");
+                MainFrame.this.dispose(); 
+				new Login().setVisible(true);
             }
         });
         

@@ -1,31 +1,32 @@
 package DTO;
 
-import java.math.BigDecimal;
-
 public class PurchaseOrderDetailDTO {
-    private Long purchaseOrderId;
-    private String maXe;
-    private int quantity;
-    private BigDecimal unitPrice;
-    private BigDecimal subTotal;
+    private long maPN;  // Mã phiếu nhập
+    private String maXe;  // Mã xe
+    private int soLuong;  // Số lượng
+    private int donGia;  // Đơn giá
+    private int thanhTien;  // Thành tiền
 
-    public PurchaseOrderDetailDTO() {
-    }
+    // Constructor mặc định
+    public PurchaseOrderDetailDTO() {}
 
-    public PurchaseOrderDetailDTO(Long purchaseOrderId, String maXe, int quantity, BigDecimal unitPrice, BigDecimal subTotal) {
-        this.purchaseOrderId = purchaseOrderId;
+    // Constructor có tham số
+    public PurchaseOrderDetailDTO(long maPN, String maXe, int soLuong, int donGia, int thanhTien) {
+        this.maPN = maPN;
         this.maXe = maXe;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.subTotal = subTotal;
+        this.soLuong = soLuong;
+        this.donGia = donGia;
+        this.thanhTien = thanhTien;
     }
 
-    public Long getPurchaseOrderId() {
-        return purchaseOrderId;
+    // Getter và Setter cho các thuộc tính
+
+    public long getMaPN() {
+        return maPN;
     }
 
-    public void setPurchaseOrderId(Long purchaseOrderId) {
-        this.purchaseOrderId = purchaseOrderId;
+    public void setMaPN(long maPN) {
+        this.maPN = maPN;
     }
 
     public String getMaXe() {
@@ -36,27 +37,27 @@ public class PurchaseOrderDetailDTO {
         this.maXe = maXe;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getSoLuong() {
+        return soLuong;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setSoLuong(int soLuong) {
+        this.soLuong = soLuong;
     }
 
-    public BigDecimal getUnitPrice() {
-        return unitPrice;
+    public int getDonGia() {
+        return donGia;
     }
 
-    public void setUnitPrice(BigDecimal unitPrice) {
-        this.unitPrice = unitPrice;
+    public void setDonGia(int donGia) {
+        this.donGia = donGia;
     }
 
-    public BigDecimal getSubTotal() {
-        return subTotal;
+    public int getThanhTien() {
+        return thanhTien;
     }
 
-    public void setSubTotal(BigDecimal subTotal) {
-        this.subTotal = subTotal;
+    public void setThanhTien(int thanhTien) {
+        this.thanhTien = thanhTien;
     }
 }

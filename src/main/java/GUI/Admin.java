@@ -122,7 +122,7 @@ public class Admin {
 		try {
 			// Tạo icon xe máy đơn giản (có thể thay bằng hình ảnh thực tế)
 			BufferedImage motorcycleIcon = new BufferedImage(40, 40, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g2d = motorcycleIcon.createGraphics();
+			Graphics2D g2d = motorcycleIcon.createGraphics();	
 			g2d.setColor(Color.WHITE);
 			g2d.setStroke(new BasicStroke(2));
 			g2d.drawOval(5, 25, 15, 15); // Bánh sau

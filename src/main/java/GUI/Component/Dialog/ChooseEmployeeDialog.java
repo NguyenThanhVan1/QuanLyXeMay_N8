@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ChooseEmployeeDialog extends JDialog {
     private final NhanVienTable employeeTable = new NhanVienTable();
-    private final NhanVienBUS employeeBUS = new NhanVienBUS();
+    private final NhanVienBUS employeeBUS = NhanVienBUS.getInstance();
     private NhanVienDTO selectedEmployee;
     private RoundedTextField searchfield;
     private JComboBox<String> searchOptionsComboBox;
@@ -34,7 +34,7 @@ public class ChooseEmployeeDialog extends JDialog {
 
     public ChooseEmployeeDialog(JDialog parent) {
         super(parent, "Chọn nhân viên", true);
-        setSize(600, 400);
+        setSize(1000, 800);
         sorter = new TableRowSorter<>(employeeTable.getModel());
         employeeTable.setRowSorter(sorter);
         setLocationRelativeTo(parent);
@@ -44,16 +44,16 @@ public class ChooseEmployeeDialog extends JDialog {
         }
         setLayout(new BorderLayout(10, 10));
         add(getSearchNavBarLabel(), BorderLayout.NORTH);
-        JScrollPane scrollPane = new JScrollPane(employeeTable);
-        add(scrollPane, BorderLayout.CENTER);
+        add(employeeTable.getScrollPane(), BorderLayout.CENTER);
+
         ((JComponent) getContentPane()).setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        employeeTable.addMouseListener(new MouseAdapter() {
+        employeeTable.getTable().addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (evt.getClickCount() == 2 || evt.getClickCount() == 3) {
-                    int selectedRow = employeeTable.getSelectedRow();
-                    if (selectedRow != -1) {
-                        selectedEmployee = employeeTable.getSelectedNhanVien();
+                if (evt.getClickCount() >= 2) {
+                    selectedEmployee = employeeTable.getSelectedNhanVien(); // lấy đúng model
+                    if (selectedEmployee != null) {
                         dispose();
                     }
                 }
@@ -67,11 +67,16 @@ public class ChooseEmployeeDialog extends JDialog {
     }
 
     private void loadData() {
-        List<NhanVienDTO> employees = NhanVienBUS.employeeList;
-        if (employees != null) {
+        // Sử dụng phương thức getList() thay vì truy cập trực tiếp vào employeeList
+        List<NhanVienDTO> employees = employeeBUS.getList();
+        if (employees != null && !employees.isEmpty()) {
             employeeTable.setEmployees(employees);
+            this.nhanVienList = employees; // Lưu lại danh sách để refresh
         } else {
-            System.out.println("Không có dữ liệu");
+            JOptionPane.showMessageDialog(this, 
+                "Không có dữ liệu nhân viên", 
+                "Thông báo", 
+                JOptionPane.WARNING_MESSAGE);
         }
     }
     public JPanel getSearchNavBarLabel() {

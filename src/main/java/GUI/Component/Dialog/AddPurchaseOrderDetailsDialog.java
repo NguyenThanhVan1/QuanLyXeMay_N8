@@ -1,9 +1,9 @@
 package GUI.Component.Dialog;
 
-import BUS.ProductsBUS;
-import BUS.PurchaseOrderDetailBUS;
-// import DTO.BookViewModel;
+import BUS.SanPhamBUS;
+import DAO.PurchaseOrderDetailDAO;
 import DTO.PurchaseOrderDetailDTO;
+import DTO.SanPhamDTO;
 import GUI.Component.Button.ButtonBack;
 import GUI.Component.Button.ButtonChosen;
 import GUI.Component.TextField.CustomTextField;
@@ -15,9 +15,8 @@ import java.awt.*;
 import java.math.BigDecimal;
 
 public class AddPurchaseOrderDetailsDialog extends JDialog {
-    private final PurchaseOrderDetailBUS purchaseOrderDetailsBUS = new PurchaseOrderDetailBUS();
-    private final ProductsBUS bookBUS = new ProductsBUS();
-    private ProductsBUS currentBook;
+    private final PurchaseOrderDetailDAO purchaseOrderDetailDAO = new PurchaseOrderDetailDAO();
+    private final SanPhamBUS sanPhamBUS = new SanPhamBUS(0);
     private PurchaseOrderDetailDTO currentOrderDetail;
 
     private final CustomTextField bookIDField = new CustomTextField();
@@ -25,14 +24,12 @@ public class AddPurchaseOrderDetailsDialog extends JDialog {
     private final CustomTextField unitPriceField = new CustomTextField();
     private final ButtonChosen buttonChosenBook = new ButtonChosen();
 
-    private final JLabel titleLabel = new JLabel("Tên sách:             ");
-    private final JLabel authorLabel = new JLabel("Tác giả:             ");
-    private final JLabel categoryLabel = new JLabel("Thể loại:             ");
-    private final JLabel publisherLabel = new JLabel("NXB:             ");
-    private final JLabel yearLabel = new JLabel("Năm:             ");
+    private final JLabel titleLabel = new JLabel("Tên xe:             ");
+    private final JLabel categoryLabel = new JLabel("Hãng xe:             ");
+    // private final JLabel yearLabel = new JLabel("Giá bán:             ");
     private final JLabel subTotalLabel = new JLabel("Thành tiền:             ");
 
-    private Long purchaseOrderId;
+    private final long purchaseOrderId;
 
     public AddPurchaseOrderDetailsDialog(JDialog parentDialog, long purchaseOrderId) {
         super(parentDialog, "Thêm Chi Tiết Phiếu Nhập", true);
@@ -41,6 +38,7 @@ public class AddPurchaseOrderDetailsDialog extends JDialog {
         setSize(650, 500);
         setLocationRelativeTo(parentDialog);
     }
+
     private void initComponents() {
         setLayout(new BorderLayout(5, 5));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -60,13 +58,16 @@ public class AddPurchaseOrderDetailsDialog extends JDialog {
         backButton.addActionListener(e -> dispose());
         panel.add(backButton, BorderLayout.WEST);
 
-        JLabel title = new JLabel("Thêm Sách Vào Phiếu Nhập");
+        JLabel title = new JLabel("Thêm Xe Vào Phiếu Nhập");
         title.setFont(new Font("Segoe UI", Font.BOLD, 18));
         title.setForeground(Color.WHITE);
         title.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(title, BorderLayout.CENTER);
 
         return panel;
+    }
+    public PurchaseOrderDetailDTO getCurrentOrderDetail() {
+        return currentOrderDetail;
     }
 
     private JPanel createContentPanel() {
@@ -77,49 +78,51 @@ public class AddPurchaseOrderDetailsDialog extends JDialog {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Book ID row
-        gbc.gridx = 0; gbc.gridy = 0;
-        panel.add(new JLabel("Mã sách:"), gbc);
+        // Mã xe
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Mã xe:"), gbc);
 
         bookIDField.setPreferredSize(new Dimension(120, 30));
         bookIDField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) { updateBookInfo(); }
-            @Override public void removeUpdate(DocumentEvent e) { updateBookInfo(); }
-            @Override public void changedUpdate(DocumentEvent e) { updateBookInfo(); }
+            @Override public void insertUpdate(DocumentEvent e) { updateProductInfo(); }
+            @Override public void removeUpdate(DocumentEvent e) { updateProductInfo(); }
+            @Override public void changedUpdate(DocumentEvent e) { updateProductInfo(); }
         });
         gbc.gridx = 1;
         panel.add(bookIDField, gbc);
-        buttonChosenBook.addActionListener(e -> chooseBook());
+
+        // buttonChosenBook.addActionListener(e -> chooseProduct());
         gbc.gridx = 2;
         panel.add(buttonChosenBook, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 3;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 3;
         panel.add(createSeparator(), gbc);
 
-        // Book info panel
-        JPanel infoPanel = new JPanel(new GridLayout(3, 2, 25, 5));
+        // Info panel
+        JPanel infoPanel = new JPanel(new GridLayout(4, 1, 10, 5));
         infoPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
         Font infoFont = new Font("Segoe UI", Font.PLAIN, 16);
         titleLabel.setFont(infoFont);
-        authorLabel.setFont(infoFont);
         categoryLabel.setFont(infoFont);
-        publisherLabel.setFont(infoFont);
-        yearLabel.setFont(infoFont);
+        // yearLabel.setFont(infoFont);
         subTotalLabel.setFont(infoFont);
 
         infoPanel.add(titleLabel);
-        infoPanel.add(authorLabel);
         infoPanel.add(categoryLabel);
-        infoPanel.add(publisherLabel);
-        infoPanel.add(yearLabel);
+        // infoPanel.add(yearLabel);
         infoPanel.add(subTotalLabel);
 
-        gbc.gridy = 2; gbc.gridwidth = 3;
+        gbc.gridy = 2;
         panel.add(infoPanel, gbc);
 
-        // Quantity row
-        gbc.gridy = 3; gbc.gridwidth = 1;
+        // Quantity
+        gbc.gridy = 3;
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
         panel.add(new JLabel("Số lượng:"), gbc);
 
         quantityField.setPreferredSize(new Dimension(80, 30));
@@ -131,8 +134,9 @@ public class AddPurchaseOrderDetailsDialog extends JDialog {
         gbc.gridx = 1;
         panel.add(quantityField, gbc);
 
-        // Unit price row
-        gbc.gridy = 4; gbc.gridx = 0;
+        // Đơn giá
+        gbc.gridy = 4;
+        gbc.gridx = 0;
         panel.add(new JLabel("Đơn giá:"), gbc);
 
         unitPriceField.setPreferredSize(new Dimension(120, 30));
@@ -147,64 +151,52 @@ public class AddPurchaseOrderDetailsDialog extends JDialog {
         return panel;
     }
 
-    private void updateBookInfo() {
-        String bookIDText = bookIDField.getText();
-        if (bookIDText.isEmpty()) {
-            currentBook = null;
-            clearBookInfo();
+    private void updateProductInfo() {
+        String maXe = bookIDField.getText().trim();
+        if (maXe.isEmpty()) {
+            clearProductInfo();
             return;
         }
 
-        try {
-            long bookID = Long.parseLong(bookIDText);
-            currentBook = bookBUS.getBookByIdForDisplay(bookID);
-            if (currentBook != null) {
-                titleLabel.setText("Tên sách: " + currentBook.getName());
-                authorLabel.setText("Tác giả: " + currentBook.getAuthorName());
-                categoryLabel.setText("Thể loại: " + currentBook.getCategoryName());
-                publisherLabel.setText("NXB: " + currentBook.getPublisherName());
-                yearLabel.setText("Năm: " + currentBook.getYearOfPublication());
-            } else {
-                clearBookInfo();
-            }
-        } catch (NumberFormatException e) {
-            clearBookInfo();
+        SanPhamDTO sp = sanPhamBUS.getSanPhamById(maXe);
+        if (sp != null) {
+            titleLabel.setText("Tên xe: " + sp.getTenXe());
+            categoryLabel.setText("Hãng xe: " + sp.getHangXe());
+            // yearLabel.setText("Giá bán: " + sp.getGiaban());
+        } else {
+            clearProductInfo();
         }
     }
 
-    private void clearBookInfo() {
-        titleLabel.setText("Tên sách:            ");
-        authorLabel.setText("Tác giả:            ");
-        categoryLabel.setText("Thể loại:            ");
-        publisherLabel.setText("NXB:            ");
-        yearLabel.setText("Năm:            ");
-        subTotalLabel.setText("Thành tiền:            ");
+    private void clearProductInfo() {
+        titleLabel.setText("Tên xe:             ");
+        categoryLabel.setText("Hãng xe:             ");
+        // yearLabel.setText("Giá bán:             ");
+        subTotalLabel.setText("Thành tiền:             ");
     }
 
     private void calculateSubTotal() {
         try {
             int quantity = Integer.parseInt(quantityField.getText());
             BigDecimal unitPrice = new BigDecimal(unitPriceField.getText());
-            BigDecimal subTotal = unitPrice.multiply(new BigDecimal(quantity));
+            BigDecimal subTotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
             subTotalLabel.setText("Thành tiền: " + subTotal.toString());
         } catch (NumberFormatException e) {
-            subTotalLabel.setText("Thành tiền:            ");
+            subTotalLabel.setText("Thành tiền:             ");
         }
     }
 
-    private void chooseBook() {
-        ChooseBookDialog dialog = new ChooseBookDialog(this);
-        dialog.setVisible(true);
-        currentBook = dialog.getSelectedBook();
-        if (currentBook != null) {
-            bookIDField.setText(currentBook.getIdXe().toString());
-            titleLabel.setText("Tên sách: " + currentBook.getName());
-            authorLabel.setText("Tác giả: " + currentBook.getAuthorName());
-            categoryLabel.setText("Thể loại: " + currentBook.getCategoryName());
-            publisherLabel.setText("NXB: " + currentBook.getPublisherName());
-            yearLabel.setText("Năm: " + currentBook.getYearOfPublication());
-        }
-    }
+    // private void chooseProduct() {
+    //     ChooseBookDialog dialog = new ChooseBookDialog(this);
+    //     dialog.setVisible(true);
+    //     SanPhamDTO selectedProduct = dialog.getSelectedProduct(); // Bạn cần cập nhật ChooseBookDialog trả về SanPhamDTO
+    //     if (selectedProduct != null) {
+    //         bookIDField.setText(selectedProduct.getMaXe());
+    //         titleLabel.setText("Tên xe: " + selectedProduct.getTenXe());
+    //         categoryLabel.setText("Hãng xe: " + selectedProduct.getHangXe());
+    //         yearLabel.setText("Giá bán: " + selectedProduct.getGiaban());
+    //     }
+    // }
 
     private JSeparator createSeparator() {
         JSeparator separator = new JSeparator();
@@ -233,61 +225,55 @@ public class AddPurchaseOrderDetailsDialog extends JDialog {
     }
 
     private boolean isValidInput() {
-        if (currentBook == null || bookIDField.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập mã sách hoặc chọn sách!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+        if (bookIDField.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập mã xe!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        
-        if (quantityField.getText().isEmpty()) {
+        if (quantityField.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập số lượng!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        
-        if (unitPriceField.getText().isEmpty()) {
+        if (unitPriceField.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đơn giá!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        
+
         try {
             int quantity = Integer.parseInt(quantityField.getText());
             if (quantity <= 0) {
                 JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0!", "Thông báo", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
-            
             BigDecimal unitPrice = new BigDecimal(unitPriceField.getText());
             if (unitPrice.compareTo(BigDecimal.ZERO) <= 0) {
                 JOptionPane.showMessageDialog(this, "Đơn giá phải lớn hơn 0!", "Thông báo", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Dữ liệu nhập không hợp lệ!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Dữ liệu không hợp lệ!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        
-        return true;
-    }
 
-    public PurchaseOrderDetailDTO getCurrentOrderDetail() {
-        return currentOrderDetail;
+        return true;
     }
 
     private void addPurchaseOrderDetails() {
         if (isValidInput()) {
-            long bookId = Long.parseLong(bookIDField.getText());
+            String maXe = bookIDField.getText().trim();
             int quantity = Integer.parseInt(quantityField.getText());
-            BigDecimal unitPrice = new BigDecimal(unitPriceField.getText());
-            BigDecimal subTotal = unitPrice.multiply(new BigDecimal(quantity));
-            
+            int unitPrice = Integer.parseInt(unitPriceField.getText());
+            int subTotal = quantity * unitPrice;   
+
             currentOrderDetail = new PurchaseOrderDetailDTO(
-                purchaseOrderId,
-                bookId,
-                quantity,
-                unitPrice,
-                subTotal
+                    purchaseOrderId,
+                    maXe,
+                    quantity,
+                    unitPrice,
+                    subTotal
             );
+
             if (purchaseOrderId > 0) {
-                purchaseOrderDetailsBUS.addPurchaseOrderDetail(currentOrderDetail);
+                purchaseOrderDetailDAO.create(currentOrderDetail);
             }
             dispose();
         }

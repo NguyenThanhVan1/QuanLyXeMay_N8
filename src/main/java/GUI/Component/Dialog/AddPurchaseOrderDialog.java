@@ -15,16 +15,21 @@ import GUI.Component.Panel.Statistics.Components.PurchaseChangeEvent;
 import GUI.Component.Table.PurchaseOrderTable;
 import GUI.Component.Table.PurchaseOrderDetailsTable;
 import GUI.Component.TextField.CustomTextField;
+
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.*;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.toedter.calendar.demo.DateChooserPanel;
 
 public class AddPurchaseOrderDialog extends JDialog {
     private PurchaseOrderBUS purchaseOrderBUS = new PurchaseOrderBUS();
@@ -37,6 +42,7 @@ public class AddPurchaseOrderDialog extends JDialog {
     private JLabel supplierNameLabel;
     private JLabel supplierPhoneLabel;
     private JLabel supplierAddressLabel;
+    
 
     private JLabel employeeLabel;
     private JLabel employeeNameLabel;
@@ -204,11 +210,11 @@ public class AddPurchaseOrderDialog extends JDialog {
         JPanel infoPanel = new JPanel(new GridLayout(2, 2, 10, 10));
         buyDateLabel = new JLabel("Ngày nhập:");
         buyDateChooser = new JDateChooser();
-        buyDateChooser.setDateFormatString("dd/MM/yyyy");
+        buyDateChooser.setDateFormatString("yyyy-MM-dd");
         buyDateChooser.setDate(new Date());
 
         statusLabel = new JLabel("Trạng thái:");
-        statusComboBox = new JComboBox<>(new String[]{"Đang_Chờ"});
+        statusComboBox = new JComboBox<>(new String[]{"Đang_Chờ","Hoàn thành","Đã hủy"});
 
         infoPanel.add(buyDateLabel);
         infoPanel.add(buyDateChooser);
@@ -300,38 +306,48 @@ public class AddPurchaseOrderDialog extends JDialog {
     }
 
     private void chooseEmployee() {
-        ChooseEmployeeDialog chooseEmployeeDialog = new ChooseEmployeeDialog(this);
-        chooseEmployeeDialog.setVisible(true);
-        if (chooseEmployeeDialog.getSelectedEmployee() != null) {
-            currentEmployee = chooseEmployeeDialog.getSelectedEmployee();
-            employeeField.setText(currentEmployee.getManv().toString());
-            showEmployeeInfo();
-            // Update employee info labels
+    // System.out.println("Opening employee selection dialog..."); // Debug
+    ChooseEmployeeDialog chooseEmployeeDialog = new ChooseEmployeeDialog(this);
+    chooseEmployeeDialog.setVisible(true);
+    
+    if (chooseEmployeeDialog.getSelectedEmployee() != null) {
+        currentEmployee = chooseEmployeeDialog.getSelectedEmployee();
+        System.out.println("Selected employee: " + currentEmployee.getHoten()); // Debug
+        employeeField.setText(currentEmployee.getManv());
+        showEmployeeInfo();
+    }
+}
+private void setCurrentID() {
+        try {
+            currentPurchaseId = purchaseOrderBUS.getCurrentID() + 1;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Lỗi khi lấy ID phiếu mượn: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void addOrderDetail() {
-        AddPurchaseOrderDetailsDialog addDetailDialog = new AddPurchaseOrderDetailsDialog(this,0L);
-        addDetailDialog.setVisible(true);
-        if (addDetailDialog.getCurrentOrderDetail() != null) {
-            PurchaseOrderDetailDTO newDetail = addDetailDialog.getCurrentOrderDetail();
-            for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
-                if (detail.getMaXe() == newDetail.getMaXe()) {
-                    detail.setQuantity(detail.getQuantity() + newDetail.getQuantity());
-                    BigDecimal subTotal = detail.getUnitPrice().multiply(new BigDecimal(detail.getQuantity()));
-                    detail.setSubTotal(subTotal);
-                    purchaseOrderDetailsTable.updatePurchaseOrderDetails(detail);
-                    purchaseOrderDetailsTable.refreshTable();
-                    updateTotalAmount();
-                    return;
-                }
+    AddPurchaseOrderDetailsDialog addDetailDialog = new AddPurchaseOrderDetailsDialog(this, 0L);
+    addDetailDialog.setVisible(true);
+    if (addDetailDialog.getCurrentOrderDetail() != null) {
+        PurchaseOrderDetailDTO newDetail = addDetailDialog.getCurrentOrderDetail();
+        for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
+            if (detail.getMaXe().equals(newDetail.getMaXe())) {
+                detail.setSoLuong(detail.getSoLuong() + newDetail.getSoLuong());
+                detail.setThanhTien(detail.getDonGia() * detail.getSoLuong());
+                purchaseOrderDetailsTable.updatePurchaseOrderDetails(detail);
+                purchaseOrderDetailsTable.refreshTable();
+                updateTotalAmount();
+                return;
             }
-            pendingOrderDetails.add(newDetail);
-            purchaseOrderDetailsTable.setPurchaseOrderDetails(pendingOrderDetails);
-            purchaseOrderDetailsTable.refreshTable();
-            updateTotalAmount();
         }
+        pendingOrderDetails.add(newDetail);
+        purchaseOrderDetailsTable.setPurchaseOrderDetails(pendingOrderDetails);
+        purchaseOrderDetailsTable.refreshTable();
+        updateTotalAmount();
     }
+}
     
 
     private void UpdateOrderDetails() {
@@ -354,48 +370,47 @@ public class AddPurchaseOrderDialog extends JDialog {
     }
 
     private void deleteOrderDetails() {
-        int selectedRow = purchaseOrderDetailsTable.getSelectedRow();
+    int selectedRow = purchaseOrderDetailsTable.getSelectedRow();
 
-        if (selectedRow != -1) {
-            // Show confirmation dialog
-            int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "Bạn có chắc chắn muốn xóa chi tiết đã chọn?",
-                    "Xác nhận xóa",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE
-            );
+    if (selectedRow != -1) {
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Bạn có chắc chắn muốn xóa chi tiết đã chọn?",
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
 
-            if (confirm == JOptionPane.YES_OPTION) {
-                pendingOrderDetails.remove(selectedRow);
-                purchaseOrderDetailsTable.setPurchaseOrderDetails(pendingOrderDetails);
-                purchaseOrderDetailsTable.refreshTable();
-                updateTotalAmount();
+        if (confirm == JOptionPane.YES_OPTION) {
+            pendingOrderDetails.remove(selectedRow);
+            purchaseOrderDetailsTable.setPurchaseOrderDetails(pendingOrderDetails);
+            purchaseOrderDetailsTable.refreshTable();
+            updateTotalAmount();
 
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Xóa chi tiết thành công",
-                        "Thông báo",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            }
-        } else {
             JOptionPane.showMessageDialog(
                     this,
-                    "Vui lòng chọn một chi tiết để xóa",
+                    "Xóa chi tiết thành công",
                     "Thông báo",
-                    JOptionPane.WARNING_MESSAGE
+                    JOptionPane.INFORMATION_MESSAGE
             );
         }
+    } else {
+        JOptionPane.showMessageDialog(
+                this,
+                "Vui lòng chọn một chi tiết để xóa",
+                "Thông báo",
+                JOptionPane.WARNING_MESSAGE
+        );
     }
+}
 
     private void updateTotalAmount() {
-        BigDecimal total = BigDecimal.ZERO;
-        for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
-            total = total.add(detail.getUnitPrice().multiply(BigDecimal.valueOf(detail.getQuantity())));
-        }
-        totalAmountValueLabel.setText(total.toString() + " VND");
+    int total = 0;
+    for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
+        total += detail.getThanhTien();
     }
+    totalAmountValueLabel.setText(total + " VND");
+}
 
     private boolean validateInput() {
         if (supplierField.getText().isEmpty()) {
@@ -417,54 +432,60 @@ public class AddPurchaseOrderDialog extends JDialog {
         return true;
     }
 
-    private void setCurrentID() {
-        try {
-            currentPurchaseId = purchaseOrderBUS.getCurrentID() + 1;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "Lỗi khi lấy ID phiếu mượn: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+    
     private void addPurchaseOrder() {
-        if (!validateInput()) return;
-    
-        try {
-            setCurrentID();
-            String supplierId = supplierField.getText().trim();
-            String employeeId = employeeField.getText().trim();
-            Date buyDate = new java.sql.Timestamp(buyDateChooser.getDate().getTime());
-            PurchaseStatus status = PurchaseStatus.valueOf(statusComboBox.getSelectedItem().toString());
-    
-            // Tính tổng tiền từ danh sách chi tiết
-            BigDecimal totalAmount = BigDecimal.ZERO;
-            for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
-                BigDecimal itemTotal = detail.getUnitPrice().multiply(BigDecimal.valueOf(detail.getQuantity()));
-                totalAmount = totalAmount.add(itemTotal);
-            }
-    
-            // Khởi tạo PurchaseOrderDTO
-            PurchaseOrderDTO purchaseOrderDTO = new PurchaseOrderDTO();
-            purchaseOrderDTO.setMaPN(currentPurchaseId);
-            purchaseOrderDTO.setMANCC(supplierId);
-            purchaseOrderDTO.setMaNV(employeeId);
-            purchaseOrderDTO.setBuyDate(buyDate);
-            purchaseOrderDTO.setStatus(status);
-            purchaseOrderDTO.setTongTien(totalAmount);
-            boolean success = purchaseOrderBUS.addPurchaseOrder(purchaseOrderDTO);
-            if (success) {
-                purchaseOrderPanel.addPurchaseOrder(purchaseOrderDTO);
-                for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
-                    detail.setPurchaseOrderId(purchaseOrderDTO.getMaPN());
-                    purchaseOrderDetailBUS.addPurchaseOrderDetail(detail);
-                }
-            }
-            EventBusManager.getEventBus().post(new PurchaseChangeEvent());
-            JOptionPane.showMessageDialog(this, "Thêm phiếu nhập thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-            dispose();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi thêm phiếu nhập: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
+    if (!validateInput()) return;
+
+    try {
+        setCurrentID();
+        String supplierId = supplierField.getText().trim();
+        String employeeId = employeeField.getText().trim();
+        Date selectedDate = buyDateChooser.getDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String buyDate = sdf.format(selectedDate);
+
+        PurchaseStatus status = PurchaseStatus.valueOf(statusComboBox.getSelectedItem().toString());
+
+        // Tính tổng tiền từ danh sách chi tiết
+        int totalAmount = 0;
+        for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
+            totalAmount += detail.getThanhTien();
         }
+
+        // Tạo đối tượng phiếu nhập
+        PurchaseOrderDTO newOrder = new PurchaseOrderDTO();
+        newOrder.setMaPN(currentPurchaseId);
+        newOrder.setMANCC(supplierId);
+        newOrder.setMaNV(employeeId);
+        newOrder.setBuyDate(buyDate);
+        newOrder.setTongTien(totalAmount);
+        newOrder.setStatus(status);
+
+        // Gọi BUS để thêm phiếu nhập
+        purchaseOrderBUS.addPurchaseOrder(newOrder);
+
+        // Thêm chi tiết phiếu nhập
+        for (PurchaseOrderDetailDTO detail : pendingOrderDetails) {
+            detail.setMaPN(currentPurchaseId); // Gán mã phiếu nhập cho mỗi chi tiết
+            purchaseOrderDetailBUS.addPurchaseOrderDetail(detail);
+        }
+
+        // Update stock levels after adding the purchase order details
+        purchaseOrderDetailBUS.capNhatTonKhoSauKhiNhap(pendingOrderDetails);
+
+        JOptionPane.showMessageDialog(this, "Thêm phiếu nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+        // Cập nhật lại bảng hiển thị bên ngoài nếu cần
+        if (purchaseOrderPanel != null) {
+            purchaseOrderPanel.refreshData();
+        }
+
+        dispose(); // Đóng dialog sau khi thêm xong
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "Lỗi khi thêm phiếu nhập: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        ex.printStackTrace();
     }
+}
+
+
 }
