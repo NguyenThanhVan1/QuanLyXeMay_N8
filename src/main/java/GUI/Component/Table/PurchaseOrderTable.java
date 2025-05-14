@@ -86,7 +86,7 @@ public class PurchaseOrderTable extends JTableCustom {
                 dto.getMANCC(),
                 dto.getMaNV(),
                 dto.getStatus(),
-                formatDate(dto.getBuyDate()),
+                dto.getBuyDate(),
                 formatVND(dto.getTongTien())
             };
             tableModel.addRow(rowData);

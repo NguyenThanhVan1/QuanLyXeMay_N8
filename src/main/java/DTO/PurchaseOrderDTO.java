@@ -10,12 +10,12 @@ public class PurchaseOrderDTO {
     private String MANCC;
     private PurchaseStatus status;
     private int tongTien;
-    private Date ngayNhap;
+    private String ngayNhap;
 
     public PurchaseOrderDTO() {
     }
 
-    public PurchaseOrderDTO(long MaPN, String MaNV, String MANCC, PurchaseStatus status, int tongTien, Date ngayNhap) {
+    public PurchaseOrderDTO(long MaPN, String MaNV, String MANCC, PurchaseStatus status, int tongTien, String ngayNhap) {
         this.MaPN = MaPN;
         this.MaNV = MaNV;
         this.MANCC = MANCC;
@@ -64,11 +64,11 @@ public class PurchaseOrderDTO {
         this.tongTien = tongTien;
     }
 
-    public Date getBuyDate() {
+    public String getBuyDate() {
         return ngayNhap;
     }
 
-    public void setBuyDate(Date buyDate) {
+    public void setBuyDate(String ngayNhap) {
         this.ngayNhap = ngayNhap;
     }
 }

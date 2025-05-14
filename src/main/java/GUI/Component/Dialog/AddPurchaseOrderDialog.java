@@ -15,16 +15,21 @@ import GUI.Component.Panel.Statistics.Components.PurchaseChangeEvent;
 import GUI.Component.Table.PurchaseOrderTable;
 import GUI.Component.Table.PurchaseOrderDetailsTable;
 import GUI.Component.TextField.CustomTextField;
+
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.*;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.toedter.calendar.demo.DateChooserPanel;
 
 public class AddPurchaseOrderDialog extends JDialog {
     private PurchaseOrderBUS purchaseOrderBUS = new PurchaseOrderBUS();
@@ -435,7 +440,10 @@ private void setCurrentID() {
         setCurrentID();
         String supplierId = supplierField.getText().trim();
         String employeeId = employeeField.getText().trim();
-        Date buyDate = new java.util.Date();
+        Date selectedDate = buyDateChooser.getDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String buyDate = sdf.format(selectedDate);
+
         PurchaseStatus status = PurchaseStatus.valueOf(statusComboBox.getSelectedItem().toString());
 
         // Tính tổng tiền từ danh sách chi tiết
