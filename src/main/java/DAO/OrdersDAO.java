@@ -20,7 +20,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
 
     @Override
     public boolean create(OrdersDTO entity) {
-        String sql = "INSERT INTO donhang (MADH, NGAYLAP, MAKH, DIACHI, TONGTIEN, TRANGTHAI) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO donhang (NGAYLAP, MAKH, DIACHI, TONGTIEN, TRANGTHAI) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 

@@ -2,6 +2,8 @@ package BUS.Interface;
 
 import java.util.List;
 
+import DTO.ProductsDTO;
+
 public interface ShoppingCartsBUSInterface<T, ID> {
     boolean create(T entity); 
     boolean delete(ID id); 
@@ -10,4 +12,6 @@ public interface ShoppingCartsBUSInterface<T, ID> {
     boolean update(T entity);
     boolean insert(T entity);
     T checkExist(String idCustomer, String idProduct);
+
+    List<ProductsDTO> getByShoppingCart(String idCustomer);
 }

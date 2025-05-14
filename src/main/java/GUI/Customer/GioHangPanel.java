@@ -6,6 +6,8 @@ import javax.swing.table.DefaultTableModel;
 
 import BUS.ShoppingCartsBUS;
 import BUS.UsersBUS;
+import DTO.OrdersDTO;
+import DTO.ProductsDTO;
 import DTO.ShoppingCartsDTO;
 import DTO.UsersDTO;
 import GUI.IdCurrentUser;
@@ -13,6 +15,7 @@ import GUI.IdCurrentUser;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,28 +25,29 @@ public class GioHangPanel extends JPanel {
     private JLabel lblTongTien;
     private MainFrame mainFrame;
     
-    // private static List<ProductsDTO> danhSachSanPhamTrongGio;
-    private List<ShoppingCartsDTO> danhSachSanPhamTrongGio;
+    private List<ProductsDTO> danhSachSanPhamTrongGio;
+    private List<ShoppingCartsDTO> shoppingCarts;
     
     private ShoppingCartsBUS shoppingCartsBUS;
     
     public GioHangPanel(MainFrame mainFrame) {
-        this.shoppingCartsBUS = new ShoppingCartsBUS();
-        IdCurrentUser idCurrentUser = new IdCurrentUser();
-        this.danhSachSanPhamTrongGio = this.shoppingCartsBUS.getByIdCustomer(idCurrentUser.getCurrentUserId());
-
-
+        System.out.println("GioHangPanel");
+        
+        
+       
         this.mainFrame = mainFrame;
         setLayout(new BorderLayout(0, 10));
         setBorder(new EmptyBorder(10, 10, 10, 10));
         
-        // Panel hiển thị giỏ hàng
-        JPanel panelGioHang = createCartPanel();
-        add(panelGioHang, BorderLayout.CENTER);
+        
         
         // Panel thông tin thanh toán
         JPanel panelThanhToan = createPaymentPanel();
         add(panelThanhToan, BorderLayout.SOUTH);
+
+        // Panel hiển thị giỏ hàng
+        JPanel panelGioHang = createCartPanel();
+        add(panelGioHang, BorderLayout.CENTER);
     }
     
     private JPanel createCartPanel() {
@@ -77,6 +81,7 @@ public class GioHangPanel extends JPanel {
         
         JScrollPane scrollPane = new JScrollPane(tblGioHang);
         panel.add(scrollPane, BorderLayout.CENTER);
+        updateGioHang();
         
         return panel;
     }
@@ -94,15 +99,6 @@ public class GioHangPanel extends JPanel {
         
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
-        JButton btnCapNhat = new JButton("Cập nhật giỏ hàng");
-        btnCapNhat.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateGioHang();
-                JOptionPane.showMessageDialog(GioHangPanel.this, "Đã cập nhật giỏ hàng!");
-            }
-        });
-        
         JButton btnThanhToan = new JButton("Tiến hành thanh toán");
         btnThanhToan.addActionListener(new ActionListener() {
             @Override
@@ -113,22 +109,23 @@ public class GioHangPanel extends JPanel {
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
+                BigDecimal tongTien = BigDecimal.ZERO;
+                for (ProductsDTO sp : danhSachSanPhamTrongGio) {
+                    BigDecimal thanhTien = sp.getPrice().multiply(BigDecimal.valueOf(sp.getQuantity()));
+                    tongTien = tongTien.add(thanhTien);
+                }
+                // Hiển thị dialog thanh toán
+                ThanhToanDialog dialog = new ThanhToanDialog((Frame) SwingUtilities.getWindowAncestor(GioHangPanel.this), 
+                                                        danhSachSanPhamTrongGio, 
+                                                        tongTien);
+                dialog.setVisible(true);
                 
-                // Chuyển đến trang thông tin
-                mainFrame.cardLayout.show(mainFrame.contentPanel, "ThongTin");
             }
         });
         
-        JButton btnTiepTucMua = new JButton("Tiếp tục mua hàng");
-        btnTiepTucMua.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                mainFrame.cardLayout.show(mainFrame.contentPanel, "SanPham");
-            }
-        });
+       
         
-        buttonPanel.add(btnCapNhat);
-        buttonPanel.add(btnTiepTucMua);
+
         buttonPanel.add(btnThanhToan);
         
         panel.add(panelInfo, BorderLayout.CENTER);
@@ -138,31 +135,37 @@ public class GioHangPanel extends JPanel {
     }
     
     public void updateGioHang() {
+        // System.out.println(this.danhSachSanPhamTrongGio);
+        this.shoppingCartsBUS = new ShoppingCartsBUS();
+        IdCurrentUser idCurrentUser = new IdCurrentUser();
+        idCurrentUser.setCurrentUserId("1");
+        // System.out.println("IdCurrentUser: " + idCurrentUser.getCurrentUserId());
+        this.shoppingCarts = this.shoppingCartsBUS.getByIdCustomer(idCurrentUser.getCurrentUserId());
+        System.out.println("ShoppingCarts: " + this.shoppingCarts);
+        this.danhSachSanPhamTrongGio = this.shoppingCartsBUS.getByShoppingCart(idCurrentUser.getCurrentUserId());
         // Xóa dữ liệu cũ
         modelGioHang.setRowCount(0);
-        
-        // Tính tổng tiền
-        long tongTien = 0;
-        
+        BigDecimal tongTien = BigDecimal.ZERO;
         // Thêm dữ liệu mới
         for (int i = 0; i < danhSachSanPhamTrongGio.size(); i++) {
             ProductsDTO sp = danhSachSanPhamTrongGio.get(i);
-            int soLuong = danhSachSoLuong.get(i);
-            long thanhTien = sp.getGia() * soLuong;
-            tongTien += thanhTien;
-            
+            BigDecimal thanhTien = sp.getPrice().multiply(BigDecimal.valueOf(sp.getQuantity()));
+            tongTien = tongTien.add(thanhTien);
             modelGioHang.addRow(new Object[]{
-                sp.getMa(),
-                sp.getTen(),
-                String.format("%,d", sp.getGia()),
-                soLuong,
-                String.format("%,d", thanhTien),
+                sp.getProductId(),
+                sp.getProductName(),
+                String.format("%,f", sp.getPrice()),
+                sp.getQuantity(),
+                String.format("%,f", thanhTien),
                 "Xóa"
             });
         }
-        
+        System.out.println("Tong tien: " + tongTien);
         // Cập nhật tổng tiền
-        lblTongTien.setText("Tổng tiền: " + String.format("%,d", tongTien) + " VND");
+        // this.lblTongTien = new JLabel();
+        lblTongTien.setText("Tổng tiền: " + String.format("%,f", tongTien) + " VND");
+        this.revalidate();
+        this.repaint();
     }
     
     public static void themVaoGioHang(ProductsDTO sp) {

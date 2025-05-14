@@ -220,7 +220,12 @@ public class MainFrame extends JFrame {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                
                 cardLayout.show(contentPanel, cardName);
+                if(cardName.equals("GioHang")) {
+                    gioHangPanel.updateGioHang();
+                } 
+               
                 setActiveButton(button);
             }
         });
@@ -247,28 +252,4 @@ public class MainFrame extends JFrame {
         currentActiveButton = button;
     }
     
-    // Giữ nguyên các hàm xử lý hiện có
-    public void showGioHang() {
-        cardLayout.show(contentPanel, "GioHang");
-        
-        // Cập nhật nút active trong sidebar
-        for (Component comp : sidebarPanel.getComponents()) {
-            if (comp instanceof JPanel) {
-                JPanel panel = (JPanel) comp;
-                for (Component btnComp : panel.getComponents()) {
-                    if (btnComp instanceof JButton) {
-                        JButton btn = (JButton) btnComp;
-                        if (btn.getText().equals("Giỏ hàng")) {
-                            setActiveButton(btn);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    public void updateGioHang() {
-        gioHangPanel.updateGioHang();
-    }
 }

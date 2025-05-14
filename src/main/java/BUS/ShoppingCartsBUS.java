@@ -1,6 +1,7 @@
 package BUS;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.Database;
@@ -49,7 +50,7 @@ public class ShoppingCartsBUS implements BUS.Interface.ShoppingCartsBUSInterface
         try {
             this.conn.setAutoCommit(false);
             ShoppingCartsDTO existingEntity = shoppingCartsDAO.getById(entity.getIdXe(), conn);
-            shoppingCartsDAO.delete(entity.getIdXe(), conn);
+            shoppingCartsDAO.delete(entity.getIdProduct(), conn);
             shoppingCartsDAO.create(entity, conn);
             this.conn.commit();
             return true;
@@ -103,6 +104,28 @@ public class ShoppingCartsBUS implements BUS.Interface.ShoppingCartsBUSInterface
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public List<ProductsDTO> getByShoppingCart(String idCustomer) {
+        try {
+            List<ShoppingCartsDTO> shopCart = this.shoppingCartsDAO.getByIdCustomer(idCustomer, conn);
+            List<ProductsDTO> products = this.productsDAO.getAll(conn);
+
+            List<ProductsDTO> result = new ArrayList<>();
+            products.forEach(product -> {
+                for (ShoppingCartsDTO cart : shopCart) {
+                    if (product.getProductId().equals(cart.getIdProduct())) {
+                        product.setQuantity(cart.getQuantity());
+                        result.add(product);
+                    }
+                }
+            });
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
     

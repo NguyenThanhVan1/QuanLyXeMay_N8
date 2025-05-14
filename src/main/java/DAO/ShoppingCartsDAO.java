@@ -45,7 +45,7 @@ public class ShoppingCartsDAO implements DAO.Interface.ShoppingCartsDAOInterface
     @Override
     public List<DTO.ShoppingCartsDTO> getByIdCustomer(String idCustomer, java.sql.Connection conn) {
         try {
-            String sql = "SELECT * FROM giohang WHERE idKhachHang = ? AND idXe = ?";
+            String sql = "SELECT * FROM giohang WHERE idKhachHang = ?";
             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, idCustomer);
             java.sql.ResultSet rs = pstmt.executeQuery();
@@ -106,6 +106,27 @@ public class ShoppingCartsDAO implements DAO.Interface.ShoppingCartsDAOInterface
                 return shoppingCart;
             }
             return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<DTO.ProductsDTO> getByShoppingCart(String idCustomer, java.sql.Connection conn) {
+        try {
+            String sql = "SELECT * FROM giohang WHERE idKhachHang = ?";
+            java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, idCustomer);
+            java.sql.ResultSet rs = pstmt.executeQuery();
+            java.util.List<DTO.ProductsDTO> products = new java.util.ArrayList<>();
+            while (rs.next()) {
+                DTO.ProductsDTO product = new DTO.ProductsDTO();
+                product.setProductId((rs.getString("idXe")));
+                product.setQuantity(rs.getInt("soLuong"));
+                products.add(product);
+            }
+            return products;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

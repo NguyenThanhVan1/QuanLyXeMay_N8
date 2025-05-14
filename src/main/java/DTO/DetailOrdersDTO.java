@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 
 public class DetailOrdersDTO {
     private int orderId; 
-    private int xeId; 
+    private String xeId; 
     private int quantity; 
     private BigDecimal unitPrice; 
     private BigDecimal totalPrice; 
 
     
-    public DetailOrdersDTO(int orderId, int xeId, int quantity, BigDecimal unitPrice, BigDecimal totalPrice) {
+    public DetailOrdersDTO(int orderId, String xeId, int quantity, BigDecimal unitPrice, BigDecimal totalPrice) {
         this.orderId = orderId;
         this.xeId = xeId;
         this.quantity = quantity;
@@ -32,11 +32,11 @@ public class DetailOrdersDTO {
         this.orderId = orderId;
     }
 
-    public int getXeId() {
+    public String getXeId() {
         return xeId;
     }
 
-    public void setXeId(int xeId) {
+    public void setXeId(String xeId) {
         this.xeId = xeId;
     }
 
