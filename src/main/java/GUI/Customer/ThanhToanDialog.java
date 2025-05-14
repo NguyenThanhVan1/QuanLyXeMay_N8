@@ -9,6 +9,7 @@ import javax.swing.border.LineBorder;
 
 import BUS.OrdersBUS;
 import BUS.ProductsBUS;
+import BUS.ShoppingCartsBUS;
 import BUS.UsersBUS;
 import DTO.OrdersDTO;
 import DTO.ProductsDTO;
@@ -659,6 +660,7 @@ private JPanel createButtonPanel() {
         int option = showCustomConfirmDialog("Xác nhận đặt hàng với thông tin đã nhập?");
             
         if (option == JOptionPane.YES_OPTION) {
+            tongTien = tongTien.add(tongTien.multiply(new BigDecimal("0.1"))); // Thêm VAT 10%
             OrdersBUS ordersBUS = new OrdersBUS();
             OrdersDTO order = new OrdersDTO();
             order.setCreatedDate(new Date());
@@ -666,9 +668,12 @@ private JPanel createButtonPanel() {
             order.setAddress(diaChi);
             order.setTotalAmount(tongTien);
             order.setStatus("Chờ xử lý");
+            order.setMethod(phuongThucThanhToan);
+            
 
             try {
                 ProductsBUS productsBUS = new ProductsBUS();
+                ShoppingCartsBUS shoppingCartsBUS = new ShoppingCartsBUS();
                 List<ProductsDTO> productsFailed = productsBUS.getFailedProductsAfterOrders(this.danhSachSanPham);
                 System.out.println("Sản phẩm không đủ số lượng: " + productsFailed.size());
                 if(productsFailed.size() > 0){
@@ -676,6 +681,7 @@ private JPanel createButtonPanel() {
                     return;
                 }
                 ordersBUS.create(order, danhSachSanPham);
+                shoppingCartsBUS.delete(khachHang.getId());
                 showCustomSuccessDialog("Đặt hàng thành công");
                 MainFrame mainFrame = (MainFrame) SwingUtilities.getWindowAncestor(this);
                 GioHangPanel gioHangPanel = GioHangPanel.getInstance(mainFrame);

@@ -21,7 +21,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
 
     @Override
     public OrdersDTO create(OrdersDTO entity) {
-        String sql = "INSERT INTO donhang (NGAYLAP, MAKH, DIACHI, TONGTIEN, TRANGTHAI) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO donhang (NGAYLAP, MAKH, DIACHI, TONGTIEN, TRANGTHAI, PTTHANHTOAN) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = Database.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -30,6 +30,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
             ps.setString(3, entity.getAddress());
             ps.setBigDecimal(4, entity.getTotalAmount());
             ps.setString(5, entity.getStatus());
+            ps.setString(6, entity.getMethod());
 
             ps.executeUpdate();
 
@@ -75,7 +76,8 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
                         rs.getString("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
-                        rs.getString("TRANGTHAI")
+                        rs.getString("TRANGTHAI"),
+                        rs.getString("PTTHANHTOAN")
                 );
                 list.add(order);
             }
@@ -103,7 +105,8 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
                         rs.getString("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
-                        rs.getString("TRANGTHAI")
+                        rs.getString("TRANGTHAI"),
+                        rs.getString("PTTHANHTOAN")
                 );
             }
 
@@ -116,7 +119,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
 
     @Override
     public boolean update(OrdersDTO entity, Connection conn) {
-        String sql = "UPDATE donhang SET NGAYLAP = ?, MAKH = ?, DIACHI = ?, TONGTIEN = ?, TRANGTHAI = ? WHERE MADH = ?";
+        String sql = "UPDATE donhang SET NGAYLAP = ?, MAKH = ?, DIACHI = ?, TONGTIEN = ?, TRANGTHAI = ?, PTTHANHTOAN = ? WHERE MADH = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setDate(1, new java.sql.Date(entity.getCreatedDate().getTime()));
@@ -125,6 +128,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
             ps.setBigDecimal(4, entity.getTotalAmount());
             ps.setString(5, entity.getStatus());
             ps.setInt(6, entity.getOrderId());
+            ps.setString(7, entity.getMethod());
 
             ps.executeUpdate();
             return true;
@@ -152,7 +156,8 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
                         rs.getString("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
-                        rs.getString("TRANGTHAI")
+                        rs.getString("TRANGTHAI"),
+                        rs.getString("PTTHANHTOAN")
                 );
                 list.add(order);
             }
@@ -179,7 +184,8 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
                         rs.getString("MAKH"),
                         rs.getString("DIACHI"),
                         rs.getBigDecimal("TONGTIEN"),
-                        rs.getString("TRANGTHAI")
+                        rs.getString("TRANGTHAI"),
+                        rs.getString("PTTHANHTOAN")
                 );
                 orders.add(order);
             }

@@ -370,6 +370,8 @@ public class OrdersTablePanel extends JPanel {
             
             JLabel orderIdLabel = createInfoLabel("Mã đơn hàng:", String.valueOf(order.getOrderId()), normalFont, infoFont);
             
+            JLabel paymentMethodLabel = createInfoLabel("Phương thức thanh toán:", order.getMethod(), normalFont, infoFont);
+
             // Format hiển thị tổng tiền
             NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
             String formattedAmount = currencyFormat.format(order.getTotalAmount()) + " VNĐ";
@@ -512,13 +514,16 @@ public class OrdersTablePanel extends JPanel {
         closeButton.addActionListener(e -> detailDialog.dispose());
         
         // Nút in (nếu cần)
-        JButton printButton = new JButton("Xem hóa đơn");
-        styleButton(printButton, primaryColor, Color.WHITE);
-        printButton.addActionListener(e -> {
-            showInvoiceDetailDialog(orderId); // Hiển thị chi tiết hóa đơn
-        });
-        
-        footerPanel.add(printButton);
+        if(order.getStatus().equals("Đã hoàn thành")){
+             JButton printButton = new JButton("Xem hóa đơn");
+            styleButton(printButton, primaryColor, Color.WHITE);
+            printButton.addActionListener(e -> {
+                showInvoiceDetailDialog(orderId); // Hiển thị chi tiết hóa đơn
+            });
+            
+            footerPanel.add(printButton);
+        }
+       
         footerPanel.add(closeButton);
 
         // Thêm tất cả vào main panel
@@ -804,8 +809,11 @@ public class OrdersTablePanel extends JPanel {
             JLabel nameLabel = createInfoLabel("Khách hàng:", customer.getName(), normalFont, infoFont);
             JLabel idLabel = createInfoLabel("Mã khách hàng:", String.valueOf(invoice.getCustomerId()), normalFont, infoFont);
     
+            JLabel method = createInfoLabel("Phương thức thanh toán:", invoice.getMethod(), normalFont, infoFont);
+
             customerDetailsPanel.add(nameLabel);
             customerDetailsPanel.add(idLabel);
+            customerDetailsPanel.add(method);
     
             customerInfoPanel.add(customerTitleLabel, BorderLayout.NORTH);
             customerInfoPanel.add(customerDetailsPanel, BorderLayout.CENTER);
@@ -832,7 +840,7 @@ public class OrdersTablePanel extends JPanel {
             // Format total amount
             NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
             String formattedAmount = currencyFormat.format(invoice.getTotalPrice()) + " VNĐ";
-            JLabel totalLabel = createInfoLabel("Tổng tiền:", formattedAmount, normalFont, infoFont);
+            JLabel totalLabel = createInfoLabel("Tổng tiền (VAT 10%):", formattedAmount, normalFont, infoFont);
             totalLabel.setForeground(accentColor);
     
             paymentDetailsPanel.add(invoiceIdLabel);

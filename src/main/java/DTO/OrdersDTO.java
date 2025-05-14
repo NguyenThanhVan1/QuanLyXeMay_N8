@@ -9,25 +9,36 @@ public class OrdersDTO {
     private String address;
     private BigDecimal totalAmount;
     private String status;
+    private String method;
 
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
     public OrdersDTO(Date createdDate, String customerId, String address, BigDecimal totalAmount,
-        String status) {
+        String status, String method) {
         this.createdDate = createdDate;
         this.customerId = customerId;
         this.address = address;
         this.totalAmount = totalAmount;
         this.status = status;
+        this.method = method;
     }
 
     public OrdersDTO(int orderId, Date createdDate, String customerId, String address,
-        BigDecimal totalAmount, String status) {
+        BigDecimal totalAmount, String status, String method) {
         this.orderId = orderId;
         this.createdDate = createdDate;
         this.customerId = customerId;
         this.address = address;
         this.totalAmount = totalAmount;
         this.status = status;
+        this.method = method;
     }
 
 

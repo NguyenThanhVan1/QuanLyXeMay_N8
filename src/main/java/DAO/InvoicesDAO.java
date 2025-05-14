@@ -15,7 +15,7 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
     public boolean create(InvoicesDTO invoice, Connection conn) {
         try {
             // System.out.println(invoice);
-            String sql = "INSERT INTO hoadon (NGAYLAP, MAKH, MANV, TONGTIEN, MADH) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO hoadon (NGAYLAP, MAKH, MANV, TONGTIEN, MADH, PTTHANHTOAN) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             
             pstmt.setDate(1, new java.sql.Date(invoice.getDate().getTime()));
@@ -23,6 +23,7 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
             pstmt.setString(3, invoice.getEmployerID());
             pstmt.setBigDecimal(4, invoice.getTotalPrice());
             pstmt.setInt(5, invoice.getOrderID());
+            pstmt.setString(6, invoice.getMethod());
                         
             int rowsAffected = pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -67,6 +68,7 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
                 invoice.setEmployerID(rs.getString("MANV"));
                 invoice.setTotalPrice(rs.getBigDecimal("TONGTIEN"));
                 invoice.setOrderID(rs.getInt("MADH"));
+                invoice.setMethod(rs.getString("PTTHANHTOAN"));
                 
                 return invoice;
             }
@@ -100,6 +102,7 @@ public class InvoicesDAO implements InvoicesDAOInterface<InvoicesDTO, Integer> {
                 invoice.setEmployerID(rs.getString("MANV"));
                 invoice.setTotalPrice(rs.getBigDecimal("TONGTIEN"));
                 invoice.setOrderID(rs.getInt("MADH"));
+                invoice.setMethod(rs.getString("PTTHANHTOAN"));
                 
                 return invoice;
             }

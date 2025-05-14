@@ -241,15 +241,17 @@ public class GioHangPanel extends JPanel {
                 int row = tblGioHang.getSelectedRow();
                 if (row >= 0) {
                     // Xóa sản phẩm khỏi danh sách
-                    danhSachSanPhamTrongGio.remove(row);
-                    danhSachSoLuong.remove(row);
+                    danhSachSanPhamTrongGio.remove(row);                    
                     
-                    // Cập nhật lại giỏ hàng
-                    updateGioHang();
                     JOptionPane.showMessageDialog(GioHangPanel.this, 
                                                  "Đã xóa sản phẩm khỏi giỏ hàng!",
                                                  "Thông báo", 
                                                  JOptionPane.INFORMATION_MESSAGE);
+                    ShoppingCartsBUS shoppingCartsBUS = new ShoppingCartsBUS();
+                    shoppingCartsBUS.deleteByIdProduct(danhSachSanPhamTrongGio.get(row).getProductId());
+                
+                    // Cập nhật lại giỏ hàng
+                    updateGioHang();
                 }
             }
             isPushed = false;

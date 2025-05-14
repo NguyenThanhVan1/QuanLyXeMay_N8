@@ -1,5 +1,6 @@
 package DAO;
 
+import java.sql.Connection;
 import java.util.List;
 
 import DTO.ShoppingCartsDTO;
@@ -28,8 +29,21 @@ public class ShoppingCartsDAO implements DAO.Interface.ShoppingCartsDAOInterface
 
     @Override
     public boolean delete(String id, java.sql.Connection conn) {
-        // TODO Auto-generated method stub
-        return false;
+        try {
+            String sql = "DELETE FROM giohang WHERE idKhachHang = ?";
+            java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, id);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        
     }
 
     @Override
@@ -133,4 +147,20 @@ public class ShoppingCartsDAO implements DAO.Interface.ShoppingCartsDAOInterface
         }
     }
     
+    public boolean deleteByIdProduct(String idProduct, Connection conn){
+        try {
+            String sql = "DELETE FROM giohang WHERE idXe = ?";
+            java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, idProduct);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

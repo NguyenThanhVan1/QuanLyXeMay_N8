@@ -10,7 +10,16 @@ public class InvoicesDTO {
     private String employerID;
     private BigDecimal totalPrice;
     private int orderID;
+    private String method;
 
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
     @Override
     public String toString() {
@@ -21,21 +30,23 @@ public class InvoicesDTO {
     public InvoicesDTO() {
     }
 
-    public InvoicesDTO(int id, Date date, String customerId, String employerID, BigDecimal totalPrice, int orderID) {
+    public InvoicesDTO(int id, Date date, String customerId, String employerID, BigDecimal totalPrice, int orderID, String method) {
         this.id = id;
         this.date = date;
         this.customerId = customerId;
         this.employerID = employerID;
         this.totalPrice = totalPrice;
         this.orderID = orderID;
+        this.method = method;
     }
 
-    public InvoicesDTO(Date date, String customerId, String employerID, BigDecimal totalPrice, int orderID) {
+    public InvoicesDTO(Date date, String customerId, String employerID, BigDecimal totalPrice, int orderID, String method) {
         this.date = date;
         this.customerId = customerId;
         this.employerID = employerID;
         this.totalPrice = totalPrice;
         this.orderID = orderID;
+        this.method = method;
     }
 
     public int getId() {

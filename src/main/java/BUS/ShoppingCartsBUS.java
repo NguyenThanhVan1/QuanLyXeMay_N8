@@ -49,7 +49,7 @@ public class ShoppingCartsBUS implements BUS.Interface.ShoppingCartsBUSInterface
     public boolean update(ShoppingCartsDTO entity) {
         try {
             this.conn.setAutoCommit(false);
-            ShoppingCartsDTO existingEntity = shoppingCartsDAO.getById(entity.getIdXe(), conn);
+            ShoppingCartsDTO existingEntity = shoppingCartsDAO.getByIdCustomer(entity.getIdProduct(), conn);
             shoppingCartsDAO.delete(entity.getIdProduct(), conn);
             shoppingCartsDAO.create(entity, conn);
             this.conn.commit();
@@ -126,6 +126,15 @@ public class ShoppingCartsBUS implements BUS.Interface.ShoppingCartsBUSInterface
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public boolean deleteByIdProduct(String idProduct) {
+        try {
+            return shoppingCartsDAO.deleteByIdProduct(idProduct, conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
     
