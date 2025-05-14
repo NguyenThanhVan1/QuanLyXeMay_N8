@@ -205,11 +205,11 @@ public class AddPurchaseOrderDialog extends JDialog {
         JPanel infoPanel = new JPanel(new GridLayout(2, 2, 10, 10));
         buyDateLabel = new JLabel("Ngày nhập:");
         buyDateChooser = new JDateChooser();
-        buyDateChooser.setDateFormatString("dd/MM/yyyy");
+        buyDateChooser.setDateFormatString("yyyy-MM-dd");
         buyDateChooser.setDate(new Date());
 
         statusLabel = new JLabel("Trạng thái:");
-        statusComboBox = new JComboBox<>(new String[]{"Đang_Chờ"});
+        statusComboBox = new JComboBox<>(new String[]{"Đang_Chờ","Hoàn thành","Đã hủy"});
 
         infoPanel.add(buyDateLabel);
         infoPanel.add(buyDateChooser);
@@ -435,7 +435,7 @@ private void setCurrentID() {
         setCurrentID();
         String supplierId = supplierField.getText().trim();
         String employeeId = employeeField.getText().trim();
-        Date buyDate = new java.sql.Timestamp(buyDateChooser.getDate().getTime());
+        Date buyDate = new java.util.Date();
         PurchaseStatus status = PurchaseStatus.valueOf(statusComboBox.getSelectedItem().toString());
 
         // Tính tổng tiền từ danh sách chi tiết

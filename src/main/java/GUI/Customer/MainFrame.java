@@ -1,6 +1,8 @@
 package GUI.Customer;
 
 import BUS.KhachHangBUS;
+import GUI.Login;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -12,7 +14,6 @@ public class MainFrame extends JFrame {
     private GioHangPanel gioHangPanel;
     private ThongTinPanel thongTinPanel;
     private DoiMatKhauPanel doiMatKhauPanel;
-    private KhachHangBUS khBUS = new KhachHangBUS();
     CardLayout cardLayout;
     
     // Các thành phần mới cho giao diện hiện đại
@@ -162,6 +163,8 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(MainFrame.this, "Đã đăng xuất khỏi hệ thống!");
+                MainFrame.this.dispose(); 
+				new Login().setVisible(true);
             }
         });
         
