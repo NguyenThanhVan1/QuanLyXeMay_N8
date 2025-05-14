@@ -28,7 +28,7 @@ public class PurchaseOrderDAO {
         dto.setMaPN(rs.getLong("MaPN"));
         dto.setMANCC(rs.getString("MANCC"));
         dto.setMaNV(rs.getString("MaNV"));
-        dto.setTongTien(rs.getBigDecimal("TongTien"));
+        dto.setTongTien(rs.getInt("TongTien"));
         dto.setBuyDate(rs.getTimestamp("NGAYNHAP"));
         dto.setStatus(status);
         return dto;

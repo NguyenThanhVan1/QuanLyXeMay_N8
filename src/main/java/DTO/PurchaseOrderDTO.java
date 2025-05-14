@@ -9,13 +9,13 @@ public class PurchaseOrderDTO {
     private String MaNV;
     private String MANCC;
     private PurchaseStatus status;
-    private BigDecimal tongTien;
+    private int tongTien;
     private Date ngayNhap;
 
     public PurchaseOrderDTO() {
     }
 
-    public PurchaseOrderDTO(long MaPN, String MaNV, String MANCC, PurchaseStatus status, BigDecimal tongTien, Date ngayNhap) {
+    public PurchaseOrderDTO(long MaPN, String MaNV, String MANCC, PurchaseStatus status, int tongTien, Date ngayNhap) {
         this.MaPN = MaPN;
         this.MaNV = MaNV;
         this.MANCC = MANCC;
@@ -56,11 +56,11 @@ public class PurchaseOrderDTO {
         this.status = status;
     }
 
-    public BigDecimal getTongTien() {
+    public int getTongTien() {
         return tongTien;
     }
 
-    public void setTongTien(BigDecimal tongTien) {
+    public void setTongTien(int tongTien) {
         this.tongTien = tongTien;
     }
 

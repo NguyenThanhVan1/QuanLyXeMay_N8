@@ -15,12 +15,17 @@ import DTO.NhanVienDTO;
 import BUS.NhanVienBUS;
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.app.beans.SVGIcon;
+import com.toedter.calendar.JDateChooser;
+
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.URI;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -371,6 +376,24 @@ public class nhanVienGUI extends javax.swing.JPanel
         lblngaysinh.setHorizontalAlignment(JLabel.LEFT);
         JTextField txtngaysinh=new JTextField();
         txtngaysinh.setBounds(150,115,150,25);
+        txtngaysinh.setEditable(false);
+        txtngaysinh.setBackground(Color.white);
+        JDateChooser date=new JDateChooser();
+        date.setBounds(300,115,25,25);
+        date.getDateEditor().addPropertyChangeListener(
+            new PropertyChangeListener() {
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {
+                    if ("date".equals(evt.getPropertyName())) {
+                        Date selectedDate = date.getDate();
+                        if (selectedDate != null) {
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            txtngaysinh.setText(sdf.format(selectedDate));
+                        }
+                    }
+                }
+            }
+        );
         
         JLabel lblgioitinh=new JLabel("Giới tính:");
         lblgioitinh.setBounds(330,115,100,25);
@@ -477,6 +500,7 @@ public class nhanVienGUI extends javax.swing.JPanel
         dialog.add(cbquyen);
         dialog.add(btnxacnhan);
         dialog.add(btnhuy);
+        dialog.add(date);
         
         btnxacnhan.addActionListener(e -> {
             String manv=txtmanv.getText().trim();
@@ -517,6 +541,7 @@ public class nhanVienGUI extends javax.swing.JPanel
         });
         btnhuy.addActionListener(e -> dialog.dispose());
         dialog.setVisible(true);
+        
     }
     public void showSuaDialog(NhanVienDTO nv) 
     {
@@ -557,6 +582,25 @@ public class nhanVienGUI extends javax.swing.JPanel
         lblngaysinh.setHorizontalAlignment(JLabel.LEFT);
         JTextField txtngaysinh=new JTextField(nv.getNgaysinh());
         txtngaysinh.setBounds(150,115,150,25);
+        txtngaysinh.setEditable(false);
+        txtngaysinh.setBackground(Color.white);
+        JDateChooser date=new JDateChooser();
+        date.setDateFormatString("yyyy-MM-dd");
+        date.setBounds(300,115,25,25);
+        date.getDateEditor().addPropertyChangeListener(
+            new PropertyChangeListener() {
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {
+                    if ("date".equals(evt.getPropertyName())) {
+                        Date selectedDate = date.getDate();
+                        if (selectedDate != null) {
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            txtngaysinh.setText(sdf.format(selectedDate));
+                        }
+                    }
+                }
+            }
+        );
         
         JLabel lblgioitinh=new JLabel("Giới tính:");
         lblgioitinh.setBounds(330,115,100,25);
@@ -704,6 +748,7 @@ public class nhanVienGUI extends javax.swing.JPanel
         dialog.add(cbquyen);
         dialog.add(btnLuu);
         dialog.setVisible(true);
+        dialog.add(date);
     }
 //     public void showDataToTable(ArrayList<NhanVienDTO> list) 
 //     {
@@ -740,5 +785,16 @@ public class nhanVienGUI extends javax.swing.JPanel
     public void listSP() {
         if (nvBUS.getList() == null) nvBUS.listNV();
         nhanVienTable.loadData(nvBUS.getList());
+    }
+    public static void main(String[] args)
+    {
+        JFrame frame=new JFrame("Quản lý nhân viên");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1200,700);
+        frame.setLayout(new BorderLayout());
+        nhanVienGUI nv=new nhanVienGUI();
+        frame.add(nv,BorderLayout.CENTER);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }

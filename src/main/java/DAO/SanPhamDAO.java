@@ -123,4 +123,27 @@ public class SanPhamDAO {
             }
         }
     }
+    public void updateSoLuong(String maXe, int soLuongMoi) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = Database.getConnection();
+            String sql = "UPDATE XEMAY SET SOLUONG = ? WHERE MAXE = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, soLuongMoi);
+            stmt.setString(2, maXe);
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(SanPhamDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                Database.closeConnection(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

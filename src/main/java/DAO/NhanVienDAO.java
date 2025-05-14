@@ -67,7 +67,7 @@ public class NhanVienDAO {
                     "'" + nv.getChucvu() + "'," +
                     "'" + nv.getTendangnhap() + "'," +
                     "'" + nv.getMatkhau() + "'," +
-                    "'" + nv.getQuyen() + "')";
+                    "'" + nv.getQuyen() + "',1)" ;
             System.out.println(sql);
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
@@ -98,7 +98,8 @@ public class NhanVienDAO {
                     "CHUCVU='" + nv.getChucvu() + "'," +
                     "TENDANGNHAP='" + nv.getTendangnhap() + "'," +
                     "MATKHAU='" + nv.getMatkhau() + "'," +
-                    "QUYEN='" + nv.getQuyen() + "' " +
+                    "QUYEN='" + nv.getQuyen() + "'," +
+                    "isActive=1 " + 
                     "WHERE MANV='" + nv.getManv() + "'";
             System.out.println(sql);
             stmt.executeUpdate(sql);
