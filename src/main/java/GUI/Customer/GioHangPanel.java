@@ -24,7 +24,8 @@ public class GioHangPanel extends JPanel {
     private DefaultTableModel modelGioHang;
     private JLabel lblTongTien;
     private MainFrame mainFrame;
-    
+    private static GioHangPanel instance;
+
     private List<ProductsDTO> danhSachSanPhamTrongGio;
     private List<ShoppingCartsDTO> shoppingCarts;
     
@@ -32,8 +33,6 @@ public class GioHangPanel extends JPanel {
     
     public GioHangPanel(MainFrame mainFrame) {
         System.out.println("GioHangPanel");
-        
-        
        
         this.mainFrame = mainFrame;
         setLayout(new BorderLayout(0, 10));
@@ -48,6 +47,16 @@ public class GioHangPanel extends JPanel {
         // Panel hiển thị giỏ hàng
         JPanel panelGioHang = createCartPanel();
         add(panelGioHang, BorderLayout.CENTER);
+    }
+
+    public static GioHangPanel getInstance(MainFrame mainFrame) {
+        if (instance == null) {
+            instance = new GioHangPanel(mainFrame);
+            return instance;
+        }
+        else {
+            return instance;
+        }
     }
     
     private JPanel createCartPanel() {
@@ -252,5 +261,11 @@ public class GioHangPanel extends JPanel {
             isPushed = false;
             return super.stopCellEditing();
         }
+    }
+
+    public void clearCart() {
+        danhSachSanPhamTrongGio.clear();
+        modelGioHang.setRowCount(0);
+        lblTongTien.setText("Tổng tiền: 0 VND");
     }
 }

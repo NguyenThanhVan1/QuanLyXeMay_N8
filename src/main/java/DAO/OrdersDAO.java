@@ -4,6 +4,7 @@ import DAO.Interface.OrdersDAOInterface;
 import DTO.OrdersDTO;
 import DTO.ProductsDTO;
 
+import java.sql.Statement;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,21 +20,25 @@ import javax.swing.text.html.HTMLDocument.HTMLReader.PreAction;
 public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer>{
 
     @Override
-    public boolean create(OrdersDTO entity) {
+    public OrdersDTO create(OrdersDTO entity) {
         String sql = "INSERT INTO donhang (NGAYLAP, MAKH, DIACHI, TONGTIEN, TRANGTHAI) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+            PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setInt(1, entity.getOrderId());
-            ps.setDate(2, new java.sql.Date(entity.getCreatedDate().getTime()));
-            ps.setString(3, entity.getCustomerId());
-            ps.setString(4, entity.getAddress());
-            ps.setBigDecimal(5, entity.getTotalAmount());
-            ps.setString(6, entity.getStatus());
+            ps.setDate(1, new java.sql.Date(entity.getCreatedDate().getTime()));
+            ps.setString(2, entity.getCustomerId());
+            ps.setString(3, entity.getAddress());
+            ps.setBigDecimal(4, entity.getTotalAmount());
+            ps.setString(5, entity.getStatus());
 
             ps.executeUpdate();
-            return true;
 
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                entity.setOrderId(rs.getInt(1)); // Lấy ID vừa insert
+            }
+
+            return entity;
         } catch (SQLException e) {
             throw new RuntimeException("Lỗi khi thêm đơn hàng: " + e.getMessage(), e);
         }

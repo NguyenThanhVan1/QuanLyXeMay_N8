@@ -23,14 +23,13 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, String>{
 
     @Override
     public boolean create(UsersDTO entity, Connection conn) {
-        String sql = "INSERT INTO khachhang (HOTEN, SDT, DIACHI, TENDANGNHAP, MATKHAU, QUYEN) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO khachhang (HOTEN, SDT, DIACHI, TENDANGNHAP, MATKHAU) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, entity.getName());
-            ps.setString(2, entity.getRole());
+            ps.setString(2, entity.getPhone());
             ps.setString(3, entity.getAddress());
             ps.setString(4, entity.getUserName());
             ps.setString(5, entity.getPassword());
-            ps.setString(6, entity.getRole());
 
             int rowsInserted = ps.executeUpdate();
             return rowsInserted > 0;
@@ -61,8 +60,7 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, String>{
             List<UsersDTO> usersList = new ArrayList<>();
             while (rs.next()) {
                 UsersDTO user = new UsersDTO(rs.getString("MAKH"), rs.getString("HOTEN"), rs.getString("SDT"),
-                        rs.getString("DIACHI"), rs.getString("TENDANGNHAP"), rs.getString("MATKHAU"),
-                        rs.getString("QUYEN"));
+                        rs.getString("DIACHI"), rs.getString("TENDANGNHAP"), rs.getString("MATKHAU"));
                 usersList.add(user);
             }
             return usersList;
@@ -80,8 +78,7 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, String>{
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new UsersDTO(rs.getString("MAKH"), rs.getString("HOTEN"), rs.getString("SDT"),
-                        rs.getString("DIACHI"), rs.getString("TENDANGNHAP"), rs.getString("MATKHAU"),
-                        rs.getString("QUYEN"));
+                        rs.getString("DIACHI"), rs.getString("TENDANGNHAP"), rs.getString("MATKHAU"));
             }
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi lấy thông tin người dùng: " + e.getMessage(), e);
@@ -92,15 +89,13 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, String>{
     @Override
     public boolean update(UsersDTO entity, Connection conn) {
         try {
-            String sql = "UPDATE khachhang SET HOTEN = ?, SDT = ?, DIACHI = ?, TENDANGNHAP = ?, MATKHAU = ?, QUYEN = ? WHERE MAKH = ?";
+            String sql = "UPDATE khachhang SET HOTEN = ?, SDT = ?, DIACHI = ?, TENDANGNHAP = ?, MATKHAU = ? WHERE MAKH = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, entity.getName());
-            ps.setString(2, entity.getRole());
-            ps.setString(3, entity.getAddress());
-            ps.setString(4, entity.getUserName());
-            ps.setString(5, entity.getPassword());
-            ps.setString(6, entity.getRole());
-            ps.setString(7, entity.getId());
+            ps.setString(2, entity.getAddress());
+            ps.setString(3, entity.getUserName());
+            ps.setString(4, entity.getPassword());
+            ps.setString(5, entity.getId());
             int rowsUpdated = ps.executeUpdate();
             return rowsUpdated > 0;
         } catch (Exception e) {

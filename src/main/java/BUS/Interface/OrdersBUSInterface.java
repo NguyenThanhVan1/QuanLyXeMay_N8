@@ -14,7 +14,7 @@ public interface OrdersBUSInterface<T, ID>{
 
     T getById(ID orderId);
 
-    boolean create(T order, List<ProductsDTO> productList);
+    T create(T order, List<ProductsDTO> productList);
 
     boolean update(T order);
 

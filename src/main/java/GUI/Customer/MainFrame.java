@@ -45,7 +45,7 @@ public class MainFrame extends JFrame {
         
         // Khởi tạo các panel
         sanPhamPanel = new SanPhamPanel(this);
-        gioHangPanel = new GioHangPanel(this);
+        gioHangPanel = GioHangPanel.getInstance(this);
         thongTinPanel = new ThongTinPanel(this);
         doiMatKhauPanel = new DoiMatKhauPanel(this);
         

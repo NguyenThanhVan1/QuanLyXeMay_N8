@@ -1,6 +1,8 @@
 package BUS;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
 import BUS.Interface.ProductsBUSInterface;
 import DAO.ProductsDAO;
@@ -51,6 +53,25 @@ public class ProductsBUS implements ProductsBUSInterface<ProductsDTO, Integer> {
     public java.util.List<DTO.ProductsDTO> getAll() {
         
         return this.productDAO.getAll(conn);
+    }
+
+    public List<ProductsDTO> getFailedProductsAfterOrders(List<ProductsDTO> products) {
+        try {
+            List<ProductsDTO> list = this.productDAO.getAll(conn);
+            List<ProductsDTO> failedProducts = new ArrayList<>();
+            for (ProductsDTO product : list) {
+                for (ProductsDTO orderedProduct : products) {
+                    if (product.getProductId().equals(orderedProduct.getProductId())) {
+                        if (product.getQuantity() < orderedProduct.getQuantity()) {
+                            failedProducts.add(product);
+                        }
+                    }
+                }
+            }
+            return failedProducts;
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi lấy danh sách sản phẩm không đủ số lượng: " + e.getMessage(), e);
+        }
     }
     
 }

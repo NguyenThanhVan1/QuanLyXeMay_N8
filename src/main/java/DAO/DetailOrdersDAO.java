@@ -23,13 +23,13 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
     @Override
     public boolean create(List<DetailOrdersDTO> detailOrder) {
         try {
-            String sql = "INSERT INTO chitietdonhang (MADH, MAXM, SOLUONG, GIATRI, THANHTIEN) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO chitietdonhang (MADH, MAXE, SOLUONG, DONGIA, THANHTIEN) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
     
             for (DetailOrdersDTO order : detailOrder) {
                 ps.setInt(1, order.getOrderId());
-                ps.setInt(2, order.getXeId());
+                ps.setString(2, order.getXeId());
                 ps.setInt(3, order.getQuantity());
                 ps.setBigDecimal(4, order.getUnitPrice());
                 ps.setBigDecimal(5, order.getTotalPrice());
@@ -63,7 +63,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
             while (rs.next()) {
                 DetailOrdersDTO detailOrder = new DetailOrdersDTO(
                         rs.getInt("MADH"),
-                        rs.getInt("MAXM"),
+                        rs.getString("MAXE"),
                         rs.getInt("SOLUONG"),
                         rs.getBigDecimal("GIATRI"),
                         rs.getBigDecimal("THANHTIEN")
@@ -89,7 +89,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
             while (rs.next()) {
                 DetailOrdersDTO detailOrder = new DetailOrdersDTO(
                         rs.getInt("MADH"),
-                        rs.getInt("MAXM"),
+                        rs.getString("MAXE"),
                         rs.getInt("SOLUONG"),
                         rs.getBigDecimal("GIATRI"),
                         rs.getBigDecimal("THANHTIEN")

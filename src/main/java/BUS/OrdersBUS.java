@@ -61,24 +61,32 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
     }
 
     @Override
-    public boolean create(OrdersDTO order, List<ProductsDTO> productList) {
+    public OrdersDTO create(OrdersDTO order, List<ProductsDTO> productList) {
         try {
-            ordersDAO.create(order);
-
+            this.conn.setAutoCommit(false);
+            OrdersDTO orderCreated = ordersDAO.create(order);
+            
             List <DetailOrdersDTO> detailOrders = new ArrayList<>();
+            
             for(ProductsDTO product : productList) {
                 BigDecimal total = product.getPrice().multiply(BigDecimal.valueOf(product.getQuantity()));
                 DetailOrdersDTO detailOrder = new DetailOrdersDTO(order.getOrderId(), product.getProductId(), product.getQuantity(), product.getPrice(), total);
                 detailOrders.add(detailOrder);
             }
+            
             detailOrdersDAO.create(detailOrders);
+            this.conn.commit();
+            return orderCreated;
             
         } catch (Exception e) {
+            try {
+                this.conn.rollback();
+            } catch (Exception rollbackEx) {
+                System.out.println("Lỗi khi rollback: " + rollbackEx.getMessage());
+            }
             System.out.println("Lỗi khi thêm đơn hàng: " + e.getMessage());
-            return false;
+            return null;
         }
-
-        return true;
     }
 
     @Override

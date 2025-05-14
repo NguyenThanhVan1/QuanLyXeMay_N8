@@ -10,25 +10,21 @@ public class UsersDTO {
     private String role;
 
 
-    public UsersDTO(String name, String phone, String address, String userName, String password,
-            String role) {
+    public UsersDTO(String name, String phone, String address, String userName, String password) {
         this.name = name;
         this.phone = phone;
         this.address = address;
         this.userName = userName;
         this.password = password;
-        this.role = role;
     }
 
-    public UsersDTO(String id, String name, String phone, String address, String userName, String password,
-            String role) {
+    public UsersDTO(String id, String name, String phone, String address, String userName, String password) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.address = address;
         this.userName = userName;
         this.password = password;
-        this.role = role; 
     }
 
     public UsersDTO() {
@@ -72,12 +68,7 @@ public class UsersDTO {
     public void setPassword(String password) {
         this.password = password;
     }
-    public String getRole() {
-        return role;
-    }
-    public void setRole(String role) {
-        this.role = role;
-    }
+
 
     
 }

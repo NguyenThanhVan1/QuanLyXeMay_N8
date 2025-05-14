@@ -10,7 +10,7 @@ import DTO.ProductsDTO;
 public interface OrdersDAOInterface<T, ID> {
     
     
-    boolean create(T entity);
+    T create(T entity);
     boolean delete(ID orderId);
     boolean update(T entity, Connection conn);
     List<T> getAll();
