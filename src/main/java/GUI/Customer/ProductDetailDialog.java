@@ -233,7 +233,7 @@ public class ProductDetailDialog extends JDialog {
             JOptionPane.INFORMATION_MESSAGE
         );
         IdCurrentUser idCurrentUser = new IdCurrentUser();
-        idCurrentUser.setCurrentUserId("1");
+        // idCurrentUser.setCurrentUserId("1");
         String idCustomer = idCurrentUser.getCurrentUserId();
         ShoppingCartsDTO shoppingCart = new ShoppingCartsDTO(idCustomer, sanPham.getProductId(), soLuong);
         this.shoppingCartsBUS.add(shoppingCart);

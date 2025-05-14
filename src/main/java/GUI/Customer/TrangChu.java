@@ -1,9 +1,27 @@
 package GUI.Customer;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 public class TrangChu extends JFrame{
     public TrangChu() {
+        try {
+            // Reset lại toàn bộ Look and Feel
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            
+            // Đảm bảo xóa các thuộc tính tùy chỉnh
+            UIManager.put("OptionPane.background", null);
+            UIManager.put("Panel.background", null);
+            UIManager.put("OptionPane.messageForeground", null);
+            UIManager.put("Button.background", null);
+            UIManager.put("Button.foreground", null);
+            
+            // Cập nhật lại toàn bộ UI components
+            SwingUtilities.updateComponentTreeUI(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         new MainFrame().setVisible(true);
     }
     public static void main(String[] args) {

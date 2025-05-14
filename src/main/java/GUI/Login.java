@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import javax.swing.border.*;
 
 import BUS.KhachHangBUS;
+import BUS.UsersBUS;
 import DAO.KhachHangDAO;
 import DAO.NhanVienDAO;
 import DTO.KhachHangDTO;
 import DTO.NhanVienDTO;
+import DTO.UsersDTO;
 import GUI.Customer.TrangChu;
 
 public class Login extends JFrame {
@@ -39,6 +41,7 @@ public class Login extends JFrame {
     private Font titleFont = new Font("Segoe UI", Font.BOLD, 24);
 
     public Login() {
+        applyDarkTheme();
         setTitle("MOTORCYCLE SHOP");
         setSize(450, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -71,6 +74,15 @@ public class Login extends JFrame {
         setVisible(true);
     }
 
+    private void applyDarkTheme() {
+        // Áp dụng chủ đề tối chỉ cho các thành phần trong form này
+        UIManager.put("OptionPane.background", new Color(33, 33, 33));
+        UIManager.put("Panel.background", new Color(33, 33, 33));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(0, 123, 255));
+        UIManager.put("Button.foreground", Color.WHITE);
+    }
+    
     private void createLoginPanel() {
         loginPanel = new JPanel();
         loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
@@ -449,13 +461,16 @@ public class Login extends JFrame {
         } else {
 
             // Đăng nhập khách hàng (ví dụ đơn giản)
-            if (checkCustomerLogin(username, password)) {
+           if (checkCustomerLogin(username, password)) {
                 JOptionPane.showMessageDialog(this,
                         "Đăng nhập khách hàng thành công!",
                         "Thông báo",
                         JOptionPane.INFORMATION_MESSAGE);
-                // openCustomerPanel();
-                new TrangChu().setVisible(true);
+                UsersBUS bus = new UsersBUS();
+                UsersDTO user = bus.geByUsername(username);
+                IdCurrentUser.setCurrentUserId(user.getId());
+                new TrangChu();
+               
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this,
@@ -559,19 +574,9 @@ public class Login extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // Apply dark theme to UIManager
-        UIManager.put("OptionPane.background", new Color(33, 33, 33));
-        UIManager.put("Panel.background", new Color(33, 33, 33));
-        UIManager.put("OptionPane.messageForeground", Color.WHITE);
-        UIManager.put("Button.background", new Color(0, 123, 255));
-        UIManager.put("Button.foreground", Color.WHITE);
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new Login();
-            }
-        });
-    }
+        
+        // Không thiết lập dark theme ở đây nữa
+        
+        SwingUtilities.invokeLater(() -> new Login());
+        }
 }

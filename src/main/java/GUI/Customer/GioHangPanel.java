@@ -32,7 +32,7 @@ public class GioHangPanel extends JPanel {
     private ShoppingCartsBUS shoppingCartsBUS;
     
     public GioHangPanel(MainFrame mainFrame) {
-        System.out.println("GioHangPanel");
+        System.out.println("GioHangPanel new");
        
         this.mainFrame = mainFrame;
         setLayout(new BorderLayout(0, 10));
@@ -147,8 +147,8 @@ public class GioHangPanel extends JPanel {
         // System.out.println(this.danhSachSanPhamTrongGio);
         this.shoppingCartsBUS = new ShoppingCartsBUS();
         IdCurrentUser idCurrentUser = new IdCurrentUser();
-        idCurrentUser.setCurrentUserId("1");
-        // System.out.println("IdCurrentUser: " + idCurrentUser.getCurrentUserId());
+        // idCurrentUser.setCurrentUserId("1");
+        System.out.println("IdCurrentUser: " + idCurrentUser.getCurrentUserId());
         this.shoppingCarts = this.shoppingCartsBUS.getByIdCustomer(idCurrentUser.getCurrentUserId());
         System.out.println("ShoppingCarts: " + this.shoppingCarts);
         this.danhSachSanPhamTrongGio = this.shoppingCartsBUS.getByShoppingCart(idCurrentUser.getCurrentUserId());

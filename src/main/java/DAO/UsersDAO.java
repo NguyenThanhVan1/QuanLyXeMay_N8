@@ -102,5 +102,21 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, String>{
             throw new RuntimeException("Lỗi khi cập nhật người dùng: " + e.getMessage(), e);
         }
     }
+
+    public UsersDTO getByUsername(String username, Connection conn) {
+        try {
+            String sql = "SELECT * FROM khachhang WHERE TENDANGNHAP = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new UsersDTO(rs.getString("MAKH"), rs.getString("HOTEN"), rs.getString("SDT"),
+                        rs.getString("DIACHI"), rs.getString("TENDANGNHAP"), rs.getString("MATKHAU"));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi lấy thông tin người dùng: " + e.getMessage(), e);
+        }
+        return null;
+    }
     
 }

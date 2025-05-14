@@ -73,4 +73,13 @@ public class UsersBUS implements UsersBUSInterface<UsersDTO, String> {
             return false;
         }
     }
+
+    public UsersDTO geByUsername(String username) {
+        try {
+            return this.usersDAO.getByUsername(username, conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
