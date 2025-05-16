@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -248,7 +249,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer> {
 
         // Nếu chưa có, tạo mã mới dựa trên số dòng hiện có
         String countQuery = "SELECT COUNT(*) AS total FROM DONHANG";
-        PreparedStatement countStmt = conn.createStatement();
+        Statement countStmt = conn.createStatement();
         ResultSet countRs = countStmt.executeQuery(countQuery);
 
         int count = 0;
