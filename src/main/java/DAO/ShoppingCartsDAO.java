@@ -12,7 +12,7 @@ public class ShoppingCartsDAO implements DAO.Interface.ShoppingCartsDAOInterface
             String sql = "INSERT INTO giohang (idKhachHang, idXe, soLuong) VALUES (?, ?, ?)";
             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, entity.getIdCustomer());
-            pstmt.setString(2, entity.getIdProduct());      
+            pstmt.setString(2, entity.getIdProduct());
             pstmt.setInt(3, entity.getQuantity());
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
@@ -20,11 +20,11 @@ public class ShoppingCartsDAO implements DAO.Interface.ShoppingCartsDAOInterface
             } else {
                 return false;
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
-        } 
+        }
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ShoppingCartsDAO implements DAO.Interface.ShoppingCartsDAOInterface
             e.printStackTrace();
             return false;
         }
-        
+
     }
 
     @Override
@@ -54,6 +54,7 @@ public class ShoppingCartsDAO implements DAO.Interface.ShoppingCartsDAOInterface
         } catch (Exception e) {
             // TODO: handle exception
         }
+        return null;
     }
 
     @Override
@@ -146,8 +147,8 @@ public class ShoppingCartsDAO implements DAO.Interface.ShoppingCartsDAOInterface
             return null;
         }
     }
-    
-    public boolean deleteByIdProduct(String idProduct, Connection conn){
+
+    public boolean deleteByIdProduct(String idProduct, Connection conn) {
         try {
             String sql = "DELETE FROM giohang WHERE idXe = ?";
             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);

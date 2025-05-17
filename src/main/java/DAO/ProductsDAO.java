@@ -15,23 +15,18 @@ public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, String> {
     private Connection conn;
 
     public ProductsDAO() {
-        try {
-            conn = Database.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi kết nối đến cơ sở dữ liệu: " + e.getMessage(), e);
-        }
+        conn = Database.getConnection();
     }
-
 
     @Override
     public boolean create(ProductsDTO entity, Connection conn) {
-        
+
         return false;
     }
 
     @Override
     public boolean delete(String id, Connection conn) {
-        
+
         return false;
     }
 
@@ -48,15 +43,16 @@ public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, String> {
                 String brand = rs.getString("HANGXE");
                 BigDecimal price = rs.getBigDecimal("GIABAN");
                 int quantity = rs.getInt("SOLUONG");
+                String ANH = rs.getString("ANH");
 
-                ProductsDTO productDTO = new ProductsDTO(productId, productName, brand, price, quantity);
+                ProductsDTO productDTO = new ProductsDTO(productId, productName, brand, price, quantity, ANH);
                 productsList.add(productDTO);
             }
             return productsList;
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi lấy danh sách sản phẩm: " + e.getMessage(), e);
         }
-        
+
     }
 
     @Override
@@ -72,8 +68,8 @@ public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, String> {
                 String brand = rs.getString("HANGXE");
                 BigDecimal price = rs.getBigDecimal("GIABAN");
                 int quantity = rs.getInt("SOLUONG");
-
-                return new ProductsDTO(productId, productName, brand, price, quantity);
+                String ANH = rs.getString("ANH");
+                return new ProductsDTO(productId, productName, brand, price, quantity, ANH);
             }
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi lấy thông tin sản phẩm: " + e.getMessage(), e);
@@ -119,11 +115,7 @@ public class ProductsDAO implements ProductsDAOInterface<ProductsDTO, String> {
             return rowsUpdated > 0;
         } catch (SQLException e) {
             throw new RuntimeException("Lỗi khi cập nhật số lượng sản phẩm: " + e.getMessage(), e);
-        } 
+        }
     }
-
- 
-
-
 
 }

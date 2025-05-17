@@ -3,13 +3,13 @@ package DTO;
 import java.math.BigDecimal;
 
 public class ProductsDTO {
-    private String productId; 
-    private String productName; 
-    private String brand; 
-    private BigDecimal price; 
-    private int quantity; 
+    private String productId;
+    private String productName;
+    private String brand;
+    private BigDecimal price;
+    private int quantity;
+    private String ANH;
 
-    
     public ProductsDTO(String productName, String brand, BigDecimal price, int quantity) {
         this.productName = productName;
         this.brand = brand;
@@ -17,20 +17,19 @@ public class ProductsDTO {
         this.quantity = quantity;
     }
 
-    public ProductsDTO(String productId, String productName, String brand, BigDecimal price, int quantity) {
+    public ProductsDTO(String productId, String productName, String brand, BigDecimal price, int quantity, String ANH) {
         this.productId = productId;
         this.productName = productName;
         this.brand = brand;
         this.price = price;
         this.quantity = quantity;
+        this.ANH = ANH;
     }
 
-    
     public ProductsDTO() {
-        
+
     }
 
-    
     public String getProductId() {
         return productId;
     }
@@ -80,5 +79,17 @@ public class ProductsDTO {
                 ", price=" + price +
                 ", quantity=" + quantity +
                 '}';
+    }
+
+    public String getLoai() {
+        return this.brand;
+    }
+
+    public String getANH() {
+        return ANH;
+    }
+
+    public void setANH(String ANH) {
+        this.ANH = ANH;
     }
 }

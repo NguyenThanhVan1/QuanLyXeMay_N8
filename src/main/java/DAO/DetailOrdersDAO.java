@@ -12,13 +12,8 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
     private Connection conn;
 
     public DetailOrdersDAO() {
-        try {
-            conn = Database.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi kết nối đến cơ sở dữ liệu: " + e.getMessage(), e);
-        }
+        conn = Database.getConnection();
     }
-
 
     @Override
     public boolean create(List<DetailOrdersDTO> detailOrder) {
@@ -26,7 +21,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
             String sql = "INSERT INTO chitietdonhang (MADH, MAXE, SOLUONG, DONGIA, THANHTIEN) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
-    
+
             for (DetailOrdersDTO order : detailOrder) {
                 ps.setInt(1, order.getOrderId());
                 ps.setString(2, order.getXeId());
@@ -36,7 +31,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
                 ps.addBatch();
             }
             ps.executeBatch();
-    
+
             conn.commit();
             return true;
         } catch (SQLException e) {
@@ -55,7 +50,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
         String sql = "SELECT * FROM chitietdonhang WHERE MADH = ?";
 
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, orderId);
             ResultSet rs = ps.executeQuery();
@@ -66,8 +61,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
                         rs.getString("MAXE"),
                         rs.getInt("SOLUONG"),
                         rs.getBigDecimal("DONGIA"),
-                        rs.getBigDecimal("THANHTIEN")
-                );
+                        rs.getBigDecimal("THANHTIEN"));
                 detailOrders.add(detailOrder);
             }
 
@@ -92,12 +86,11 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
                         rs.getString("MAXE"),
                         rs.getInt("SOLUONG"),
                         rs.getBigDecimal("GIATRI"),
-                        rs.getBigDecimal("THANHTIEN")
-                );
+                        rs.getBigDecimal("THANHTIEN"));
                 detailOrders.add(detailOrder);
             }
             return detailOrders;
-            
+
         } catch (SQLException e) {
             throw new RuntimeException("Lỗi khi lấy danh sách chi tiết đơn hàng: " + e.getMessage(), e);
         }
@@ -112,7 +105,7 @@ public class DetailOrdersDAO implements DetailOrdersDAOInterface<DetailOrdersDTO
     public boolean delete(Integer orderId) {
         String sql = "DELETE FROM chitietdonhang WHERE MADH = ?";
         try (Connection conn = Database.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, orderId);
 

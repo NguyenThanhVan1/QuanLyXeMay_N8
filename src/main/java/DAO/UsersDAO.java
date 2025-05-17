@@ -10,15 +10,11 @@ import java.util.List;
 import DAO.Interface.UsersDAOInterface;
 import DTO.UsersDTO;
 
-public class UsersDAO implements UsersDAOInterface<UsersDTO, String>{
+public class UsersDAO implements UsersDAOInterface<UsersDTO, String> {
     private Connection conn;
 
     public UsersDAO() {
-       try {
-            conn = Database.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi kết nối đến cơ sở dữ liệu: " + e.getMessage(), e);
-        }
+        conn = Database.getConnection();
     }
 
     @Override
@@ -66,7 +62,7 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, String>{
             return usersList;
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi lấy danh sách người dùng: " + e.getMessage(), e);
-        } 
+        }
     }
 
     @Override
@@ -118,5 +114,5 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, String>{
         }
         return null;
     }
-    
+
 }
