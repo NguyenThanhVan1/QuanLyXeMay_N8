@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import DAO.Database;
 public class SanPhamPanel extends JPanel {
     private JTextField txtTimKiem;
     private JComboBox<String> cboLoai;
+    private JComboBox<String> cboSapXep;
     private JComboBox<String> cboGia;
     private List<ProductsDTO> danhSachSanPham;
     private PhanTrangPanel phanTrangPanel;
@@ -283,6 +285,8 @@ public class SanPhamPanel extends JPanel {
             cboLoai = comboBox;
         } else if (title.equals("Khoảng giá")) {
             cboGia = comboBox;
+        } else if (title.equals("Sắp xếp theo")) {
+            cboSapXep = comboBox;
         }
 
         panel.add(comboBox);
@@ -460,6 +464,7 @@ public class SanPhamPanel extends JPanel {
         String keyword = txtTimKiem.getText().trim().toLowerCase();
         String brand = cboLoai.getSelectedItem().toString();
         String priceRange = cboGia.getSelectedItem().toString();
+        String sortOption = cboSapXep.getSelectedItem().toString(); // 👉 Lấy giá trị sắp xếp từ combo box
 
         List<ProductsDTO> products = this.productsBUS.getAll(); // Lấy toàn bộ sản phẩm
         List<ProductsDTO> filtered = new ArrayList<>();
@@ -467,12 +472,12 @@ public class SanPhamPanel extends JPanel {
         for (ProductsDTO product : products) {
             boolean matches = true;
 
-            // Lọc theo từ khóa tên sản phẩm
+            // Lọc theo từ khóa
             if (!keyword.isEmpty() && !product.getProductName().toLowerCase().contains(keyword)) {
                 matches = false;
             }
 
-            // Lọc theo hãng xe
+            // Lọc theo hãng
             if (!brand.equals("Tất cả") && !product.getBrand().equalsIgnoreCase(brand)) {
                 matches = false;
             }
@@ -507,7 +512,20 @@ public class SanPhamPanel extends JPanel {
             }
         }
 
-        hienThiSanPham(filtered);
+        // 👉 Sắp xếp sau khi lọc
+        switch (sortOption) {
+            case "Giá tăng dần":
+                filtered.sort(Comparator.comparing(ProductsDTO::getPrice));
+                break;
+            case "Giá giảm dần":
+                filtered.sort(Comparator.comparing(ProductsDTO::getPrice).reversed());
+                break;
+            default:
+                // Mặc định không sắp xếp
+                break;
+        }
+
+        hienThiSanPham(filtered); // Hiển thị danh sách đã lọc và sắp xếp
     }
 
     private void hienThiSanPham(List<ProductsDTO> danhSach) {
