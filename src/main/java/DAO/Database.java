@@ -10,13 +10,11 @@ public class Database {
         Connection c = null;
         try {
             // Load SQL Server JDBC driver
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             // Kết nối đến SQL Server
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=QLCHXM2;" +
-                    "encrypt=true;" +
-                    "trustServerCertificate=true";
-            String username = "sa"; // tài khoản SQL Server của bạn
-            String password = "123"; // mật khẩu SQL Server
+            String url = "jdbc:mysql://localhost:3308/qlchxm2";
+            String username = "root"; // tài khoản SQL Server của bạn
+            String password = ""; // mật khẩu SQL Server
 
             c = DriverManager.getConnection(url, username, password);
 

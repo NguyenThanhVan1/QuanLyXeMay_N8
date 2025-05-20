@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import BUS.ProductsBUS;
 import BUS.ShoppingCartsBUS;
 import BUS.UsersBUS;
 import DTO.OrdersDTO;
@@ -32,9 +33,11 @@ public class GioHangPanel extends JPanel {
     private List<ShoppingCartsDTO> shoppingCarts;
 
     private ShoppingCartsBUS shoppingCartsBUS;
+    private ProductsBUS productsBUS;
 
     public GioHangPanel(MainFrame mainFrame) {
         System.out.println("GioHangPanel new");
+        this.productsBUS   = new ProductsBUS();
 
         this.mainFrame = mainFrame;
         setLayout(new BorderLayout(0, 10));
@@ -122,6 +125,17 @@ public class GioHangPanel extends JPanel {
                     BigDecimal thanhTien = sp.getPrice().multiply(BigDecimal.valueOf(sp.getQuantity()));
                     tongTien = tongTien.add(thanhTien);
                 }
+                //kiểm tra số lượng xe máy trong database có đủ so với đơn hàng hay không
+                for (ProductsDTO sp : danhSachSanPhamTrongGio) {
+                    ProductsDTO product = productsBUS.getById(sp.getProductId());
+                    if (product.getQuantity() < sp.getQuantity()) {
+                        JOptionPane.showMessageDialog(GioHangPanel.this,
+                                "Số lượng sản phẩm " + product.getProductName() + " không đủ trong kho!",
+                                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                }
+                System.out.println("Check return ở trên");
                 // Hiển thị dialog thanh toán
                 ThanhToanDialog dialog = new ThanhToanDialog(
                         (Frame) SwingUtilities.getWindowAncestor(GioHangPanel.this),
@@ -241,22 +255,22 @@ public class GioHangPanel extends JPanel {
 
         @Override
         public Object getCellEditorValue() {
-            if (isPushed) {
-                // Xử lý khi nhấn nút "Xóa"
-                int row = tblGioHang.getSelectedRow();
-                if (row >= 0) {
-                    // Xóa sản phẩm khỏi danh sách
-                    danhSachSanPhamTrongGio.remove(row);
+            if(danhSachSanPhamTrongGio.size() > 0){
+                if (isPushed) {
+                    // Xử lý khi nhấn nút "Xóa"
+                    
+                    int row = tblGioHang.getSelectedRow();
+                    if (row >= 0) {
+                        JOptionPane.showMessageDialog(GioHangPanel.this,
+                                "Đã xóa sản phẩm khỏi giỏ hàng!",
+                                "Thông báo",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        ShoppingCartsBUS shoppingCartsBUS = new ShoppingCartsBUS();
+                        shoppingCartsBUS.deleteByIdProduct(danhSachSanPhamTrongGio.get(row).getProductId());
 
-                    JOptionPane.showMessageDialog(GioHangPanel.this,
-                            "Đã xóa sản phẩm khỏi giỏ hàng!",
-                            "Thông báo",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    ShoppingCartsBUS shoppingCartsBUS = new ShoppingCartsBUS();
-                    shoppingCartsBUS.deleteByIdProduct(danhSachSanPhamTrongGio.get(row).getProductId());
-
-                    // Cập nhật lại giỏ hàng
-                    updateGioHang();
+                        // Cập nhật lại giỏ hàng
+                        SwingUtilities.invokeLater(() -> updateGioHang());
+                    }
                 }
             }
             isPushed = false;

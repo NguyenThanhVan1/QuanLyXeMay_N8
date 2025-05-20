@@ -173,16 +173,19 @@ private JPanel createSimpleCustomerPanel() {
     
     // Tạo các trường nhập liệu
     txtHoTen = createStyledTextField();
+    txtHoTen.setEditable(false);
     if (khachHang != null) {
         txtHoTen.setText(khachHang.getName());
     }
     
     txtDiaChi = createStyledTextField();
+    txtDiaChi.setEditable(false);
     if (khachHang != null && khachHang.getAddress() != null) {
         txtDiaChi.setText(khachHang.getAddress());
     }
     
     txtSoDienThoai = createStyledTextField();
+    txtSoDienThoai.setEditable(false);
     if (khachHang != null && khachHang.getPhone() != null) {
         txtSoDienThoai.setText(khachHang.getPhone());
     }
@@ -646,7 +649,7 @@ private JPanel createButtonPanel() {
     
     private void xuLyThanhToan() {
         String hoTen = txtHoTen.getText().trim();
-        String diaChi = txtDiaChi.getText().trim();
+        String diaChi = txtDiaChi.getText().trim(); 
         String soDienThoai = txtSoDienThoai.getText().trim();
         String phuongThucThanhToan = (String) cboHinhThucThanhToan.getSelectedItem();
         
