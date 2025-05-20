@@ -77,8 +77,12 @@ public class ThongTinPanel extends JPanel {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
         JButton btnQuayLai = new JButton("Quay lại giỏ hàng");
-        btnQuayLai.addActionListener(e -> mainFrame.cardLayout.show(mainFrame.contentPanel, "GioHang"));
-
+        // btnQuayLai.addActionListener(e ->
+        // mainFrame.cardLayout.show(mainFrame.contentPanel, "GioHang"));
+        btnQuayLai.addActionListener(e -> {
+            mainFrame.cardLayout.show(mainFrame.contentPanel, "GioHang");
+            mainFrame.setGioHangActive(); // tô xanh lại nút giỏ hàng
+        });
         JButton btnXacNhan = new JButton("Cập nhật thông tin");
         btnXacNhan.addActionListener(e -> {
             if (validateForm()) {
