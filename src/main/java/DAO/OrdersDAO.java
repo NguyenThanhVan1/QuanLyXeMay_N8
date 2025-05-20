@@ -117,6 +117,7 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer> {
 
     @Override
     public boolean update(OrdersDTO entity, Connection conn) {
+        System.out.println("Update order: " + entity);
         String sql = "UPDATE donhang SET NGAYLAP = ?, MAKH = ?, DIACHI = ?, TONGTIEN = ?, TRANGTHAI = ?, PTTHANHTOAN = ? WHERE MADH = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -125,8 +126,9 @@ public class OrdersDAO implements OrdersDAOInterface<OrdersDTO, Integer> {
             ps.setString(3, entity.getAddress());
             ps.setBigDecimal(4, entity.getTotalAmount());
             ps.setString(5, entity.getStatus());
-            ps.setInt(6, entity.getOrderId());
-            ps.setString(7, entity.getMethod());
+            ps.setString(6, entity.getMethod());
+            ps.setInt(7, entity.getOrderId());
+            
 
             ps.executeUpdate();
             return true;

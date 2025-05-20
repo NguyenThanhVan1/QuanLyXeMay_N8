@@ -51,6 +51,7 @@ public class StatisticsPanel extends JPanel {
     private JPanel chartPanel;
     private JTable topProductsTable;
     private ChartPanel chartComponent;
+    private List<OrdersDTO> allOrders;
     
     // Các màu cho giao diện
     private static final Color PRIMARY_COLOR = new Color(0, 123, 255);
@@ -581,6 +582,7 @@ public class StatisticsPanel extends JPanel {
     public void updateOrdersList(Date fromDate, Date toDate){
         this.ordersList.clear();
         this.ordersList.addAll(ordersBUS.getOrdersByFilters(fromDate, toDate, null, null));
+        System.out.println("Danh sach don hang sau khi cap nhat o thong ke: " + this.ordersList);
 
         mainPanel.removeAll();
 
@@ -591,4 +593,5 @@ public class StatisticsPanel extends JPanel {
         revalidate();
         repaint();
     }
+
 }

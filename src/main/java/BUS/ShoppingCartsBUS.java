@@ -49,7 +49,6 @@ public class ShoppingCartsBUS implements BUS.Interface.ShoppingCartsBUSInterface
     public boolean update(ShoppingCartsDTO entity) {
         try {
             this.conn.setAutoCommit(false);
-            ShoppingCartsDTO existingEntity = shoppingCartsDAO.getByIdCustomer(entity.getIdProduct(), conn);
             shoppingCartsDAO.delete(entity.getIdProduct(), conn);
             shoppingCartsDAO.create(entity, conn);
             this.conn.commit();

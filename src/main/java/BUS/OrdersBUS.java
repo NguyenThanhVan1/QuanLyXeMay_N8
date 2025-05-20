@@ -103,7 +103,7 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
                 }
 
                 System.out.println("Nhân viên đang đăng nhập admin: " + IdCurrentUser.getCurrentUserId());
-                InvoicesDTO invoice = new InvoicesDTO(date, order.getCustomerId(), IdCurrentUser.getCurrentUserId(), total, order.getOrderId());
+                InvoicesDTO invoice = new InvoicesDTO(date, order.getCustomerId(), IdCurrentUser.getCurrentUserId(), total, order.getOrderId(), order.getMethod());
                 // System.out.println("chưa tạo" + invoice.getId());
                 this.invoicesDAO.create(invoice, conn);
                 // System.out.println("Hóa đơn đã được tạo: " + invoice.getId());
@@ -161,8 +161,12 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
         }
         else{
             try {
+
+                System.out.println("Đã vào chờ xử lý");
                 this.conn.setAutoCommit(false);
                 List<DetailOrdersDTO> list = this.detailOrdersDAO.getById(order.getOrderId());
+                System.out.println("Danh sach chi tiet don hang: " + list);
+
                 List<ProductsDTO> productList = new ArrayList<>();
                 for(DetailOrdersDTO detailOrder : list) {
                     ProductsDTO product = this.productsDAO.getById(detailOrder.getXeId(), conn);
@@ -170,7 +174,8 @@ public class OrdersBUS implements OrdersBUSInterface<OrdersDTO, Integer> {
                     product.setQuantity(quantity); 
                     productList.add(product);
                 }
-
+                System.out.println("Danh sach san pham sau khi cap nhat: " + productList);
+                // System.out.println("Don hang: " + order);
                 this.productsDAO.update(productList, conn);
                 this.ordersDAO.update(order, conn); 
                 conn.commit();

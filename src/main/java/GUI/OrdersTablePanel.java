@@ -671,6 +671,17 @@ public class OrdersTablePanel extends JPanel {
                 }
 
             } else {
+                //kiểm tra xem số lượng sản phẩm trong dabase có đủ không
+                DetailOrdersBUS detailOrdersBUS = new DetailOrdersBUS();
+                List<DetailOrdersDTO> detailOrders = detailOrdersBUS.getByOrderId(orderId);
+                ProductsBUS productsBUS = new ProductsBUS();
+                for (DetailOrdersDTO detail : detailOrders) {
+                    ProductsDTO product = productsBUS.getById(detail.getXeId());
+                    if (product.getQuantity() < detail.getQuantity()) {
+                        JOptionPane.showMessageDialog(updateDialog, "Sản phẩm không " + product.getProductName()  +" đủ số lượng!");
+                        return;
+                    }
+                }
                 order.setStatus("Đang giao hàng");
                 ordersBUS.update(order, "");
             }
