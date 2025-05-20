@@ -88,10 +88,11 @@ public class UsersDAO implements UsersDAOInterface<UsersDTO, String> {
             String sql = "UPDATE khachhang SET HOTEN = ?, SDT = ?, DIACHI = ?, TENDANGNHAP = ?, MATKHAU = ? WHERE MAKH = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, entity.getName());
-            ps.setString(2, entity.getAddress());
-            ps.setString(3, entity.getUserName());
-            ps.setString(4, entity.getPassword());
-            ps.setString(5, entity.getId());
+            ps.setString(2, entity.getPhone());
+            ps.setString(3, entity.getAddress());
+            ps.setString(4, entity.getUserName());
+            ps.setString(5, entity.getPassword());
+            ps.setString(6, entity.getId());
             int rowsUpdated = ps.executeUpdate();
             return rowsUpdated > 0;
         } catch (Exception e) {
