@@ -3,6 +3,7 @@ package GUI.Customer;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.math3.stat.descriptive.summary.Product;
 
@@ -37,7 +38,7 @@ public class SanPhamPanel extends JPanel {
     private ButtonGroup priceGroup; // nhóm radio khoảng giá
 
     private ProductsBUS productsBUS;
-
+    // List<ProductsDTO> products = this.productsBUS.getAll();
     private final int ITEMS_PER_ROW = 4;
     private final int ROWS_PER_PAGE = 2;
     private final int ITEMS_PER_PAGE = ITEMS_PER_ROW * ROWS_PER_PAGE;
@@ -455,126 +456,68 @@ public class SanPhamPanel extends JPanel {
         }
     }
 
-    // private Color getColorForProductType(String loai) {
-    // switch (loai) {
-    // case "Honda":
-    // return new Color(100, 181, 246); // Light Blue
-    // case "Yamaha":
-    // return new Color(129, 199, 132); // Light Green
-    // case "Piaggio":
-    // return new Color(255, 183, 77); // Orange
-    // case "Vespa":
-    // return new Color(240, 98, 146);
-    // case "SYM":
-    // return new Color(240, 98, 146);
-    // case "Kymco":
-    // return new Color(240, 98, 146); // Pink
-    // default:
-    // return new Color(189, 189, 189); // Gray
-    // }
-    // }
-
-    // private void taoDataMau() {
-    // danhSachSanPham = new ArrayList<>();
-    // danhSachSanPham
-    // .add(new ProductsDTO("SP001", "iPhone 15 Pro Max", "Điện thoại", new
-    // BigDecimal("32990000"), 10));
-    // danhSachSanPham
-    // .add(new ProductsDTO("SP002", "Samsung Galaxy S24 Ultra", "Điện thoại", new
-    // BigDecimal("28990000"), 8));
-    // danhSachSanPham.add(new ProductsDTO("SP003", "Xiaomi 14 Pro", "Điện thoại",
-    // new BigDecimal("19990000"), 15));
-    // danhSachSanPham.add(new ProductsDTO("SP004", "MacBook Pro M3", "Laptop", new
-    // BigDecimal("45990000"), 7));
-    // danhSachSanPham.add(new ProductsDTO("SP005", "Dell XPS 15", "Laptop", new
-    // BigDecimal("38990000"), 5));
-    // danhSachSanPham.add(new ProductsDTO("SP006", "Lenovo ThinkPad X1", "Laptop",
-    // new BigDecimal("32990000"), 12));
-    // danhSachSanPham.add(new ProductsDTO("SP007", "iPad Pro M2", "Tablet", new
-    // BigDecimal("23990000"), 10));
-    // danhSachSanPham.add(new ProductsDTO("SP008", "Samsung Galaxy Tab S9",
-    // "Tablet", new BigDecimal("19990000"), 8));
-    // danhSachSanPham.add(new ProductsDTO("SP009", "AirPods Pro 2", "Phụ kiện", new
-    // BigDecimal("4990000"), 25));
-    // danhSachSanPham
-    // .add(new ProductsDTO("SP010", "Apple Watch Series 9", "Phụ kiện", new
-    // BigDecimal("10990000"), 15));
-    // danhSachSanPham
-    // .add(new ProductsDTO("SP011", "Samsung Galaxy Buds 3", "Phụ kiện", new
-    // BigDecimal("3990000"), 20));
-    // danhSachSanPham
-    // .add(new ProductsDTO("SP012", "Laptop Gaming Asus ROG", "Laptop", new
-    // BigDecimal("32990000"), 8));
-    // danhSachSanPham.add(new ProductsDTO("SP013", "Xiaomi Pad 6", "Tablet", new
-    // BigDecimal("7990000"), 12));
-    // danhSachSanPham.add(new ProductsDTO("SP014", "Sony WH-1000XM5", "Phụ kiện",
-    // new BigDecimal("8990000"), 10));
-    // danhSachSanPham
-    // .add(new ProductsDTO("SP015", "Google Pixel 8 Pro", "Điện thoại", new
-    // BigDecimal("25990000"), 7));
-    // }
-
     private void timKiemSanPham() {
-        String sortOption = getSelectedButtonText(sortGroup);
-        String categoryOption = getSelectedButtonText(categoryGroup);
-        String priceOption = getSelectedButtonText(priceGroup);
+        String keyword = txtTimKiem.getText().trim().toLowerCase();
+        String brand = cboLoai.getSelectedItem().toString();
+        String priceRange = cboGia.getSelectedItem().toString();
 
-        String sql = "SELECT * FROM xemay WHERE 1=1";
+        List<ProductsDTO> products = this.productsBUS.getAll(); // Lấy toàn bộ sản phẩm
+        List<ProductsDTO> filtered = new ArrayList<>();
 
-        // Lọc hãng xe
-        if (categoryOption != null && !categoryOption.equals("Tất cả")) {
-            sql += " AND HANGXE = ?";
-        }
+        for (ProductsDTO product : products) {
+            boolean matches = true;
 
-        // Lọc theo khoảng giá
-        if (priceOption != null && !priceOption.equals("Tất cả")) {
-            switch (priceOption) {
+            // Lọc theo từ khóa tên sản phẩm
+            if (!keyword.isEmpty() && !product.getProductName().toLowerCase().contains(keyword)) {
+                matches = false;
+            }
+
+            // Lọc theo hãng xe
+            if (!brand.equals("Tất cả") && !product.getBrand().equalsIgnoreCase(brand)) {
+                matches = false;
+            }
+
+            // Lọc theo khoảng giá
+            BigDecimal price = product.getPrice();
+            switch (priceRange) {
                 case "Dưới 5 triệu":
-                    sql += " AND GIABAN < 5000000";
+                    if (price.compareTo(BigDecimal.valueOf(5_000_000)) >= 0)
+                        matches = false;
                     break;
                 case "5-10 triệu":
-                    sql += " AND GIABAN BETWEEN 5000000 AND 10000000";
+                    if (price.compareTo(BigDecimal.valueOf(5_000_000)) < 0 ||
+                            price.compareTo(BigDecimal.valueOf(10_000_000)) > 0)
+                        matches = false;
                     break;
                 case "10-20 triệu":
-                    sql += " AND GIABAN BETWEEN 10000000 AND 20000000";
+                    if (price.compareTo(BigDecimal.valueOf(10_000_000)) < 0 ||
+                            price.compareTo(BigDecimal.valueOf(20_000_000)) > 0)
+                        matches = false;
                     break;
                 case "Trên 20 triệu":
-                    sql += " AND GIABAN > 20000000";
-                    break;
-            }
-        }
-
-        // Sắp xếp
-        if (sortOption != null) {
-            switch (sortOption) {
-                case "Giá tăng dần":
-                    sql += " ORDER BY GIABAN ASC";
-                    break;
-                case "Giá giảm dần":
-                    sql += " ORDER BY GIABAN DESC";
+                    if (price.compareTo(BigDecimal.valueOf(20_000_000)) <= 0)
+                        matches = false;
                     break;
                 default:
-                    sql += " ORDER BY MAXE ASC";
                     break;
             }
-        }
 
-        try (Connection conn = Database.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            int paramIndex = 1;
-            if (categoryOption != null && !categoryOption.equals("Tất cả")) {
-                ps.setString(paramIndex++, categoryOption);
+            if (matches) {
+                filtered.add(product);
             }
-
-            ResultSet rs = ps.executeQuery();
-
-            loadDataToTable(rs);
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Lỗi truy vấn dữ liệu: " + ex.getMessage());
         }
+
+        hienThiSanPham(filtered);
+    }
+
+    private void hienThiSanPham(List<ProductsDTO> danhSach) {
+        productGridPanel.removeAll();
+        for (ProductsDTO product : danhSach) {
+            JPanel card = createProductCard(product);
+            productGridPanel.add(card);
+        }
+        productGridPanel.revalidate();
+        productGridPanel.repaint();
     }
 
     private String getSelectedButtonText(ButtonGroup buttonGroup) {
@@ -651,20 +594,20 @@ public class SanPhamPanel extends JPanel {
         return null;
     }
 
-    private boolean checkPriceRange(long gia, String giaOption) {
-        switch (giaOption) {
-            case "Dưới 5 triệu":
-                return gia < 5000000;
-            case "5-10 triệu":
-                return gia >= 5000000 && gia <= 10000000;
-            case "10-20 triệu":
-                return gia > 10000000 && gia <= 20000000;
-            case "Trên 20 triệu":
-                return gia > 20000000;
-            default:
-                return true;
-        }
-    }
+    // private boolean checkPriceRange(long gia, String giaOption) {
+    // switch (giaOption) {
+    // case "Dưới 5 triệu":
+    // return gia < 5000000;
+    // case "5-10 triệu":
+    // return gia >= 5000000 && gia <= 10000000;
+    // case "10-20 triệu":
+    // return gia > 10000000 && gia <= 20000000;
+    // case "Trên 20 triệu":
+    // return gia > 20000000;
+    // default:
+    // return true;
+    // }
+    // }
 
     private void handleShowDetail(ProductsDTO sp) {
         ProductDetailDialog dialog = new ProductDetailDialog((Frame) SwingUtilities.getWindowAncestor(this), sp);

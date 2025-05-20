@@ -47,8 +47,8 @@ public class ProductDetailDialog extends JDialog {
     }
 
     private void initComponents() {
-        allProducts = productDAO.getAllProducts(); // hoặc DAO bạn đang dùng
-        hienThiSanPham(allProducts);
+        // allProducts = productDAO.getAllProducts(); // hoặc DAO bạn đang dùng
+        // hienThiSanPham(allProducts);
         // Giảm khoảng cách giữa các thành phần trong BorderLayout
         JPanel mainPanel = new JPanel(new BorderLayout(8, 8));
         mainPanel.setBackground(BACKGROUND_COLOR);
